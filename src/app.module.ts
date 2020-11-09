@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { DefaultController } from './controllers/default.controller';
 import ConfigModule from './config/config.module';
-import MongoModule from './mongo/mongo.module';
-import { ModelsModule } from './models/models.module';
+import DatabaseModule from './database/database.module';
+import { EntitiesModule } from './entities/entities.module';
 
 @Module({
     imports: [
         ConfigModule,
-        MongoModule,
-        ModelsModule,
+        DatabaseModule,
+        EntitiesModule,
     ],
     controllers: [DefaultController],
 })
