@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Injectable()
 export class DatabaseConfig implements TypeOrmOptionsFactory {
@@ -11,18 +12,16 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
     }
 
     createTypeOrmOptions(): Promise<TypeOrmModuleOptions> | TypeOrmModuleOptions {
-        const dbType: never = this.config.get('database.type');
-        const dbPassword: never = this.config.get('database.password');
-        const dbName: never = this.config.get('database.database');
         return {
-            type: dbType,
+            type: this.config.get<never>('database.type'),
             host: this.config.get('database.host'),
             port: this.config.get('database.port'),
             username: this.config.get('database.username'),
-            password: dbPassword,
-            database: dbName,
+            password: this.config.get<never>('database.password'),
+            database: this.config.get<never>('database.database'),
             autoLoadEntities: true,
             synchronize: true,
+            namingStrategy: new SnakeNamingStrategy(),
         };
     }
 }

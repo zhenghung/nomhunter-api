@@ -34,6 +34,10 @@ Wipe all docker containers and images
 docker system prune -a
 docker volume prune
 ```
+Wipe only postgres
+```
+docker volume rm nomhunter-api_postgres
+```
 
 ## Installation
 
