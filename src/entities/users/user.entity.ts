@@ -1,21 +1,35 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
     @ApiProperty()
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: number;
 
     @ApiProperty()
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @ApiProperty()
     @Column()
-    passwordHash: string;
+    @Exclude()
+    password: string;
 
     @ApiProperty()
-    @Column({ default: true })
-    isActive: boolean;
+    @Column()
+    firstName: string;
+
+    @ApiProperty()
+    @Column()
+    lastName: string;
+
+    @ApiProperty()
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @ApiProperty()
+    @UpdateDateColumn()
+    updatedAt: Date;
 }

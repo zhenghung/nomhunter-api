@@ -268,8 +268,8 @@ module.exports = {
       "error",
       { "blankLine": "always", "prev": "import", "next": "*" },
       { "blankLine": "never", "prev": "import", "next": "import" },
-      { "blankLine": "always", "prev": "multiline-block-like", "next": "*" },
-      { "blankLine": "always", "prev": "*", "next": "multiline-block-like" },
+      { "blankLine": "any", "prev": "multiline-block-like", "next": "*" },
+      { "blankLine": "any", "prev": "*", "next": "multiline-block-like" },
     ],
     "prefer-object-spread": "error",
     "quote-props": [
