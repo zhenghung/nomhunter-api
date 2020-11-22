@@ -1,3 +1,3 @@
 export interface TokenResponseInterface {
-    bearerToken: string;
+  bearerToken: string;
 }

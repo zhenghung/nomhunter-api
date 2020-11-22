@@ -1,39 +1,62 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './user.entity';
-import { UsersService } from './users.service';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Logger,
+  Param,
+  Post,
+} from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { User } from "./user.entity";
+import { UsersService } from "./users.service";
+import { ApiTags } from "@nestjs/swagger";
+import { QueryFailedError } from "typeorm";
 
-@ApiTags('Users')
-@Controller('users')
+@ApiTags("Users")
+@Controller("users")
 export class UsersController {
-    private readonly logger = new Logger(UsersController.name);
+  private readonly logger = new Logger(UsersController.name);
 
-    constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-    @Post()
-    create(@Body() createUserDto: CreateUserDto): Promise<void> {
-        this.logger.log(`Creating user with email: ${createUserDto.email}`);
-        return this.usersService.create(createUserDto)
-            .then((user) => this.logger.log(`User with email ${user.email} successfully created`));
-    }
+  @Post()
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    this.logger.log(`Creating user with email: ${createUserDto.email}`);
+    return this.usersService
+      .create(createUserDto)
+      .then((user) => {
+        this.logger.log(`User with email ${user.email} successfully created`);
+        return user;
+      })
+      .catch((e) => {
+        const errMsg = `User with email ${createUserDto.email} already taken`;
+        if (e instanceof QueryFailedError) {
+          this.logger.log(errMsg);
+        }
+        throw new HttpException(errMsg, HttpStatus.BAD_REQUEST);
+      });
+  }
 
-    @Get()
-    findAll(): Promise<User[]> {
-        this.logger.log('Fetching all users');
-        return this.usersService.findAll();
-    }
+  @Get()
+  findAll(): Promise<User[]> {
+    this.logger.log("Fetching all users");
+    return this.usersService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string): Promise<User> {
-        this.logger.log(`Fetching user with id ${id}`);
-        return this.usersService.getById(id);
-    }
+  @Get(":id")
+  findOne(@Param("id") id: string): Promise<User> {
+    this.logger.log(`Fetching user with id ${id}`);
+    return this.usersService.getById(id);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: string): Promise<void> {
-        this.logger.log(`Deleting user with id ${id}`);
-        return this.usersService.remove(id)
-            .then(() => this.logger.log(`User with id ${id} successfully deleted`));
-    }
+  @Delete(":id")
+  remove(@Param("id") id: string): Promise<void> {
+    this.logger.log(`Deleting user with id ${id}`);
+    return this.usersService
+      .remove(id)
+      .then(() => this.logger.log(`User with id ${id} successfully deleted`));
+  }
 }
