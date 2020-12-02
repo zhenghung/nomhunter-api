@@ -13,7 +13,7 @@ export const configFactory: ConfigFactory = () => ({
   },
 
   http: {
-    port: parseInt(process.env.HTTP_PORT, 10) || 3000,
+    port: parseInt(process.env.PORT, 10) || 3000,
   },
 
   jwt: {
