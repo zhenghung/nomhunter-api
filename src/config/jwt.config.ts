@@ -12,7 +12,9 @@ export class JwtConfig implements JwtOptionsFactory {
   createJwtOptions(): Promise<JwtModuleOptions> | JwtModuleOptions {
     return {
       secret: this.configService.get<string>("jwt.secret"),
-      signOptions: { expiresIn: "60s" },
+      signOptions: {
+        expiresIn: this.configService.get<string>("jwt.expiration"),
+      },
     };
   }
 }

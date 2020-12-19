@@ -6,36 +6,31 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+
+export enum FileType {
+  PROFILE_PIC,
+  AVATAR_BODY,
+  AVATAR_HAT,
+  AVATAR_PROP,
+}
 
 @Entity()
-export class User {
+export class FileEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ApiProperty()
-  @Column({ unique: true })
-  email: string;
+  @Column("enum", { enum: FileType })
+  type: FileType;
 
   @ApiProperty()
   @Column()
-  @Exclude()
-  password: string;
+  name: string;
 
   @ApiProperty()
   @Column()
-  firstName: string;
-
-  @ApiProperty()
-  @Column()
-  lastName: string;
-
-  @ApiProperty()
-  @Column({
-    nullable: true,
-  })
-  profilePic: string;
+  url: string;
 
   @ApiProperty()
   @CreateDateColumn()

@@ -1,0 +1,62 @@
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, Repository } from "typeorm";
+import { FileEntity } from "./file.entity";
+import { HttpUtil } from "../../util/http.util";
+import { CreateFileDto } from "./dto/create-file.dto";
+
+@Injectable()
+export class FilesService {
+  private readonly logger = new Logger(FilesService.name);
+
+  constructor(
+    @InjectRepository(FileEntity)
+    private readonly filesRepository: Repository<FileEntity>
+  ) {}
+
+  async getById(id: string): Promise<FileEntity> {
+    return await this.filesRepository
+      .findOneOrFail(id)
+      .catch((error: Error) => {
+        throw HttpUtil.createHttpException(
+          `FileEntity of id: ${id} does not exist`,
+          HttpStatus.NOT_FOUND,
+          this.logger,
+          error
+        );
+      });
+  }
+
+  async create(createFileDto: CreateFileDto): Promise<FileEntity> {
+    const newFileEntity = new FileEntity();
+    newFileEntity.name = createFileDto.name;
+    newFileEntity.type = createFileDto.type;
+    newFileEntity.url = createFileDto.url;
+    await this.filesRepository.save(newFileEntity);
+    return newFileEntity;
+  }
+
+  async remove(id: string): Promise<boolean> {
+    return await this.filesRepository
+      .delete(id)
+      .catch((error) => {
+        throw HttpUtil.createHttpException(
+          "Something went wrong",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          this.logger,
+          error
+        );
+      })
+      .then((result: DeleteResult) => {
+        if (result.affected == 0) {
+          throw HttpUtil.createHttpException(
+            `FileEntity of id: ${id} does not exist`,
+            HttpStatus.NOT_FOUND,
+            this.logger
+          );
+        }
+        this.logger.log(`FileEntity of id: ${id} deleted successfully`);
+        return true;
+      });
+  }
+}

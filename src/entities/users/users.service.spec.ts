@@ -2,7 +2,12 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "./users.service";
 import { User } from "./user.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+import {
+  DeleteResult,
+  QueryFailedError,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
@@ -42,6 +47,7 @@ describe("UsersService", () => {
             findOneOrFail: jest.fn().mockResolvedValue(testUser1),
             save: jest.fn().mockReturnValue(testUser2),
             delete: jest.fn(),
+            update: jest.fn(),
           },
         },
       ],
@@ -140,6 +146,41 @@ describe("UsersService", () => {
       ).resolves.toEqual(testUser2);
       expect(repoSpy).toBeCalledTimes(1);
       expect(repoSpy).toBeCalledWith(testUser2);
+      return testResult;
+    });
+  });
+
+  describe("updateProfilePic", () => {
+    it("should return true", () => {
+      const successUpdateResult = new UpdateResult();
+      successUpdateResult.affected = 1;
+      const repoSpy = jest
+        .spyOn(repo, "update")
+        .mockResolvedValue(successUpdateResult);
+      const testResult = expect(
+        service.updateProfilePic("a uuid", "imageId")
+      ).resolves.toEqual(true);
+      expect(repoSpy).toBeCalledWith(
+        { id: "a uuid" },
+        { profilePic: "imageId" }
+      );
+      expect(repoSpy).toBeCalledTimes(1);
+      return testResult;
+    });
+    it("should return false", () => {
+      const successUpdateResult = new UpdateResult();
+      successUpdateResult.affected = 0;
+      const repoSpy = jest
+        .spyOn(repo, "update")
+        .mockResolvedValue(successUpdateResult);
+      const testResult = expect(
+        service.updateProfilePic("a uuid", "imageId")
+      ).resolves.toEqual(false);
+      expect(repoSpy).toBeCalledWith(
+        { id: "a uuid" },
+        { profilePic: "imageId" }
+      );
+      expect(repoSpy).toBeCalledTimes(1);
       return testResult;
     });
   });

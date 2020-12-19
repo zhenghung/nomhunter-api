@@ -7,7 +7,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
 import { LoginDto } from "./dto/login.dto";
-import { HttpExceptions } from "../constants/http.exception.constant";
+import { HttpExceptions } from "../constants/http.exception";
 
 const loginDto: LoginDto = {
   email: "newUser@nomhunter.com",

@@ -4,7 +4,7 @@ import * as bcrypt from "bcrypt";
 import { UsersService } from "../entities/users/users.service";
 import { User } from "../entities/users/user.entity";
 import { RegisterDto } from "./dto/register.dto";
-import { HttpExceptions } from "../constants/http.exception.constant";
+import { HttpExceptions } from "../constants/http.exception";
 import { TokenResponseInterface } from "./interface/token-response.interface";
 import { QueryFailedError } from "typeorm";
 
