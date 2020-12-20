@@ -18,5 +18,14 @@ export const configFactory: ConfigFactory = () => ({
 
   jwt: {
     secret: process.env.JWT_SECRET,
+    expiration: process.env.JWT_EXPIRATION,
+  },
+
+  aws: {
+    region: process.env.AWS_REGION,
+    accesskeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+    s3RootUrl: process.env.AWS_S3_ROOT_URL,
   },
 });

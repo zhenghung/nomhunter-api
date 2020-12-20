@@ -12,6 +12,7 @@ const testUser1: User = {
   password: "password1",
   firstName: "UserOne",
   lastName: "NameOne",
+  profilePic: "default_profile",
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -22,6 +23,7 @@ const testUser2: User = {
   password: "password2",
   firstName: "UserTwo",
   lastName: "NameTwo",
+  profilePic: "default_profile",
   createdAt: new Date(),
   updatedAt: new Date(),
 };

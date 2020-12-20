@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, Repository, UpdateResult } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "./user.entity";
 import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
+import { HttpUtil } from "../../util/http.util";
 
 @Injectable()
 export class UsersService {
@@ -23,15 +24,17 @@ export class UsersService {
       .findOneOrFail(id)
       .catch((error: Error) => {
         if (error instanceof EntityNotFoundError) {
-          throw this.createHttpException(
+          throw HttpUtil.createHttpException(
             `User of id: ${id} does not exist`,
             HttpStatus.NOT_FOUND,
+            this.logger,
             error
           );
         } else {
-          throw this.createHttpException(
+          throw HttpUtil.createHttpException(
             `${id} is not a UUID`,
             HttpStatus.BAD_REQUEST,
+            this.logger,
             error
           );
         }
@@ -42,9 +45,10 @@ export class UsersService {
     return await this.usersRepository
       .findOneOrFail({ email })
       .catch((error: Error) => {
-        throw this.createHttpException(
+        throw HttpUtil.createHttpException(
           `User of email: ${email} does not exist`,
           HttpStatus.NOT_FOUND,
+          this.logger,
           error
         );
       });
@@ -60,37 +64,35 @@ export class UsersService {
     return newUser;
   }
 
+  async updateProfilePic(userId: string, imageId: string): Promise<boolean> {
+    return await this.usersRepository
+      .update({ id: userId }, { profilePic: imageId })
+      .then((updateResult: UpdateResult) => {
+        return updateResult.affected == 1;
+      });
+  }
+
   async remove(id: string): Promise<boolean> {
     return await this.usersRepository
       .delete(id)
       .catch((error) => {
-        throw this.createHttpException(
+        throw HttpUtil.createHttpException(
           "Something went wrong",
           HttpStatus.INTERNAL_SERVER_ERROR,
+          this.logger,
           error
         );
       })
       .then((result: DeleteResult) => {
         if (result.affected == 0) {
-          throw this.createHttpException(
+          throw HttpUtil.createHttpException(
             `User of id: ${id} does not exist`,
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
+            this.logger
           );
         }
         this.logger.log(`User of id: ${id} deleted successfully`);
         return true;
       });
-  }
-
-  private createHttpException(
-    errorMsg: string,
-    httpStatus: HttpStatus,
-    error?: Error
-  ): HttpException {
-    if (error) {
-      this.logger.log(error.message);
-    }
-    this.logger.log(errorMsg);
-    throw new HttpException(errorMsg, httpStatus);
   }
 }
