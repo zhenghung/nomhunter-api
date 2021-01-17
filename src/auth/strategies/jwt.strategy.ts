@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { UsersService } from "../../entities/users/users.service";
 import { TokenRequestInterface } from "../interface/token-request.interface";
-import { User } from "../../entities/users/user.entity";
+import { UserEntity } from "../../entities/users/user.entity";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: TokenRequestInterface): Promise<User> {
+  async validate(payload: TokenRequestInterface): Promise<UserEntity> {
     return this.userService.getById(payload.sub);
   }
 }

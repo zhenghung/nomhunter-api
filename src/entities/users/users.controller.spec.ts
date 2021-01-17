@@ -2,11 +2,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { User } from "./user.entity";
+import { UserEntity } from "./user.entity";
 import { QueryFailedError } from "typeorm";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
-const testUser1: User = {
+const testUser1: UserEntity = {
   id: "1",
   email: "userOne@nomhunter.com",
   password: "password1",
@@ -17,7 +17,7 @@ const testUser1: User = {
   updatedAt: new Date(),
 };
 
-const testUser2: User = {
+const testUser2: UserEntity = {
   id: "2",
   email: "userTwo@nomhunter.com",
   password: "password2",

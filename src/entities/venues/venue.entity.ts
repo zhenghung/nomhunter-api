@@ -2,40 +2,48 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+import { ZoneEntity } from "../zones/zone.entity";
 
-@Entity("users")
-export class UserEntity {
+@Entity("venues")
+export class VenueEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ApiProperty()
-  @Column({ unique: true })
-  email: string;
+  @Column()
+  name: string;
 
   @ApiProperty()
   @Column()
-  @Exclude()
-  password: string;
+  latitude: string;
 
   @ApiProperty()
   @Column()
-  firstName: string;
+  longitude: string;
 
   @ApiProperty()
   @Column()
-  lastName: string;
+  googlePlacesId: string;
 
   @ApiProperty()
-  @Column({
-    nullable: true,
-  })
-  profilePic: string;
+  @Column()
+  photoReference: string;
+
+  @ApiProperty({ name: "zone_id" })
+  @ManyToOne(() => ZoneEntity, (zone) => zone.venues)
+  @JoinColumn({ name: "zone_id" })
+  zone: ZoneEntity;
+
+  @ApiProperty()
+  @Column()
+  description: string;
 
   @ApiProperty()
   @CreateDateColumn()

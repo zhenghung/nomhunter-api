@@ -1,12 +1,12 @@
 import { AuthService } from "./auth.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthController } from "./auth.controller";
-import { User } from "../entities/users/user.entity";
+import { UserEntity } from "../entities/users/user.entity";
 import { RequestWithUser } from "./interface/request-with-user.interface";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 
-const testUser1 = new User();
+const testUser1 = new UserEntity();
 testUser1.email = "newUser@nomhunter.com";
 testUser1.password = "password1";
 testUser1.firstName = "NewUser";

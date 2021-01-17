@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { UsersService } from "../entities/users/users.service";
-import { User } from "../entities/users/user.entity";
+import { UserEntity } from "../entities/users/user.entity";
 import { RegisterDto } from "./dto/register.dto";
 import { HttpExceptions } from "../constants/http.exception";
 import { TokenResponseInterface } from "./interface/token-response.interface";
@@ -19,7 +19,7 @@ export class AuthService {
    * Encrypts password by adding a salt and hashing it, then creating a new User entity
    * @param registrationData
    */
-  public async register(registrationData: RegisterDto): Promise<User> {
+  public async register(registrationData: RegisterDto): Promise<UserEntity> {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
       return await this.usersService.create({
@@ -44,7 +44,7 @@ export class AuthService {
    * JWT service signs the user's email and id as bearer token
    * @param user User entity from the database
    */
-  public login(user: User): TokenResponseInterface {
+  public login(user: UserEntity): TokenResponseInterface {
     const payload = { email: user.email, sub: user.id };
     return {
       bearerToken: this.jwtService.sign(payload),
@@ -59,7 +59,7 @@ export class AuthService {
   public async validateUser(
     email: string,
     plainTextPassword: string
-  ): Promise<User> {
+  ): Promise<UserEntity> {
     try {
       const user = await this.usersService.getByEmail(email);
       const correctPassword = await AuthService.verifyPassword(

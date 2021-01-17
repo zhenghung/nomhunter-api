@@ -3,7 +3,7 @@ import { S3Service } from "../s3/s3.service";
 import { FilesService } from "../entities/files/files.service";
 import { UsersService } from "../entities/users/users.service";
 import { AvatarService } from "./avatar.service";
-import { User } from "../entities/users/user.entity";
+import { UserEntity } from "../entities/users/user.entity";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
 import { FileEntity, FileType } from "../entities/files/file.entity";
@@ -13,7 +13,7 @@ testCreateAvatarDto.body = 1;
 testCreateAvatarDto.hat = 1;
 testCreateAvatarDto.prop = 1;
 
-const testUser1 = new User();
+const testUser1 = new UserEntity();
 testUser1.id = "someId";
 testUser1.email = "newUser@nomhunter.com";
 testUser1.password = "password";
