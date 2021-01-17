@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Logger,
   Param,
   Post,
@@ -15,6 +16,9 @@ import { ZonesService } from "../zones/zones.service";
 import { CreateVenueReq } from "./dto/create-venue.req";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { OptionalBoolPipe } from "../../common/pipes/optional-bool.pipe";
+import { GoogleMapsService } from "../../services/google-maps/google-maps.service";
+import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { DetailsResponseInterface } from "../../services/google-maps/interface/details-response.interface";
 
 @ApiTags("Venues")
 @Controller("venues")
@@ -23,14 +27,36 @@ export class VenuesController {
 
   constructor(
     private readonly venuesService: VenuesService,
-    private readonly zonesService: ZonesService
+    private readonly zonesService: ZonesService,
+    private readonly googleMapsService: GoogleMapsService
   ) {}
 
   @Post()
   async create(@Body() createVenueReq: CreateVenueReq): Promise<VenueEntity> {
+    // Fetch photoReference, lat and lng via GoogleMapsApi
+    const details: DetailsResponseInterface = await this.googleMapsService.getGooglePlacesDetails(
+      createVenueReq.googlePlacesId
+    );
+    if (details.status != "OK") {
+      throw HttpExceptionsUtil.createHttpException(
+        "Invalid Place Id",
+        HttpStatus.BAD_REQUEST,
+        this.logger
+      );
+    }
+    const photoReference = details.result.photos[0].photo_reference;
+    const latitude = details.result.geometry.location.lat.toString();
+    const longitude = details.result.geometry.location.lng.toString();
+
+    // Find Zone By Id
     const zone = await this.zonesService.getById(createVenueReq.zone_id);
+
+    // Create Venue
     const createVenueDto: CreateVenueDto = {
       ...createVenueReq,
+      latitude,
+      longitude,
+      photoReference,
       zone,
     };
     this.logger.log(`Creating venue with name: ${createVenueDto.name}`);

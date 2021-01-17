@@ -5,16 +5,7 @@ export class CreateVenueReq {
   name: string;
 
   @ApiProperty()
-  latitude: string;
-
-  @ApiProperty()
-  longitude: string;
-
-  @ApiProperty()
   googlePlacesId: string;
-
-  @ApiProperty()
-  photoReference: string;
 
   @ApiProperty()
   description: string;
