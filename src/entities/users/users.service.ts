@@ -2,8 +2,7 @@ import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, Repository, UpdateResult } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { User } from "./user.entity";
-import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
+import { UserEntity } from "./user.entity";
 import { HttpUtil } from "../../util/http.util";
 
 @Injectable()
@@ -11,37 +10,21 @@ export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }
 
-  async getById(id: string): Promise<User> {
+  async getById(id: string): Promise<UserEntity> {
     return await this.usersRepository
       .findOneOrFail(id)
-      .catch((error: Error) => {
-        if (error instanceof EntityNotFoundError) {
-          throw HttpUtil.createHttpException(
-            `User of id: ${id} does not exist`,
-            HttpStatus.NOT_FOUND,
-            this.logger,
-            error
-          );
-        } else {
-          throw HttpUtil.createHttpException(
-            `${id} is not a UUID`,
-            HttpStatus.BAD_REQUEST,
-            this.logger,
-            error
-          );
-        }
-      });
+      .catch(HttpUtil.genericFindByUUIDErrorHandler("User", id, this.logger));
   }
 
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: string): Promise<UserEntity> {
     return await this.usersRepository
       .findOneOrFail({ email })
       .catch((error: Error) => {
@@ -54,14 +37,8 @@ export class UsersService {
       });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = new User();
-    newUser.email = createUserDto.email;
-    newUser.password = createUserDto.password;
-    newUser.firstName = createUserDto.firstName;
-    newUser.lastName = createUserDto.lastName;
-    await this.usersRepository.save(newUser);
-    return newUser;
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    return await this.usersRepository.save(createUserDto);
   }
 
   async updateProfilePic(userId: string, imageId: string): Promise<boolean> {

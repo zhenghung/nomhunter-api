@@ -10,7 +10,7 @@ import {
   Post,
 } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { User } from "./user.entity";
+import { UserEntity } from "./user.entity";
 import { UsersService } from "./users.service";
 import { ApiTags } from "@nestjs/swagger";
 import { QueryFailedError } from "typeorm";
@@ -23,7 +23,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     this.logger.log(`Creating user with email: ${createUserDto.email}`);
     return this.usersService
       .create(createUserDto)
@@ -41,13 +41,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Promise<User[]> {
+  findAll(): Promise<UserEntity[]> {
     this.logger.log("Fetching all users");
     return this.usersService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string): Promise<User> {
+  findOne(@Param("id") id: string): Promise<UserEntity> {
     this.logger.log(`Fetching user with id ${id}`);
     return this.usersService.getById(id);
   }

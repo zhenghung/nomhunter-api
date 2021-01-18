@@ -15,7 +15,7 @@ import { RequestWithUser } from "./interface/request-with-user.interface";
 import { LocalAuthGuard } from "./guard/local-auth.guard";
 import JwtAuthGuard from "./guard/jwt-auth.guard";
 import { LoginDto } from "./dto/login.dto";
-import { User } from "../entities/users/user.entity";
+import { UserEntity } from "../entities/users/user.entity";
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiBadRequestResponse({ description: "Email already exists" })
   @ApiInternalServerErrorResponse({ description: "Something went wrong" })
   @Post("register")
-  async register(@Body() registrationData: RegisterDto): Promise<User> {
+  async register(@Body() registrationData: RegisterDto): Promise<UserEntity> {
     return this.authService.register(registrationData).then((user) => {
       this.logger.log(`User with email: ${user.email} successfully created`);
       return user;
@@ -71,7 +71,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: "User Profile retrieved" })
   @ApiUnauthorizedResponse({ description: "Unauthorized bearer token" })
-  getProfile(@Request() request: RequestWithUser): User {
+  getProfile(@Request() request: RequestWithUser): UserEntity {
     this.logger.log(`User ${request.user.email} authenticated`);
     return request.user;
   }

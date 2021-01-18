@@ -28,4 +28,9 @@ export const configFactory: ConfigFactory = () => ({
     bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
     s3RootUrl: process.env.AWS_S3_ROOT_URL,
   },
+
+  google: {
+    apiKey: process.env.GOOGLE_PLACES_API_KEY,
+    photoRootUrl: process.env.GOOGLE_API_PHOTOS_ROOT_URL,
+  },
 });

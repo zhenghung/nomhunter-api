@@ -2,27 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { VenueEntity } from "../venues/venue.entity";
 
-export enum FileType {
-  PROFILE_PIC,
-  AVATAR_BODY,
-  AVATAR_HAT,
-  AVATAR_PROP,
-}
-
-@Entity("files")
-export class FileEntity {
+@Entity("zones")
+export class ZoneEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @ApiProperty()
-  @Column("enum", { enum: FileType })
-  type: FileType;
 
   @ApiProperty()
   @Column()
@@ -30,7 +22,16 @@ export class FileEntity {
 
   @ApiProperty()
   @Column()
-  url: string;
+  latitude: string;
+
+  @ApiProperty()
+  @Column()
+  longitude: string;
+
+  @ApiProperty()
+  @OneToMany(() => VenueEntity, (venue) => venue.zone)
+  @JoinColumn()
+  venues: VenueEntity[];
 
   @ApiProperty()
   @CreateDateColumn()

@@ -17,23 +17,13 @@ export class FilesService {
   async getById(id: string): Promise<FileEntity> {
     return await this.filesRepository
       .findOneOrFail(id)
-      .catch((error: Error) => {
-        throw HttpUtil.createHttpException(
-          `FileEntity of id: ${id} does not exist`,
-          HttpStatus.NOT_FOUND,
-          this.logger,
-          error
-        );
-      });
+      .catch(
+        HttpUtil.genericFindByUUIDErrorHandler("FileEntity", id, this.logger)
+      );
   }
 
   async create(createFileDto: CreateFileDto): Promise<FileEntity> {
-    const newFileEntity = new FileEntity();
-    newFileEntity.name = createFileDto.name;
-    newFileEntity.type = createFileDto.type;
-    newFileEntity.url = createFileDto.url;
-    await this.filesRepository.save(newFileEntity);
-    return newFileEntity;
+    return await this.filesRepository.save(createFileDto);
   }
 
   async remove(id: string): Promise<boolean> {

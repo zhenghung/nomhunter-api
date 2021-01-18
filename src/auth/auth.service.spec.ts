@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { AuthService } from "./auth.service";
 import { UsersService } from "../entities/users/users.service";
 import { JwtService } from "@nestjs/jwt";
-import { User } from "../entities/users/user.entity";
+import { UserEntity } from "../entities/users/user.entity";
 import { RegisterDto } from "./dto/register.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
@@ -20,7 +20,7 @@ const registerDto: RegisterDto = {
   lastName: "NewLastName",
 };
 
-const testUser1 = new User();
+const testUser1 = new UserEntity();
 testUser1.email = "newUser@nomhunter.com";
 testUser1.password =
   "$2b$10$R1SOiUOVNjGLu2nfuX3JX.O6sArbzmL55C90/3mGwQRgl/yqMsUo2";

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "./users.service";
-import { User } from "./user.entity";
+import { UserEntity } from "./user.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import {
   DeleteResult,
@@ -12,13 +12,13 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
 
-const testUser1 = new User();
+const testUser1 = new UserEntity();
 testUser1.email = "test1@nomhunter.com";
 testUser1.password = "password1";
 testUser1.firstName = "John";
 testUser1.lastName = "Doe";
 
-const testUser2 = new User();
+const testUser2 = new UserEntity();
 testUser2.email = "test2@nomhunter.com";
 testUser2.password = "password2";
 testUser2.firstName = "Tsz Hey";
@@ -34,14 +34,14 @@ createTestUser.lastName = testUser2.lastName;
 
 describe("UsersService", () => {
   let service: UsersService;
-  let repo: Repository<User>;
+  let repo: Repository<UserEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             find: jest.fn().mockResolvedValue(usersArray),
             findOneOrFail: jest.fn().mockResolvedValue(testUser1),
@@ -54,7 +54,7 @@ describe("UsersService", () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repo = module.get<Repository<User>>(getRepositoryToken(User));
+    repo = module.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
   });
 
   it("should be defined", () => {
