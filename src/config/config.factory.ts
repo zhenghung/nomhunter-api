@@ -31,6 +31,8 @@ export const configFactory: ConfigFactory = () => ({
 
   google: {
     apiKey: process.env.GOOGLE_PLACES_API_KEY,
-    photoRootUrl: process.env.GOOGLE_API_PHOTOS_ROOT_URL,
+    mapsRootUrl: process.env.GOOGLE_MAPS_API_ROOT_URL,
+    photoPath: process.env.GOOGLE_MAPS_API_PHOTO_PATH,
+    detailsPath: process.env.GOOGLE_MAPS_API_DETAILS_PATH,
   },
 });
