@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { S3Service } from "../s3/s3.service";
+import { S3Service } from "../../clients/s3/s3.service";
 import { FilesService } from "../../entities/files/files.service";
 import { UsersService } from "../../entities/users/users.service";
 import { AvatarService } from "./avatar.service";

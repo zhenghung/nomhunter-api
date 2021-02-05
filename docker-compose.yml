@@ -14,28 +14,25 @@ services:
     ports:
       - 5432:5432
     networks:
-      - postgres
+      - local
     restart: unless-stopped
 
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@nomhunter.com
-      - PGADMIN_DEFAULT_PASSWORD=nomnom
-      - PGADMIN_LISTEN_PORT=5454
-    volumes:
-      - pgadmin:/root/.pgadmin
+  redis:
+    image: "redis:alpine"
+    entrypoint: redis-server --requirepass password123
     ports:
-      - 5454:5454/tcp
+      - 6379:6379
+    volumes:
+      - redis:/data/redis
+    environment:
+      - REDIS_REPLICATION_MODE=master
     networks:
-      - postgres
-    restart: unless-stopped
+      - local
 
 networks:
-  postgres:
+  local:
     driver: bridge
 
 volumes:
   postgres:
-  pgadmin:
+  redis:

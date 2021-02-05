@@ -13,7 +13,7 @@ import { VenuesService } from "./venues.service";
 import { VenueEntity } from "./venue.entity";
 import { CreateVenueDto } from "./dto/create-venue.dto";
 import { ZonesService } from "../zones/zones.service";
-import { CreateVenueReq } from "./dto/create-venue.req";
+import { CreateVenueReq } from "./req/create-venue.req";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { OptionalBoolPipe } from "../../common/pipes/optional-bool.pipe";
 import { GoogleMapsService } from "../../services/google-maps/google-maps.service";
