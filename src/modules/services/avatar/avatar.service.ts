@@ -3,7 +3,7 @@ import Jimp from "jimp";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import fs from "fs";
 import { AvatarMappingDto } from "./dto/avatar-mapping.dto";
-import { S3Service } from "../s3/s3.service";
+import { S3Service } from "../../clients/s3/s3.service";
 import { FilesService } from "../../entities/files/files.service";
 import { UsersService } from "../../entities/users/users.service";
 import { CreateFileDto } from "../../entities/files/dto/create-file.dto";

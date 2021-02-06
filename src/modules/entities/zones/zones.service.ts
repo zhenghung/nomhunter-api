@@ -36,6 +36,21 @@ export class ZonesService {
       );
   }
 
+  async getByIdJoinVenues(id: string): Promise<ZoneEntity[]> {
+    return this.zoneEntityRepository
+      .createQueryBuilder("zone")
+      .innerJoinAndSelect("zone.venues", "venue")
+      .where("zone.id = :id", { id: id })
+      .getMany()
+      .catch(
+        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
+          "Venue",
+          id,
+          this.logger
+        )
+      );
+  }
+
   async create(createZoneDto: CreateZoneDto): Promise<ZoneEntity> {
     return await this.zoneEntityRepository.save(createZoneDto);
   }

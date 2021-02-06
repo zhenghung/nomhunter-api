@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
+import { GameEntity } from "../games/game.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -44,4 +46,7 @@ export class UserEntity {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => GameEntity, (game) => game.user)
+  games: GameEntity[];
 }

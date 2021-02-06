@@ -3,6 +3,10 @@ import { ConfigFactory } from "@nestjs/config/dist/interfaces";
 export const configFactory: ConfigFactory = () => ({
   env: process.env.NODE_ENV,
 
+  http: {
+    port: parseInt(process.env.PORT, 10) || 3000,
+  },
+
   database: {
     type: process.env.DB_TYPE,
     host: process.env.DB_HOST,
@@ -12,8 +16,10 @@ export const configFactory: ConfigFactory = () => ({
     password: process.env.DB_PASS,
   },
 
-  http: {
-    port: parseInt(process.env.PORT, 10) || 3000,
+  redis: {
+    endpoint: process.env.REDIS_ENDPOINT,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
   },
 
   jwt: {

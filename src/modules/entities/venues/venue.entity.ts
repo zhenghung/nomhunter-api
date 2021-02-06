@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { ZoneEntity } from "../zones/zone.entity";
+import { GameEntity } from "../games/game.entity";
 
 @Entity("venues")
 export class VenueEntity {
@@ -52,4 +54,7 @@ export class VenueEntity {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => GameEntity, (game) => game.venue)
+  games: GameEntity[];
 }
