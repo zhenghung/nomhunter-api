@@ -7,22 +7,30 @@ import { ConfigService } from "@nestjs/config";
 export class RedisService {
   private logger: Logger = new Logger(RedisService.name);
 
-  private readonly redisClient: redis.RedisClient;
+  private readonly client: redis.RedisClient;
   private readonly zAddAsync;
   private readonly zRevRangeAsync;
   private readonly delAsync;
+  private readonly setAsync;
+  private readonly getAsync;
+  private readonly expireAsync;
 
   constructor(private readonly configService: ConfigService) {
-    this.redisClient = redis.createClient({
+    this.client = redis.createClient({
       host: this.configService.get<string>("redis.endpoint"),
       port: this.configService.get<number>("redis.port"),
       password: this.configService.get<string>("redis.password"),
     });
-    this.zAddAsync = promisify(this.redisClient.zadd).bind(this.redisClient);
-    this.zRevRangeAsync = promisify(this.redisClient.zrevrange).bind(
-      this.redisClient
-    );
-    this.delAsync = promisify(this.redisClient.del).bind(this.redisClient);
+    this.zAddAsync = this.callbackToPromise(this.client.zadd);
+    this.zRevRangeAsync = this.callbackToPromise(this.client.zrevrange);
+    this.delAsync = this.callbackToPromise(this.client.del);
+    this.setAsync = this.callbackToPromise(this.client.set);
+    this.getAsync = this.callbackToPromise(this.client.get);
+    this.expireAsync = this.callbackToPromise(this.client.expire);
+  }
+
+  private callbackToPromise(functionWithCallback) {
+    return promisify(functionWithCallback).bind(this.client);
   }
 
   /**
@@ -50,6 +58,32 @@ export class RedisService {
    * @param key
    */
   async delete(key: string): Promise<number> {
+    this.logger.log(`Deleting value and key of ${key}`);
     return this.delAsync(key);
+  }
+
+  /**
+   * Get value of key
+   * @param key
+   */
+  async get(key: string): Promise<string> {
+    this.logger.log(`Get value of key ${key}`);
+    return this.getAsync(key);
+  }
+
+  /**
+   * Set value of key with optional expire
+   * @param key
+   * @param value
+   * @param expire seconds to expiry, <0 for no expiry
+   */
+  async set(key: string, value: string, expire?: number): Promise<void> {
+    this.logger.log(
+      `Set key ${key} with value ${value} and expire ${expire} seconds`
+    );
+    await this.setAsync(key, value);
+    if (expire > 0) {
+      this.expireAsync(key, expire);
+    }
   }
 }
