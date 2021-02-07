@@ -2,6 +2,7 @@ import { HttpService, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { DetailsResponseInterface } from "./interface/details-response.interface";
 import { map } from "rxjs/operators";
+import { RedisService } from "../../clients/redis/redis.service";
 
 @Injectable()
 export class GoogleMapsService {
@@ -13,6 +14,7 @@ export class GoogleMapsService {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
     private readonly httpService: HttpService
   ) {
     this.googleApiKey = this.configService.get("google.apiKey");
@@ -46,13 +48,27 @@ export class GoogleMapsService {
   async getGooglePlacesDetails(
     placeId: string
   ): Promise<DetailsResponseInterface> {
-    this.logger.log(`Fetching google maps details: ${placeId}`);
+    // Checking Cached Place Details
+    const placeDetails = await this.redisService.get(placeId);
+    if (placeDetails) {
+      this.logger.log(`Using place details from cache: ${placeId}`);
+      return JSON.parse(placeDetails);
+    }
+
+    // Calling GoogleMapsApi Webservice
+    this.logger.log(
+      `Fetching GoogleMapsApi webservice for place details: ${placeId}`
+    );
     const detailsUrl = `${this.googleMapsRootUrl}${this.googleMapsDetailsPath}?place_id=${placeId}&key=${this.googleApiKey}`;
     return this.httpService
       .get(detailsUrl, {
         responseType: "json",
       })
       .pipe(map((axiosResponse) => axiosResponse.data))
-      .toPromise();
+      .toPromise()
+      .then((details) => {
+        this.redisService.set(placeId, JSON.stringify(details), 60 * 60 * 24);
+        return details;
+      });
   }
 }
