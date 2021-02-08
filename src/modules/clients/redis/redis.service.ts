@@ -10,6 +10,7 @@ export class RedisService {
   private readonly client: redis.RedisClient;
   private readonly zAddAsync;
   private readonly zRevRangeAsync;
+  private readonly zScoreAsync;
   private readonly delAsync;
   private readonly setAsync;
   private readonly getAsync;
@@ -21,8 +22,10 @@ export class RedisService {
       port: this.configService.get<number>("redis.port"),
       password: this.configService.get<string>("redis.password"),
     });
+    this.client.flushdb();
     this.zAddAsync = this.callbackToPromise(this.client.zadd);
     this.zRevRangeAsync = this.callbackToPromise(this.client.zrevrange);
+    this.zScoreAsync = this.callbackToPromise(this.client.zscore);
     this.delAsync = this.callbackToPromise(this.client.del);
     this.setAsync = this.callbackToPromise(this.client.set);
     this.getAsync = this.callbackToPromise(this.client.get);
@@ -51,6 +54,16 @@ export class RedisService {
   async zRevRangeWithScores(set: string): Promise<string[]> {
     this.logger.log(`Get all elements in sorted set ${set}`);
     return this.zRevRangeAsync(set, 0, -1, "withscores");
+  }
+
+  /**
+   * Get score of member from sorted set
+   * @param set
+   * @param key
+   */
+  async zScore(set: string, key: string): Promise<number> {
+    this.logger.log(`Get member ${key} score from sorted set ${set}`);
+    return this.zScoreAsync(set, key);
   }
 
   /**

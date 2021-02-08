@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateGameDto } from "./dto/create-game.dto";
 import { GameEntity } from "./game.entity";
+import { RedisService } from "../../clients/redis/redis.service";
 
 @Injectable()
 export class GamesService {
@@ -10,7 +11,8 @@ export class GamesService {
 
   constructor(
     @InjectRepository(GameEntity)
-    private readonly gameEntityRepository: Repository<GameEntity>
+    private readonly gameEntityRepository: Repository<GameEntity>,
+    private readonly redisService: RedisService
   ) {}
 
   async findAll(conditions?: string): Promise<GameEntity[]> {
@@ -25,8 +27,31 @@ export class GamesService {
     return selectQueryBuilder.getMany();
   }
 
+  /**
+   * Create new Game Entity
+   * @param createGameDto
+   */
   async create(createGameDto: CreateGameDto): Promise<GameEntity> {
     this.logger.log("Creating Game: " + createGameDto);
-    return await this.gameEntityRepository.save(createGameDto);
+    const game = await this.gameEntityRepository.save(createGameDto);
+    // Check and Update Leaderboard
+    await this.updateLeaderboardCache(createGameDto);
+    return game;
+  }
+
+  private async updateLeaderboardCache(
+    createGameDto: CreateGameDto
+  ): Promise<void> {
+    const currentHighScore = await this.redisService.zScore(
+      createGameDto.venue.id,
+      createGameDto.user.id
+    );
+    if (!(currentHighScore && currentHighScore >= createGameDto.score)) {
+      await this.redisService.zAdd(
+        createGameDto.venue.id,
+        createGameDto.user.id,
+        createGameDto.score
+      );
+    }
   }
 }
