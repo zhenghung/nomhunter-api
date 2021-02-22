@@ -4,6 +4,7 @@ import { AvatarModule } from "./avatar/avatar.module";
 import { LiveModule } from "./live/live.module";
 import { GoogleMapsModule } from "./google-maps/google-maps.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
+import { ProfileModule } from "./profile/profile.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { LeaderboardModule } from "./leaderboard/leaderboard.module";
     LiveModule,
     GoogleMapsModule,
     LeaderboardModule,
+    ProfileModule,
   ],
 })
 export class ServicesModule {}
