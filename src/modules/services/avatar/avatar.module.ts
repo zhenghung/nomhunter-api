@@ -9,5 +9,6 @@ import { UsersModule } from "../../entities/users/users.module";
   imports: [FilesModule, UsersModule, S3Module],
   providers: [AvatarService],
   controllers: [AvatarController],
+  exports: [AvatarService],
 })
 export class AvatarModule {}

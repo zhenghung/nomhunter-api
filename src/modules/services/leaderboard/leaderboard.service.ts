@@ -51,28 +51,12 @@ export class LeaderboardService {
     const array: RankInterface[] = [];
     for (let i = 0; i < result.length; i += 2) {
       array.push({
+        rank: i / 2 + 1,
         userId: result[i],
         score: parseInt(result[i + 1]),
       });
     }
     return array;
-  }
-
-  /**
-   * Refresh zone leaderboard
-   */
-  async refreshZoneLeaderboard(zoneId: string): Promise<void> {
-    this.logger.log(`Refreshing leaderboard of zone ${zoneId}`);
-    const venueIds: string[] = await this.zonesService
-      .getByIdJoinVenues(zoneId)
-      .then((zones) => zones[0].venues.map((venue) => venue.id));
-    // Get Accumulated Score for each user
-    const mapBoard = await this.accumulateVenueScores(venueIds);
-    // Add score to redis
-    await this.redisService.delete(zoneId);
-    for (const [userId, score] of mapBoard) {
-      await this.redisService.zAdd(zoneId, userId, score);
-    }
   }
 
   /**
@@ -102,17 +86,39 @@ export class LeaderboardService {
     }
   }
 
-  async refreshSeasonLeaderboard(id: string): Promise<void> {
-    this.logger.log("Refreshing leaderboard of season");
+  /**
+   * Refresh zone leaderboard
+   */
+  async refreshZoneLeaderboard(zoneId: string): Promise<void> {
+    this.logger.log(`Refreshing leaderboard of zone ${zoneId}`);
+    const venueIds: string[] = await this.zonesService
+      .getByIdJoinVenues(zoneId)
+      .then((zones) => zones[0].venues.map((venue) => venue.id));
+    // Get Accumulated Score for each user
+    const mapBoard = await this.accumulateVenueScores(venueIds);
+    // Add score to redis
+    await this.redisService.delete(zoneId);
+    for (const [userId, score] of mapBoard) {
+      await this.redisService.zAdd(zoneId, userId, score);
+    }
+  }
+
+  /**
+   * Refresh Season leaderboard
+   * @param seasonId
+   */
+  async refreshSeasonLeaderboard(seasonId: string): Promise<void> {
+    this.logger.log("Refreshing leaderboard of seasons");
+    // TODO: Only for this seasons (currently all)
     const venueIds: string[] = await this.venuesService
       .findAll()
       .then((venues) => venues.map((venue) => venue.id));
     // Get Accumulated Score for each user
     const mapBoard = await this.accumulateVenueScores(venueIds);
     // Add score to redis
-    await this.redisService.delete(id);
+    await this.redisService.delete(seasonId);
     for (const [userId, score] of mapBoard) {
-      await this.redisService.zAdd(id, userId, score);
+      await this.redisService.zAdd(seasonId, userId, score);
     }
   }
 
