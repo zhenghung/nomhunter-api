@@ -28,6 +28,31 @@ export class GamesService {
   }
 
   /**
+   * Find first matching game that user obtained the specified score in a venue
+   * @param venueId
+   * @param userId
+   * @param score
+   */
+  async findMatchingGame(
+    venueId: string,
+    userId: string,
+    score: number
+  ): Promise<GameEntity> {
+    this.logger.log("Finding Matching Game");
+    return this.gameEntityRepository
+      .findOneOrFail({
+        where: { venue: { id: venueId }, user: { id: userId }, score: score },
+        order: {
+          createdAt: "ASC",
+        },
+      })
+      .catch(() => {
+        this.logger.log("No games found");
+        return null;
+      });
+  }
+
+  /**
    * Create new Game Entity
    * @param createGameDto
    */

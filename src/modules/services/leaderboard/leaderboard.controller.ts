@@ -26,6 +26,7 @@ import { ZonesService } from "../../entities/zones/zones.service";
 import { VenueRankInterface } from "./interface/venue-rank.interface";
 import { ZoneRankInterface } from "./interface/zone-rank.interface";
 import { SeasonRankInterface } from "./interface/season-rank.interface";
+import { GamesService } from "../../entities/games/games.service";
 
 @ApiTags("Leaderboard")
 @Controller("leaderboard")
@@ -35,7 +36,8 @@ export class LeaderboardController {
   constructor(
     private readonly leaderboardService: LeaderboardService,
     private readonly venuesService: VenuesService,
-    private readonly zonesService: ZonesService
+    private readonly zonesService: ZonesService,
+    private readonly gamesService: GamesService
   ) {}
 
   @ApiImplicitQuery({
@@ -110,12 +112,18 @@ export class LeaderboardController {
               rankList.filter((rank) => rank.userId == requestWithUser.user.id)
             );
           const myRank = this.getScoreAndRankAfterFiltered(ranks, "venue");
+          const game = await this.gamesService.findMatchingGame(
+            venueEntity.id,
+            requestWithUser.user.id,
+            myRank.score
+          );
           listOfVenueRanks.push({
             venueId: venueEntity.id,
             venueName: venueEntity.name,
             zoneName: venueEntity.zone.name,
             score: myRank.score,
             rank: myRank.rank,
+            date: game ? game.createdAt : null,
           });
         }
         return listOfVenueRanks;
@@ -155,10 +163,13 @@ export class LeaderboardController {
     }
   }
 
-  getScoreAndRankAfterFiltered(
+  private getScoreAndRankAfterFiltered(
     ranks: RankInterface[],
     type: string
-  ): { rank: number; score: number } {
+  ): {
+    rank: number;
+    score: number;
+  } {
     let myScore: number = null;
     let myRank: number = null;
     if (ranks.length == 1) {

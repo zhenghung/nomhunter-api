@@ -4,4 +4,5 @@ export interface VenueRankInterface {
   zoneName: string;
   score: number;
   rank: number;
+  date: Date;
 }
