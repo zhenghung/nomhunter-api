@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { UserEntity } from "../users/user.entity";
 import { VenueEntity } from "../venues/venue.entity";
+import { UserBadgeEntity } from "../userBadges/user-badge.entity";
 
 @Entity("games")
 export class GameEntity {
@@ -33,4 +35,7 @@ export class GameEntity {
   @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToOne(() => UserBadgeEntity, (userBadgeEntity) => userBadgeEntity.game)
+  userBadge: UserBadgeEntity;
 }

@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CreateGameDto } from "./dto/create-game.dto";
 import { GameEntity } from "./game.entity";
 import { RedisService } from "../../clients/redis/redis.service";
+import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 
 @Injectable()
 export class GamesService {
@@ -15,11 +16,24 @@ export class GamesService {
     private readonly redisService: RedisService
   ) {}
 
+  getById(id: string): Promise<GameEntity> {
+    return this.gameEntityRepository
+      .findOneOrFail(id)
+      .catch(
+        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
+          "Game",
+          id,
+          this.logger
+        )
+      );
+  }
+
   async findAll(conditions?: string): Promise<GameEntity[]> {
     this.logger.log("Fetching Games");
     const selectQueryBuilder = this.gameEntityRepository
       .createQueryBuilder("game")
       .innerJoinAndSelect("game.venue", "venue")
+      .innerJoinAndSelect("venue.badge", "badge")
       .innerJoinAndSelect("game.user", "user");
     if (conditions) {
       return selectQueryBuilder.where(conditions).getMany();

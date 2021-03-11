@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { FileEntity } from "./file.entity";
+import { FileEntity, FileType } from "./file.entity";
 import { DeleteResult, Repository } from "typeorm";
 import { FilesService } from "./files.service";
 import { getRepositoryToken } from "@nestjs/typeorm";
@@ -9,12 +9,12 @@ import { CreateFileDto } from "./dto/create-file.dto";
 
 const testFile = new FileEntity();
 testFile.name = "1-1-1";
-testFile.type = 0;
+testFile.type = FileType.PROFILE_PIC;
 testFile.url = "https://somelinktourl.com/";
 
 const testCreateFile = new CreateFileDto();
 testCreateFile.name = "1-1-1";
-testCreateFile.type = 0;
+testCreateFile.type = FileType.PROFILE_PIC;
 testCreateFile.url = "https://somelinktourl.com/";
 
 describe("FilesService", () => {

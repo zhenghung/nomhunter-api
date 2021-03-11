@@ -19,6 +19,7 @@ import { OptionalBoolPipe } from "../../common/pipes/optional-bool.pipe";
 import { GoogleMapsService } from "../../services/google-maps/google-maps.service";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { DetailsResponseInterface } from "../../services/google-maps/interface/details-response.interface";
+import { BadgesService } from "../badges/badges.service";
 
 @ApiTags("Venues")
 @Controller("venues")
@@ -28,7 +29,8 @@ export class VenuesController {
   constructor(
     private readonly venuesService: VenuesService,
     private readonly zonesService: ZonesService,
-    private readonly googleMapsService: GoogleMapsService
+    private readonly googleMapsService: GoogleMapsService,
+    private readonly badgesService: BadgesService
   ) {}
 
   @Post()
@@ -49,7 +51,10 @@ export class VenuesController {
     const longitude = details.result.geometry.location.lng.toString();
 
     // Find Zone By Id
-    const zone = await this.zonesService.getById(createVenueReq.zone_id);
+    const zone = await this.zonesService.getById(createVenueReq.zoneId);
+
+    // Find Badge By Id
+    const badge = await this.badgesService.getById(createVenueReq.badgeId);
 
     // Create Venue
     const createVenueDto: CreateVenueDto = {
@@ -58,6 +63,7 @@ export class VenuesController {
       longitude,
       photoReference,
       zone,
+      badge,
     };
     this.logger.log(`Creating venue with name: ${createVenueDto.name}`);
     return this.venuesService.create(createVenueDto).then((venue) => {

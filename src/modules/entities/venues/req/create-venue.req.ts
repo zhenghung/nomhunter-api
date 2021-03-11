@@ -11,5 +11,8 @@ export class CreateVenueReq {
   description: string;
 
   @ApiProperty()
-  zone_id: string;
+  badgeId: string;
+
+  @ApiProperty()
+  zoneId: string;
 }

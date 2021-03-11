@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ZoneEntity } from "../../zones/zone.entity";
+import { BadgeEntity } from "../../badges/badge.entity";
 
 export class CreateVenueDto {
   @ApiProperty()
@@ -22,4 +23,7 @@ export class CreateVenueDto {
 
   @ApiProperty()
   zone: ZoneEntity;
+
+  @ApiProperty()
+  badge: BadgeEntity;
 }

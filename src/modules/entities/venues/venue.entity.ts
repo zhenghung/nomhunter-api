@@ -11,6 +11,8 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 import { ZoneEntity } from "../zones/zone.entity";
 import { GameEntity } from "../games/game.entity";
+import { BadgeEntity } from "../badges/badge.entity";
+import { UserBadgeEntity } from "../userBadges/user-badge.entity";
 
 @Entity("venues")
 export class VenueEntity {
@@ -46,6 +48,11 @@ export class VenueEntity {
   @ApiProperty()
   @Column()
   description: string;
+
+  @ApiProperty({ name: "badge_id" })
+  @ManyToOne(() => BadgeEntity, (badgeEntity) => badgeEntity.venue)
+  @JoinColumn({ name: "badge_id" })
+  badge: BadgeEntity;
 
   @ApiProperty()
   @CreateDateColumn()

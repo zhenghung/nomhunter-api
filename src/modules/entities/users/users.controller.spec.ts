@@ -6,27 +6,25 @@ import { UserEntity } from "./user.entity";
 import { QueryFailedError } from "typeorm";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
-const testUser1: UserEntity = {
-  id: "1",
-  email: "userOne@nomhunter.com",
-  password: "password1",
-  firstName: "UserOne",
-  lastName: "NameOne",
-  profilePic: "default_profile",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+const testUser1 = new UserEntity();
+testUser1.id = "1";
+testUser1.email = "userOne@nomhunter.com";
+testUser1.password = "password1";
+testUser1.firstName = "UserOne";
+testUser1.lastName = "NameOne";
+testUser1.profilePic = "default_profile";
+testUser1.createdAt = new Date();
+testUser1.updatedAt = new Date();
 
-const testUser2: UserEntity = {
-  id: "2",
-  email: "userTwo@nomhunter.com",
-  password: "password2",
-  firstName: "UserTwo",
-  lastName: "NameTwo",
-  profilePic: "default_profile",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+const testUser2 = new UserEntity();
+testUser2.id = "2";
+testUser2.email = "userTwo@nomhunter.com";
+testUser2.password = "password2";
+testUser2.firstName = "UserTwo";
+testUser2.lastName = "NameTwo";
+testUser2.profilePic = "default_profile";
+testUser2.createdAt = new Date();
+testUser2.updatedAt = new Date();
 
 const newUserDTO: CreateUserDto = {
   email: "newUser@nomhunter.com",

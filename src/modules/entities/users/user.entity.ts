@@ -9,6 +9,7 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
 import { GameEntity } from "../games/game.entity";
+import { UserBadgeEntity } from "../userBadges/user-badge.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -49,4 +50,7 @@ export class UserEntity {
 
   @OneToMany(() => GameEntity, (game) => game.user)
   games: GameEntity[];
+
+  @OneToMany(() => UserBadgeEntity, (userBadge) => userBadge.user)
+  userBadges: UserBadgeEntity[];
 }
