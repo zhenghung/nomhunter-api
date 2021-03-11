@@ -1,5 +1,5 @@
 export interface ProfileResponseInterface {
-  userId: string;
+  playerId: string;
   name: string;
   avatarUrl: string;
 }

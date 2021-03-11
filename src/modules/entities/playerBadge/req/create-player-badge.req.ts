@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateUserBadgeReq {
+export class CreatePlayerBadgeReq {
   @ApiProperty()
-  userId: string;
+  playerId: string;
 
   @ApiProperty()
   badgeId: string;

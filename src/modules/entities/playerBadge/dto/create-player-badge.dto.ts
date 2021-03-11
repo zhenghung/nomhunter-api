@@ -1,11 +1,11 @@
 import { BadgeEntity } from "../../badge/badge.entity";
-import { UserEntity } from "../../user/user.entity";
+import { PlayerEntity } from "../../player/player.entity";
 import { GameEntity } from "../../game/game.entity";
 
-export class CreateUserBadgeDto {
+export class CreatePlayerBadgeDto {
   badge: BadgeEntity;
 
-  user: UserEntity;
+  player: PlayerEntity;
 
   game: GameEntity;
 }

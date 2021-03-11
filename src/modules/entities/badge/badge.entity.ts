@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 import { FileEntity } from "../file/file.entity";
 import { VenueEntity } from "../venue/venue.entity";
-import { UserBadgeEntity } from "../userBadge/user-badge.entity";
+import { PlayerBadgeEntity } from "../playerBadge/player-badge.entity";
 
 @Entity("badge")
 export class BadgeEntity {
@@ -43,6 +43,9 @@ export class BadgeEntity {
   @OneToMany(() => VenueEntity, (venueEntity) => venueEntity.badge)
   venue: VenueEntity[];
 
-  @OneToMany(() => UserBadgeEntity, (userBadgeEntity) => userBadgeEntity.badge)
-  userBadges: UserBadgeEntity[];
+  @OneToMany(
+    () => PlayerBadgeEntity,
+    (playerBadgeEntity) => playerBadgeEntity.badge
+  )
+  playerBadges: PlayerBadgeEntity[];
 }

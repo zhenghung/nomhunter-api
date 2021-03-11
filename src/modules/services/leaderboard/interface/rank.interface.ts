@@ -1,5 +1,5 @@
 export interface RankInterface {
   rank: number;
-  userId: string;
+  playerId: string;
   score: number;
 }

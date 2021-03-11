@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateGameReq {
   @ApiProperty()
-  userId: string;
+  playerId: string;
 
   @ApiProperty()
   venueId: string;

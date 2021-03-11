@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { GameEntity } from "./game.entity";
 import { GameEntityService } from "./game.entity.service";
 import { CreateGameDto } from "./dto/create-game.dto";
-import { UserEntityService } from "../user/user.entity.service";
+import { PlayerEntityService } from "../player/player.entity.service";
 import { VenueEntityService } from "../venue/venue.entity.service";
 import { CreateGameReq } from "./req/create-game.req";
 
@@ -14,14 +14,14 @@ export class GameEntityController {
 
   constructor(
     private readonly gamesService: GameEntityService,
-    private readonly usersService: UserEntityService,
+    private readonly playersService: PlayerEntityService,
     private readonly venuesService: VenueEntityService
   ) {}
 
   @Post()
   async create(@Body() createGameReq: CreateGameReq): Promise<GameEntity> {
     const createGameDto: CreateGameDto = {
-      user: await this.usersService.getById(createGameReq.userId),
+      player: await this.playersService.getById(createGameReq.playerId),
       venue: await this.venuesService.getById(createGameReq.venueId),
       score: createGameReq.score,
     };

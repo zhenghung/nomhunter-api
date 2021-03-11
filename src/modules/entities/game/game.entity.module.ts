@@ -3,14 +3,14 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { GameEntity } from "./game.entity";
 import { GameEntityService } from "./game.entity.service";
 import { GameEntityController } from "./game.entity.controller";
-import { UserEntityModule } from "../user/user.entity.module";
+import { PlayerEntityModule } from "../player/player.entity.module";
 import { VenueEntityModule } from "../venue/venue.entity.module";
 import { RedisModule } from "../../clients/redis/redis.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([GameEntity]),
-    UserEntityModule,
+    PlayerEntityModule,
     VenueEntityModule,
     RedisModule,
   ],

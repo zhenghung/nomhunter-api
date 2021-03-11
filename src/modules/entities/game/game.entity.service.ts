@@ -34,7 +34,7 @@ export class GameEntityService {
       .createQueryBuilder("game")
       .innerJoinAndSelect("game.venue", "venue")
       .innerJoinAndSelect("venue.badge", "badge")
-      .innerJoinAndSelect("game.user", "user");
+      .innerJoinAndSelect("game.player", "player");
     if (conditions) {
       return selectQueryBuilder.where(conditions).getMany();
     }
@@ -42,20 +42,24 @@ export class GameEntityService {
   }
 
   /**
-   * Find first matching game that user obtained the specified score in a venue
+   * Find first matching game that player obtained the specified score in a venue
    * @param venueId
-   * @param userId
+   * @param playerId
    * @param score
    */
   async findMatchingGame(
     venueId: string,
-    userId: string,
+    playerId: string,
     score: number
   ): Promise<GameEntity> {
     this.logger.log("Finding Matching Game");
     return this.gameEntityRepository
       .findOneOrFail({
-        where: { venue: { id: venueId }, user: { id: userId }, score: score },
+        where: {
+          venue: { id: venueId },
+          player: { id: playerId },
+          score: score,
+        },
         order: {
           createdAt: "ASC",
         },
@@ -83,12 +87,12 @@ export class GameEntityService {
   ): Promise<void> {
     const currentHighScore = await this.redisService.zScore(
       createGameDto.venue.id,
-      createGameDto.user.id
+      createGameDto.player.id
     );
     if (!(currentHighScore && currentHighScore >= createGameDto.score)) {
       await this.redisService.zAdd(
         createGameDto.venue.id,
-        createGameDto.user.id,
+        createGameDto.player.id,
         createGameDto.score
       );
     }

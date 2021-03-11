@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { UserEntity } from "../user/user.entity";
+import { PlayerEntity } from "../player/player.entity";
 import { VenueEntity } from "../venue/venue.entity";
-import { UserBadgeEntity } from "../userBadge/user-badge.entity";
+import { PlayerBadgeEntity } from "../playerBadge/player-badge.entity";
 
 @Entity("game")
 export class GameEntity {
@@ -18,10 +18,10 @@ export class GameEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ApiProperty({ name: "user_id" })
-  @ManyToOne(() => UserEntity, (user) => user.games)
-  @JoinColumn({ name: "user_id" })
-  user: UserEntity;
+  @ApiProperty({ name: "player_id" })
+  @ManyToOne(() => PlayerEntity, (player) => player.games)
+  @JoinColumn({ name: "player_id" })
+  player: PlayerEntity;
 
   @ApiProperty()
   @Column()
@@ -36,6 +36,9 @@ export class GameEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToOne(() => UserBadgeEntity, (userBadgeEntity) => userBadgeEntity.game)
-  userBadge: UserBadgeEntity;
+  @OneToOne(
+    () => PlayerBadgeEntity,
+    (playerBadgeEntity) => playerBadgeEntity.game
+  )
+  playerBadge: PlayerBadgeEntity;
 }

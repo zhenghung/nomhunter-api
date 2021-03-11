@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { UserEntityModule } from "../../entities/user/user.entity.module";
+import { PlayerEntityModule } from "../../entities/player/player.entity.module";
 import { AuthController } from "./auth.controller";
 import { PassportModule } from "@nestjs/passport";
 import { LocalStrategy } from "./strategies/local.strategy";
@@ -11,7 +11,7 @@ import { JwtConfig } from "../../../config/jwt.config";
 
 @Module({
   imports: [
-    UserEntityModule,
+    PlayerEntityModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

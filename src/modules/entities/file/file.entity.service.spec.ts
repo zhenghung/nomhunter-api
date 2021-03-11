@@ -71,7 +71,7 @@ describe("FilesService", () => {
   });
 
   describe("create", () => {
-    it("should successfully create a user", () => {
+    it("should successfully create a player", () => {
       const repoSpy = jest.spyOn(repo, "save");
       const testResult = expect(
         service.create(testCreateFile)

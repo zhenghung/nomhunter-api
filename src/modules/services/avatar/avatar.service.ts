@@ -5,7 +5,7 @@ import fs from "fs";
 import { AvatarMappingDto } from "./dto/avatar-mapping.dto";
 import { S3Service } from "../../clients/s3/s3.service";
 import { FileEntityService } from "../../entities/file/file.entity.service";
-import { UserEntityService } from "../../entities/user/user.entity.service";
+import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { CreateFileDto } from "../../entities/file/dto/create-file.dto";
 import { FileEntity, FileType } from "../../entities/file/file.entity";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
@@ -17,16 +17,16 @@ export class AvatarService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly filesService: FileEntityService,
-    private readonly usersService: UserEntityService
+    private readonly playersService: PlayerEntityService
   ) {}
 
   /**
-   * Fetches the url of the profile pic image of the provided user id
-   * @param userId
+   * Fetches the url of the profile pic image of the provided player id
+   * @param playerId
    */
-  async getAvatarImageUrl(userId: string): Promise<ProfilePicInterface> {
-    const user = await this.usersService.getById(userId);
-    const imageId = user.profilePic;
+  async getAvatarImageUrl(playerId: string): Promise<ProfilePicInterface> {
+    const player = await this.playersService.getById(playerId);
+    const imageId = player.profilePic;
     if (!imageId) {
       const url = this.s3Service.getImageUrl(
         "avatar",
@@ -49,15 +49,15 @@ export class AvatarService {
   /**
    * Loads avatar wearables image file
    * Overlays and flattens them, then stores the result onto AWS S3
-   * Rewrite the db of the user and file entities to point to the new url
+   * Rewrite the db of the player and file entities to point to the new url
    * @param createAvatarDto contains the selected wearables for the avatar
-   * @param userId
+   * @param playerId
    */
   async createAvatar(
     createAvatarDto: CreateAvatarDto,
-    userId: string
+    playerId: string
   ): Promise<ProfilePicInterface> {
-    this.logger.log(`Creating Avatar for user: ${userId}`);
+    this.logger.log(`Creating Avatar for player: ${playerId}`);
     const avatarParts = this.getAvatarParts(createAvatarDto);
 
     // Merge Image
@@ -90,21 +90,21 @@ export class AvatarService {
     const imageName = `${createAvatarDto.body}-${createAvatarDto.hat}-${createAvatarDto.prop}`;
     const fileCreated = await this.createImageFile(url, imageName);
 
-    // Update User entity with new profilePic image
-    const profilePic = await this.usersService
-      .getById(userId)
-      .then((user) => user.profilePic);
+    // Update Player entity with new profilePic image
+    const profilePic = await this.playersService
+      .getById(playerId)
+      .then((player) => player.profilePic);
     if (profilePic) {
       // Remove old profile pic from FileEntity Table since new one is created
       await this.filesService.remove(profilePic);
     }
-    if (await this.usersService.updateProfilePic(userId, fileCreated.id)) {
-      this.logger.log(`Avatar of user: ${userId} created at url :${url}`);
+    if (await this.playersService.updateProfilePic(playerId, fileCreated.id)) {
+      this.logger.log(`Avatar of player: ${playerId} created at url :${url}`);
       return { name: imageName, url: url };
     } else {
-      this.logger.error("Failed to update user entity with profile pic");
+      this.logger.error("Failed to update player entity with profile pic");
       throw new HttpException(
-        "Failed to update user entity with profile pic",
+        "Failed to update player entity with profile pic",
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

@@ -9,10 +9,10 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
 import { GameEntity } from "../game/game.entity";
-import { UserBadgeEntity } from "../userBadge/user-badge.entity";
+import { PlayerBadgeEntity } from "../playerBadge/player-badge.entity";
 
-@Entity("user")
-export class UserEntity {
+@Entity("player")
+export class PlayerEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -48,9 +48,9 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => GameEntity, (game) => game.user)
+  @OneToMany(() => GameEntity, (game) => game.player)
   games: GameEntity[];
 
-  @OneToMany(() => UserBadgeEntity, (userBadge) => userBadge.user)
-  userBadges: UserBadgeEntity[];
+  @OneToMany(() => PlayerBadgeEntity, (playerBadge) => playerBadge.player)
+  playerBadges: PlayerBadgeEntity[];
 }

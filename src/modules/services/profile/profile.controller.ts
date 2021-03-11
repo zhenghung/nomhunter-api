@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Logger, Query } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { ProfileResponseInterface } from "./interface/profile-response.interface";
-import { UserEntityService } from "../../entities/user/user.entity.service";
+import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { AvatarService } from "../avatar/avatar.service";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 
@@ -12,34 +12,34 @@ export class ProfileController {
   private readonly logger = new Logger(ProfileController.name);
 
   constructor(
-    private readonly usersService: UserEntityService,
+    private readonly playersService: PlayerEntityService,
     private readonly avatarService: AvatarService
   ) {}
 
   @ApiImplicitQuery({
-    name: "userId",
+    name: "playerId",
     required: true,
     type: String,
   })
-  @ApiOperation({ summary: "Fetch User profile" })
-  @ApiOkResponse({ description: "User profile retrieved successfully" })
+  @ApiOperation({ summary: "Fetch Player profile" })
+  @ApiOkResponse({ description: "Player profile retrieved successfully" })
   @Get()
   async getProfile(
-    @Query("userId") userId: string
+    @Query("playerId") playerId: string
   ): Promise<ProfileResponseInterface> {
-    if (!userId) {
+    if (!playerId) {
       throw HttpExceptionsUtil.createHttpException(
-        "UserId query required",
+        "PlayerId query required",
         HttpStatus.BAD_REQUEST,
         this.logger
       );
     }
-    this.logger.log(`Getting profile of user: ${userId}`);
-    return this.avatarService.getAvatarImageUrl(userId).then((avatar) => {
-      return this.usersService.getById(userId).then((userEntity) => {
+    this.logger.log(`Getting profile of player: ${playerId}`);
+    return this.avatarService.getAvatarImageUrl(playerId).then((avatar) => {
+      return this.playersService.getById(playerId).then((playerEntity) => {
         return {
-          userId: userEntity.id,
-          name: `${userEntity.firstName} ${userEntity.lastName}`,
+          playerId: playerEntity.id,
+          name: `${playerEntity.firstName} ${playerEntity.lastName}`,
           avatarUrl: avatar.url,
         };
       });

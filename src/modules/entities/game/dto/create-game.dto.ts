@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { UserEntity } from "../../user/user.entity";
+import { PlayerEntity } from "../../player/player.entity";
 import { VenueEntity } from "../../venue/venue.entity";
 
 export class CreateGameDto {
   @ApiProperty()
-  user: UserEntity;
+  player: PlayerEntity;
 
   @ApiProperty()
   venue: VenueEntity;

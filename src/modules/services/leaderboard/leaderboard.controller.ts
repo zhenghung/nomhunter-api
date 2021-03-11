@@ -20,7 +20,7 @@ import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { LeaderboardType } from "../../common/constants/leaderboard.type";
 import { RankInterface } from "./interface/rank.interface";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
-import { RequestWithUser } from "../auth/interface/request-with-user.interface";
+import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { VenueEntityService } from "../../entities/venue/venue.entity.service";
 import { ZoneEntityService } from "../../entities/zone/zone.entity.service";
 import { VenueRankInterface } from "./interface/venue-rank.interface";
@@ -90,14 +90,14 @@ export class LeaderboardController {
     enum: ["venues", "zone", "season"],
   })
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Get user rankings of logged in user" })
+  @ApiOperation({ summary: "Get player rankings of logged in player" })
   @ApiCreatedResponse({
-    description: "Specified rankings successfully retrieved for user",
+    description: "Specified rankings successfully retrieved for player",
   })
   @UseGuards(JwtAuthGuard)
   @Get("ranks")
   async getMyRanks(
-    @Req() requestWithUser: RequestWithUser,
+    @Req() requestWithPlayer: RequestWithPlayer,
     @Query("leaderboardType") leaderboardType: string
   ): Promise<VenueRankInterface[] | ZoneRankInterface[] | SeasonRankInterface> {
     switch (leaderboardType) {
@@ -109,12 +109,14 @@ export class LeaderboardController {
           const ranks = await this.leaderboardService
             .getLeaderboard(LeaderboardType.VENUE, venueEntity.id)
             .then((rankList) =>
-              rankList.filter((rank) => rank.userId == requestWithUser.user.id)
+              rankList.filter(
+                (rank) => rank.playerId == requestWithPlayer.user.id
+              )
             );
           const myRank = this.getScoreAndRankAfterFiltered(ranks, "venue");
           const game = await this.gamesService.findMatchingGame(
             venueEntity.id,
-            requestWithUser.user.id,
+            requestWithPlayer.user.id,
             myRank.score
           );
           listOfVenueRanks.push({
@@ -135,7 +137,9 @@ export class LeaderboardController {
           const ranks = await this.leaderboardService
             .getLeaderboard(LeaderboardType.ZONE, zoneEntity.id)
             .then((rankList) =>
-              rankList.filter((rank) => rank.userId == requestWithUser.user.id)
+              rankList.filter(
+                (rank) => rank.playerId == requestWithPlayer.user.id
+              )
             );
           const myRank = this.getScoreAndRankAfterFiltered(ranks, "zone");
           listOfZoneRanks.push({
@@ -152,7 +156,9 @@ export class LeaderboardController {
         const ranks = await this.leaderboardService
           .getLeaderboard(LeaderboardType.SEASON, seasonId)
           .then((rankList) =>
-            rankList.filter((rank) => rank.userId == requestWithUser.user.id)
+            rankList.filter(
+              (rank) => rank.playerId == requestWithPlayer.user.id
+            )
           );
         const myRank = this.getScoreAndRankAfterFiltered(ranks, "season");
         return {
@@ -178,7 +184,7 @@ export class LeaderboardController {
       myRank = ranks[0].rank;
     } else if (ranks.length > 1) {
       throw HttpExceptionsUtil.createHttpException(
-        `Multiple Ranks for user in a ${type}`,
+        `Multiple Ranks for player in a ${type}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
         this.logger
       );
