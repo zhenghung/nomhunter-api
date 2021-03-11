@@ -12,9 +12,9 @@ export class LeaderboardService {
   private readonly logger = new Logger(LeaderboardService.name);
 
   constructor(
-    private readonly gamesService: GameEntityService,
-    private readonly venuesService: VenueEntityService,
-    private readonly zonesService: ZoneEntityService,
+    private readonly gameEntityService: GameEntityService,
+    private readonly venueEntityService: VenueEntityService,
+    private readonly zoneEntityService: ZoneEntityService,
     private readonly redisService: RedisService
   ) {}
 
@@ -64,7 +64,7 @@ export class LeaderboardService {
    */
   async refreshVenueLeaderboard(venueId: string): Promise<void> {
     this.logger.log(`Refreshing leaderboard of venue ${venueId}`);
-    const games: GameEntity[] = await this.gamesService.findAll(
+    const games: GameEntity[] = await this.gameEntityService.findAll(
       `venue.id = '${venueId}'`
     );
     // Get Highest Score for each player
@@ -91,7 +91,7 @@ export class LeaderboardService {
    */
   async refreshZoneLeaderboard(zoneId: string): Promise<void> {
     this.logger.log(`Refreshing leaderboard of zone ${zoneId}`);
-    const venueIds: string[] = await this.zonesService
+    const venueIds: string[] = await this.zoneEntityService
       .getByIdJoinVenues(zoneId)
       .then((zones) => zones[0].venues.map((venue) => venue.id));
     // Get Accumulated Score for each player
@@ -110,7 +110,7 @@ export class LeaderboardService {
   async refreshSeasonLeaderboard(seasonId: string): Promise<void> {
     this.logger.log("Refreshing leaderboard of season");
     // TODO: Only for this season (currently all)
-    const venueIds: string[] = await this.venuesService
+    const venueIds: string[] = await this.venueEntityService
       .findAll()
       .then((venues) => venues.map((venue) => venue.id));
     // Get Accumulated Score for each player

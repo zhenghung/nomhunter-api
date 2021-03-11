@@ -11,7 +11,7 @@ import { QueryFailedError } from "typeorm";
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly playersService: PlayerEntityService,
+    private readonly playerEntityService: PlayerEntityService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -22,7 +22,7 @@ export class AuthService {
   public async register(registrationData: RegisterDto): Promise<PlayerEntity> {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
-      return await this.playersService.create({
+      return await this.playerEntityService.create({
         ...registrationData,
         password: hashedPassword,
       });
@@ -61,7 +61,7 @@ export class AuthService {
     plainTextPassword: string
   ): Promise<PlayerEntity> {
     try {
-      const player = await this.playersService.getByEmail(email);
+      const player = await this.playerEntityService.getByEmail(email);
       const correctPassword = await AuthService.verifyPassword(
         plainTextPassword,
         player.password

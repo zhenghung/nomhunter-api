@@ -104,7 +104,7 @@ export class LeaderboardController {
       case "venues":
         // Venues
         const listOfVenueRanks: VenueRankInterface[] = [];
-        const listOfVenues = await this.venuesService.findJoinZone();
+        const listOfVenues = await this.venuesService.findJoin("zone");
         for (const venueEntity of listOfVenues) {
           const ranks = await this.leaderboardService
             .getLeaderboard(LeaderboardType.VENUE, venueEntity.id)

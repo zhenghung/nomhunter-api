@@ -33,7 +33,7 @@ const jwtSignedPayload = {
 
 describe("AuthService", () => {
   let service: AuthService;
-  let playersService: PlayerEntityService;
+  let playerEntityService: PlayerEntityService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -56,7 +56,7 @@ describe("AuthService", () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    playersService = module.get<PlayerEntityService>(PlayerEntityService);
+    playerEntityService = module.get<PlayerEntityService>(PlayerEntityService);
   });
 
   it("should be defined", () => {
@@ -71,7 +71,7 @@ describe("AuthService", () => {
     });
     it("email already exist", () => {
       jest
-        .spyOn(playersService, "create")
+        .spyOn(playerEntityService, "create")
         .mockRejectedValue(
           new QueryFailedError(
             "",
@@ -89,7 +89,7 @@ describe("AuthService", () => {
       });
     });
     it("Something else went wrong (e.g. database connection refused)", () => {
-      jest.spyOn(playersService, "create").mockRejectedValue(new Error());
+      jest.spyOn(playerEntityService, "create").mockRejectedValue(new Error());
       return service.register(registerDto).catch((error) => {
         expect(error).toStrictEqual(
           new HttpException(
@@ -104,7 +104,7 @@ describe("AuthService", () => {
   describe("login", () => {
     it("email already exist", () => {
       jest
-        .spyOn(playersService, "create")
+        .spyOn(playerEntityService, "create")
         .mockRejectedValue(
           new QueryFailedError(
             "",
@@ -118,14 +118,16 @@ describe("AuthService", () => {
 
   describe("validatePlayer", () => {
     it("correct credentials", () => {
-      jest.spyOn(playersService, "getByEmail").mockResolvedValue(testPlayer1);
+      jest
+        .spyOn(playerEntityService, "getByEmail")
+        .mockResolvedValue(testPlayer1);
       return expect(
         service.validatePlayer(loginDto.email, loginDto.password)
       ).resolves.toStrictEqual(testPlayer1);
     });
     it("email not found", () => {
       jest
-        .spyOn(playersService, "getByEmail")
+        .spyOn(playerEntityService, "getByEmail")
         .mockRejectedValue(
           new HttpException(
             `Player of email: ${loginDto.email} does not exist`,
@@ -139,7 +141,9 @@ describe("AuthService", () => {
         });
     });
     it("wrong password", () => {
-      jest.spyOn(playersService, "getByEmail").mockResolvedValue(testPlayer1);
+      jest
+        .spyOn(playerEntityService, "getByEmail")
+        .mockResolvedValue(testPlayer1);
       return service
         .validatePlayer(loginDto.email, "incorrectPassword")
         .catch((error) => {

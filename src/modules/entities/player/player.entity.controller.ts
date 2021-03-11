@@ -19,12 +19,12 @@ import { QueryFailedError } from "typeorm";
 export class PlayerEntityController {
   private readonly logger = new Logger(PlayerEntityController.name);
 
-  constructor(private readonly playersService: PlayerEntityService) {}
+  constructor(private readonly playerEntityService: PlayerEntityService) {}
 
   @Post()
   create(@Body() createPlayerDto: CreatePlayerDto): Promise<PlayerEntity> {
     this.logger.log(`Creating player with email: ${createPlayerDto.email}`);
-    return this.playersService
+    return this.playerEntityService
       .create(createPlayerDto)
       .then((player) => {
         this.logger.log(
@@ -44,12 +44,12 @@ export class PlayerEntityController {
   @Get()
   findAll(): Promise<PlayerEntity[]> {
     this.logger.log("Fetching all player");
-    return this.playersService.findAll();
+    return this.playerEntityService.findAll();
   }
 
   @Get(":id")
   findOne(@Param("id") id: string): Promise<PlayerEntity> {
     this.logger.log(`Fetching player with id ${id}`);
-    return this.playersService.getById(id);
+    return this.playerEntityService.getById(id);
   }
 }

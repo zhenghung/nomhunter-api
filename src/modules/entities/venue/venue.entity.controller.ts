@@ -27,10 +27,10 @@ export class VenueEntityController {
   private readonly logger = new Logger(VenueEntityController.name);
 
   constructor(
-    private readonly venuesService: VenueEntityService,
-    private readonly zonesService: ZoneEntityService,
-    private readonly googleMapsService: GoogleMapsService,
-    private readonly badgesService: BadgeEntityService
+    private readonly venueEntityService: VenueEntityService,
+    private readonly zoneEntityService: ZoneEntityService,
+    private readonly badgeEntityService: BadgeEntityService,
+    private readonly googleMapsService: GoogleMapsService
   ) {}
 
   @Post()
@@ -51,10 +51,10 @@ export class VenueEntityController {
     const longitude = details.result.geometry.location.lng.toString();
 
     // Find Zone By Id
-    const zone = await this.zonesService.getById(createVenueReq.zoneId);
+    const zone = await this.zoneEntityService.getById(createVenueReq.zoneId);
 
     // Find Badge By Id
-    const badge = await this.badgesService.getById(createVenueReq.badgeId);
+    const badge = await this.badgeEntityService.getById(createVenueReq.badgeId);
 
     // Create Venue
     const createVenueDto: CreateVenueDto = {
@@ -66,7 +66,7 @@ export class VenueEntityController {
       badge,
     };
     this.logger.log(`Creating venue with name: ${createVenueDto.name}`);
-    return this.venuesService.create(createVenueDto).then((venue) => {
+    return this.venueEntityService.create(createVenueDto).then((venue) => {
       this.logger.log(`Venue with name ${venue.name} successfully created`);
       return venue;
     });
@@ -77,15 +77,28 @@ export class VenueEntityController {
     required: false,
     type: Boolean,
   })
+  @ApiImplicitQuery({
+    name: "showBadge",
+    required: false,
+    type: Boolean,
+  })
   @Get(":id")
   findOne(
     @Param("id") id: string,
-    @Query("showZone", OptionalBoolPipe) showZone?: boolean
+    @Query("showZone", OptionalBoolPipe) showZone?: boolean,
+    @Query("showBadge", OptionalBoolPipe) showBadge?: boolean
   ): Promise<VenueEntity> {
     this.logger.log(`Fetching venue with id ${id}`);
-    return showZone
-      ? this.venuesService.getByIdJoinZone(id)
-      : this.venuesService.getById(id);
+    if (showZone && showBadge) {
+      return this.venueEntityService.getByIdJoinAll(id);
+    }
+    if (showZone) {
+      return this.venueEntityService.getByIdJoinZone(id);
+    }
+    if (showBadge) {
+      return this.venueEntityService.getByIdJoinBadge(id);
+    }
+    return this.venueEntityService.getById(id);
   }
 
   @ApiImplicitQuery({
@@ -93,13 +106,26 @@ export class VenueEntityController {
     required: false,
     type: Boolean,
   })
+  @ApiImplicitQuery({
+    name: "showBadge",
+    required: false,
+    type: Boolean,
+  })
   @Get()
   findAll(
-    @Query("showZone", OptionalBoolPipe) showZone?: boolean
+    @Query("showZone", OptionalBoolPipe) showZone?: boolean,
+    @Query("showBadge", OptionalBoolPipe) showBadge?: boolean
   ): Promise<VenueEntity[]> {
     this.logger.log("Fetching all venue");
-    return showZone
-      ? this.venuesService.findJoinZone()
-      : this.venuesService.findAll();
+    if (showZone && showBadge) {
+      return this.venueEntityService.findJoinAll();
+    }
+    if (showZone) {
+      return this.venueEntityService.findJoin("zone");
+    }
+    if (showBadge) {
+      return this.venueEntityService.findJoin("badge");
+    }
+    return this.venueEntityService.findAll();
   }
 }

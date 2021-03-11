@@ -11,14 +11,14 @@ import { OptionalDatePipe } from "../../common/pipes/optional-date.pipe";
 export class SeasonEntityController {
   private readonly logger = new Logger(SeasonEntityController.name);
 
-  constructor(private readonly seasonsService: SeasonEntityService) {}
+  constructor(private readonly seasonEntityService: SeasonEntityService) {}
 
   @Post()
   create(@Body() createSeasonReq: CreateSeasonDto): Promise<SeasonEntity> {
     this.logger.log(
       `Creating season with startDate: ${createSeasonReq.startDate}`
     );
-    return this.seasonsService
+    return this.seasonEntityService
       .createSeason(createSeasonReq.startDate)
       .then((season: SeasonEntity) => {
         this.logger.log(`Season with id ${season.id} successfully created`);
@@ -40,6 +40,6 @@ export class SeasonEntityController {
     } else {
       this.logger.log(`Fetching season for current date: ${new Date()}`);
     }
-    return this.seasonsService.getSeason(date);
+    return this.seasonEntityService.getSeason(date);
   }
 }

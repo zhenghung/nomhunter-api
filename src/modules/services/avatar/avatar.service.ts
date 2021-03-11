@@ -16,8 +16,8 @@ export class AvatarService {
 
   constructor(
     private readonly s3Service: S3Service,
-    private readonly filesService: FileEntityService,
-    private readonly playersService: PlayerEntityService
+    private readonly fileEntityService: FileEntityService,
+    private readonly playerEntityService: PlayerEntityService
   ) {}
 
   /**
@@ -25,7 +25,7 @@ export class AvatarService {
    * @param playerId
    */
   async getAvatarImageUrl(playerId: string): Promise<ProfilePicInterface> {
-    const player = await this.playersService.getById(playerId);
+    const player = await this.playerEntityService.getById(playerId);
     const imageId = player.profilePic;
     if (!imageId) {
       const url = this.s3Service.getImageUrl(
@@ -38,7 +38,7 @@ export class AvatarService {
         url: url,
       };
     }
-    return await this.filesService.getById(imageId).then((file) => {
+    return await this.fileEntityService.getById(imageId).then((file) => {
       return {
         name: file.name,
         url: file.url,
@@ -91,14 +91,16 @@ export class AvatarService {
     const fileCreated = await this.createImageFile(url, imageName);
 
     // Update Player entity with new profilePic image
-    const profilePic = await this.playersService
+    const profilePic = await this.playerEntityService
       .getById(playerId)
       .then((player) => player.profilePic);
     if (profilePic) {
       // Remove old profile pic from FileEntity Table since new one is created
-      await this.filesService.remove(profilePic);
+      await this.fileEntityService.remove(profilePic);
     }
-    if (await this.playersService.updateProfilePic(playerId, fileCreated.id)) {
+    if (
+      await this.playerEntityService.updateProfilePic(playerId, fileCreated.id)
+    ) {
       this.logger.log(`Avatar of player: ${playerId} created at url :${url}`);
       return { name: imageName, url: url };
     } else {
@@ -141,7 +143,7 @@ export class AvatarService {
       name: name,
       url: url,
     };
-    return this.filesService.create(createFileDto);
+    return this.fileEntityService.create(createFileDto);
   }
 
   private static mergeImages(body: Jimp, hat: Jimp, prop: Jimp, mapping): Jimp {

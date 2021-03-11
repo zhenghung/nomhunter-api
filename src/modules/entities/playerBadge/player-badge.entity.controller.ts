@@ -14,10 +14,10 @@ export class PlayerBadgeEntityController {
   private readonly logger = new Logger(PlayerBadgeEntityController.name);
 
   constructor(
-    private readonly playerBadgesService: PlayerBadgeEntityService,
-    private readonly badgesService: BadgeEntityService,
-    private readonly playersService: PlayerEntityService,
-    private readonly gamesService: GameEntityService
+    private readonly playerBadgeEntityService: PlayerBadgeEntityService,
+    private readonly badgeEntityService: BadgeEntityService,
+    private readonly playerEntityService: PlayerEntityService,
+    private readonly gameEntityService: GameEntityService
   ) {}
 
   @Post()
@@ -25,20 +25,22 @@ export class PlayerBadgeEntityController {
     @Body() createPlayerBadgeReq: CreatePlayerBadgeReq
   ): Promise<PlayerBadgeEntity> {
     this.logger.log("Creating playerBadge entity: ${createPlayerBadgeReq}");
-    const player = await this.playersService.getById(
+    const player = await this.playerEntityService.getById(
       createPlayerBadgeReq.playerId
     );
-    const badge = await this.badgesService.getById(
+    const badge = await this.badgeEntityService.getById(
       createPlayerBadgeReq.badgeId
     );
-    const game = await this.gamesService.getById(createPlayerBadgeReq.gameId);
+    const game = await this.gameEntityService.getById(
+      createPlayerBadgeReq.gameId
+    );
 
     const createPlayerBadgeDto: CreatePlayerBadgeDto = {
       player,
       badge,
       game,
     };
-    return this.playerBadgesService
+    return this.playerBadgeEntityService
       .create(createPlayerBadgeDto)
       .then((playerBadgeEntity: PlayerBadgeEntity) => {
         this.logger.log(

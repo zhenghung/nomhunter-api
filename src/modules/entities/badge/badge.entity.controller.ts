@@ -13,8 +13,8 @@ export class BadgeEntityController {
   private readonly logger = new Logger(BadgeEntityController.name);
 
   constructor(
-    private readonly badgesService: BadgeEntityService,
-    private readonly filesService: FileEntityService
+    private readonly badgeEntityService: BadgeEntityService,
+    private readonly fileEntityService: FileEntityService
   ) {}
 
   @Post()
@@ -22,7 +22,7 @@ export class BadgeEntityController {
     this.logger.log(`Creating badge with name: ${createBadgeReq.name}`);
 
     // Get File By Id
-    const fileEntity: FileEntity = await this.filesService.getById(
+    const fileEntity: FileEntity = await this.fileEntityService.getById(
       createBadgeReq.fileId
     );
 
@@ -33,7 +33,7 @@ export class BadgeEntityController {
       file: fileEntity,
     };
 
-    return this.badgesService
+    return this.badgeEntityService
       .create(createBadgeDto)
       .then((badgeEntity: BadgeEntity) => {
         this.logger.log(`Badge with id ${badgeEntity.id} successfully created`);
@@ -44,6 +44,6 @@ export class BadgeEntityController {
   @Get()
   findAll(): Promise<BadgeEntity[]> {
     this.logger.log("Fetching all badge");
-    return this.badgesService.findAll();
+    return this.badgeEntityService.findAll();
   }
 }
