@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Logger, Query } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { ProfileResponseInterface } from "./interface/profile-response.interface";
-import { UsersService } from "../../entities/users/users.service";
+import { UserEntityService } from "../../entities/user/user.entity.service";
 import { AvatarService } from "../avatar/avatar.service";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 
@@ -12,7 +12,7 @@ export class ProfileController {
   private readonly logger = new Logger(ProfileController.name);
 
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UserEntityService,
     private readonly avatarService: AvatarService
   ) {}
 

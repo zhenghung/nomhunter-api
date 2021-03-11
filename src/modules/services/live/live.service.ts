@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { createQueryBuilder } from "typeorm";
-import { ZoneEntity } from "../../entities/zones/zone.entity";
+import { ZoneEntity } from "../../entities/zone/zone.entity";
 import { ZoneInterface } from "./interface/zone.interface";
 import { VenueInterface } from "./interface/venue.interface";
 
@@ -9,7 +9,7 @@ export class LiveService {
   private readonly logger = new Logger(LiveService.name);
 
   /**
-   * Fetch all active zones and venues
+   * Fetch all active zone and venue
    */
   async getLiveZonesAndVenues(): Promise<ZoneInterface[]> {
     const queryData = await this.queryZoneAndVenues();
@@ -19,7 +19,7 @@ export class LiveService {
   /**
    * Maps the entity retrieved into respond interface schema
    * @param queryData {@link ZoneEntity} List of ZoneEntities retrieved from DB
-   * @return {@link ZoneInterface} List of zones with less data
+   * @return {@link ZoneInterface} List of zone with less data
    */
   private mapQueryToInterface(queryData: ZoneEntity[]): ZoneInterface[] {
     const response: ZoneInterface[] = [];
@@ -66,15 +66,15 @@ export class LiveService {
         "zone.name",
         "zone.latitude",
         "zone.longitude",
-        "venues.id",
-        "venues.name",
-        "venues.latitude",
-        "venues.longitude",
-        "venues.googlePlacesId",
-        "venues.photoReference",
-        "venues.description",
+        "venue.id",
+        "venue.name",
+        "venue.latitude",
+        "venue.longitude",
+        "venue.googlePlacesId",
+        "venue.photoReference",
+        "venue.description",
       ])
-      .innerJoin("zone.venues", "venues")
+      .innerJoin("zone.venue", "venues")
       .getMany();
   }
 }

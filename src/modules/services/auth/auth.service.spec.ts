@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthService } from "./auth.service";
-import { UsersService } from "../../entities/users/users.service";
+import { UserEntityService } from "../../entities/user/user.entity.service";
 import { JwtService } from "@nestjs/jwt";
-import { UserEntity } from "../../entities/users/user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 import { RegisterDto } from "./dto/register.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
@@ -33,14 +33,14 @@ const jwtSignedPayload = {
 
 describe("AuthService", () => {
   let service: AuthService;
-  let usersService: UsersService;
+  let usersService: UserEntityService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         {
-          provide: UsersService,
+          provide: UserEntityService,
           useValue: {
             create: jest.fn().mockResolvedValue(testUser1),
             getByEmail: jest.fn().mockResolvedValue(testUser1),
@@ -56,7 +56,7 @@ describe("AuthService", () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    usersService = module.get<UsersService>(UsersService);
+    usersService = module.get<UserEntityService>(UserEntityService);
   });
 
   it("should be defined", () => {

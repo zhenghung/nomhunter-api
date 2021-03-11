@@ -1,23 +1,23 @@
 import { Module } from "@nestjs/common";
-import { UsersModule } from "./users/users.module";
-import { FilesModule } from "./files/files.module";
-import { VenuesModule } from "./venues/venues.module";
-import { ZonesModule } from "./zones/zones.module";
-import { GamesModule } from "./games/games.module";
-import { SeasonsModule } from "./seasons/seasons.module";
-import { BadgesModule } from "./badges/badges.module";
-import { UserBadgesModule } from "./userBadges/user-badges.module";
+import { UserEntityModule } from "./user/user.entity.module";
+import { FileEntityModule } from "./file/file.entity.module";
+import { VenueEntityModule } from "./venue/venue.entity.module";
+import { ZoneEntityModule } from "./zone/zone.entity.module";
+import { GameEntityModule } from "./game/game.entity.module";
+import { SeasonEntityModule } from "./season/season.entity.module";
+import { BadgeEntityModule } from "./badge/badge.entity.module";
+import { UserBadgeEntityModule } from "./userBadge/user-badge.entity.module";
 
 @Module({
   imports: [
-    UsersModule,
-    FilesModule,
-    VenuesModule,
-    BadgesModule,
-    UserBadgesModule,
-    ZonesModule,
-    GamesModule,
-    SeasonsModule,
+    UserEntityModule,
+    FileEntityModule,
+    VenueEntityModule,
+    BadgeEntityModule,
+    UserBadgeEntityModule,
+    ZoneEntityModule,
+    GameEntityModule,
+    SeasonEntityModule,
   ],
 })
 export class EntitiesModule {}

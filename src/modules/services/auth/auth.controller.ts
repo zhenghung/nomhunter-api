@@ -15,7 +15,7 @@ import { RequestWithUser } from "./interface/request-with-user.interface";
 import { LocalAuthGuard } from "./guard/local-auth.guard";
 import JwtAuthGuard from "./guard/jwt-auth.guard";
 import { LoginDto } from "./dto/login.dto";
-import { UserEntity } from "../../entities/users/user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,

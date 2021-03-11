@@ -21,12 +21,12 @@ import { LeaderboardType } from "../../common/constants/leaderboard.type";
 import { RankInterface } from "./interface/rank.interface";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithUser } from "../auth/interface/request-with-user.interface";
-import { VenuesService } from "../../entities/venues/venues.service";
-import { ZonesService } from "../../entities/zones/zones.service";
+import { VenueEntityService } from "../../entities/venue/venue.entity.service";
+import { ZoneEntityService } from "../../entities/zone/zone.entity.service";
 import { VenueRankInterface } from "./interface/venue-rank.interface";
 import { ZoneRankInterface } from "./interface/zone-rank.interface";
 import { SeasonRankInterface } from "./interface/season-rank.interface";
-import { GamesService } from "../../entities/games/games.service";
+import { GameEntityService } from "../../entities/game/game.entity.service";
 
 @ApiTags("Leaderboard")
 @Controller("leaderboard")
@@ -35,9 +35,9 @@ export class LeaderboardController {
 
   constructor(
     private readonly leaderboardService: LeaderboardService,
-    private readonly venuesService: VenuesService,
-    private readonly zonesService: ZonesService,
-    private readonly gamesService: GamesService
+    private readonly venuesService: VenueEntityService,
+    private readonly zonesService: ZoneEntityService,
+    private readonly gamesService: GameEntityService
   ) {}
 
   @ApiImplicitQuery({
@@ -87,7 +87,7 @@ export class LeaderboardController {
   @ApiImplicitQuery({
     name: "leaderboardType",
     required: true,
-    enum: ["venues", "zones", "season"],
+    enum: ["venues", "zone", "season"],
   })
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get user rankings of logged in user" })
@@ -127,7 +127,7 @@ export class LeaderboardController {
           });
         }
         return listOfVenueRanks;
-      case "zones":
+      case "zone":
         // Zones
         const listOfZoneRanks: ZoneRankInterface[] = [];
         const listOfZones = await this.zonesService.findAll();

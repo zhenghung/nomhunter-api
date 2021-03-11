@@ -1,20 +1,20 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { GamesService } from "../../entities/games/games.service";
+import { GameEntityService } from "../../entities/game/game.entity.service";
 import { RedisService } from "../../clients/redis/redis.service";
-import { GameEntity } from "../../entities/games/game.entity";
-import { ZonesService } from "../../entities/zones/zones.service";
+import { GameEntity } from "../../entities/game/game.entity";
+import { ZoneEntityService } from "../../entities/zone/zone.entity.service";
 import { RankInterface } from "./interface/rank.interface";
 import { LeaderboardType } from "../../common/constants/leaderboard.type";
-import { VenuesService } from "../../entities/venues/venues.service";
+import { VenueEntityService } from "../../entities/venue/venue.entity.service";
 
 @Injectable()
 export class LeaderboardService {
   private readonly logger = new Logger(LeaderboardService.name);
 
   constructor(
-    private readonly gamesService: GamesService,
-    private readonly venuesService: VenuesService,
-    private readonly zonesService: ZonesService,
+    private readonly gamesService: GameEntityService,
+    private readonly venuesService: VenueEntityService,
+    private readonly zonesService: ZoneEntityService,
     private readonly redisService: RedisService
   ) {}
 
@@ -108,8 +108,8 @@ export class LeaderboardService {
    * @param seasonId
    */
   async refreshSeasonLeaderboard(seasonId: string): Promise<void> {
-    this.logger.log("Refreshing leaderboard of seasons");
-    // TODO: Only for this seasons (currently all)
+    this.logger.log("Refreshing leaderboard of season");
+    // TODO: Only for this season (currently all)
     const venueIds: string[] = await this.venuesService
       .findAll()
       .then((venues) => venues.map((venue) => venue.id));

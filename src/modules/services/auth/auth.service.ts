@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { UsersService } from "../../entities/users/users.service";
-import { UserEntity } from "../../entities/users/user.entity";
+import { UserEntityService } from "../../entities/user/user.entity.service";
+import { UserEntity } from "../../entities/user/user.entity";
 import { RegisterDto } from "./dto/register.dto";
 import { HttpExceptions } from "../../common/constants/http.exceptions";
 import { TokenResponseInterface } from "./interface/token-response.interface";
@@ -11,7 +11,7 @@ import { QueryFailedError } from "typeorm";
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UserEntityService,
     private readonly jwtService: JwtService
   ) {}
 

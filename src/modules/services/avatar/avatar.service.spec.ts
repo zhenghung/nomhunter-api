@@ -1,12 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { S3Service } from "../../clients/s3/s3.service";
-import { FilesService } from "../../entities/files/files.service";
-import { UsersService } from "../../entities/users/users.service";
+import { FileEntityService } from "../../entities/file/file.entity.service";
+import { UserEntityService } from "../../entities/user/user.entity.service";
 import { AvatarService } from "./avatar.service";
-import { UserEntity } from "../../entities/users/user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
-import { FileEntity, FileType } from "../../entities/files/file.entity";
+import { FileEntity, FileType } from "../../entities/file/file.entity";
 
 const testCreateAvatarDto = new CreateAvatarDto();
 testCreateAvatarDto.body = 1;
@@ -42,14 +42,14 @@ describe("AvatarService", () => {
       providers: [
         AvatarService,
         {
-          provide: UsersService,
+          provide: UserEntityService,
           useValue: {
             getById: jest.fn().mockResolvedValue(testUser1),
             updateProfilePic: jest.fn().mockResolvedValue(true),
           },
         },
         {
-          provide: FilesService,
+          provide: FileEntityService,
           useValue: {
             create: jest.fn().mockResolvedValue(testFile),
             getById: jest.fn().mockResolvedValue(testFile),

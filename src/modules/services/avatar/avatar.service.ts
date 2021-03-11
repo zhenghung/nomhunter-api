@@ -4,10 +4,10 @@ import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import fs from "fs";
 import { AvatarMappingDto } from "./dto/avatar-mapping.dto";
 import { S3Service } from "../../clients/s3/s3.service";
-import { FilesService } from "../../entities/files/files.service";
-import { UsersService } from "../../entities/users/users.service";
-import { CreateFileDto } from "../../entities/files/dto/create-file.dto";
-import { FileEntity, FileType } from "../../entities/files/file.entity";
+import { FileEntityService } from "../../entities/file/file.entity.service";
+import { UserEntityService } from "../../entities/user/user.entity.service";
+import { CreateFileDto } from "../../entities/file/dto/create-file.dto";
+import { FileEntity, FileType } from "../../entities/file/file.entity";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
 
 @Injectable()
@@ -16,8 +16,8 @@ export class AvatarService {
 
   constructor(
     private readonly s3Service: S3Service,
-    private readonly filesService: FilesService,
-    private readonly usersService: UsersService
+    private readonly filesService: FileEntityService,
+    private readonly usersService: UserEntityService
   ) {}
 
   /**
@@ -47,7 +47,7 @@ export class AvatarService {
   }
 
   /**
-   * Loads avatar wearables image files
+   * Loads avatar wearables image file
    * Overlays and flattens them, then stores the result onto AWS S3
    * Rewrite the db of the user and file entities to point to the new url
    * @param createAvatarDto contains the selected wearables for the avatar
