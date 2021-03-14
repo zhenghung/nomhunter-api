@@ -23,7 +23,7 @@ export class PlayerEntityService {
       .findOneOrFail(id)
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Player",
+          "PlayerEntity",
           id,
           this.logger
         )

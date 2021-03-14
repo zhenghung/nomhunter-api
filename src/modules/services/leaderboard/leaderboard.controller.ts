@@ -129,7 +129,7 @@ export class LeaderboardController {
           });
         }
         return listOfVenueRanks;
-      case "zone":
+      case "zones":
         // Zones
         const listOfZoneRanks: ZoneRankInterface[] = [];
         const listOfZones = await this.zonesService.findAll();

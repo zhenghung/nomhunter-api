@@ -45,7 +45,7 @@ export class VenueEntityService {
       .findOneOrFail(id)
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Venue",
+          "VenueEntity",
           id,
           this.logger
         )
@@ -61,7 +61,7 @@ export class VenueEntityService {
       .getOneOrFail()
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Venue",
+          "VenueEntity",
           id,
           this.logger
         )
@@ -84,7 +84,7 @@ export class VenueEntityService {
       .getOneOrFail()
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Venue",
+          "VenueEntity",
           id,
           this.logger
         )

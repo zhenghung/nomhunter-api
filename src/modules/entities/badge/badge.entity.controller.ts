@@ -43,7 +43,7 @@ export class BadgeEntityController {
 
   @Get()
   findAll(): Promise<BadgeEntity[]> {
-    this.logger.log("Fetching all badge");
+    this.logger.log("Fetching all badge entities");
     return this.badgeEntityService.findAll();
   }
 }

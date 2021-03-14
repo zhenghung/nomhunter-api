@@ -19,16 +19,42 @@ export class BadgeEntityService {
   }
 
   getById(id: string): Promise<BadgeEntity> {
-    return this.badgeEntityRepository.findOneOrFail(id).catch(() => {
-      throw HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-        "BadgeEntity",
-        id,
-        this.logger
+    return this.badgeEntityRepository
+      .findOneOrFail(id)
+      .catch(
+        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
+          "BadgeEntity",
+          id,
+          this.logger
+        )
       );
-    });
   }
 
-  findAll(): Promise<BadgeEntity[]> {
+  /**
+   * Find all BadgeEntities
+   * @param withFile inner join with file entity
+   */
+  findAll(withFile?: boolean): Promise<BadgeEntity[]> {
+    if (withFile) {
+      return this.badgeEntityRepository
+        .createQueryBuilder("badge")
+        .innerJoinAndSelect("badge.file", "file")
+        .orderBy("badge.name", "ASC")
+        .getMany();
+    }
     return this.badgeEntityRepository.find();
+  }
+
+  findByJoinPlayerBadges(playerId: string): Promise<BadgeEntity[]> {
+    return this.badgeEntityRepository
+      .createQueryBuilder("badge")
+      .innerJoinAndSelect("badge.file", "file")
+      .innerJoinAndSelect("badge.playerBadges", "playerBadges")
+      .innerJoinAndSelect("playerBadges.game", "game")
+      .innerJoinAndSelect("game.venue", "venue")
+      .innerJoinAndSelect("venue.zone", "zone")
+      .where("playerBadges.player.id = :id", { id: playerId })
+      .orderBy("badge.name", "ASC")
+      .getMany();
   }
 }

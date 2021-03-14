@@ -21,7 +21,7 @@ export class GameEntityService {
       .findOneOrFail(id)
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Game",
+          "GameEntity",
           id,
           this.logger
         )

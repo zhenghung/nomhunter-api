@@ -116,7 +116,7 @@ export class VenueEntityController {
     @Query("showZone", OptionalBoolPipe) showZone?: boolean,
     @Query("showBadge", OptionalBoolPipe) showBadge?: boolean
   ): Promise<VenueEntity[]> {
-    this.logger.log("Fetching all venue");
+    this.logger.log("Fetching all venue entities");
     if (showZone && showBadge) {
       return this.venueEntityService.findJoinAll();
     }

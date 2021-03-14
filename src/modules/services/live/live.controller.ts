@@ -11,11 +11,11 @@ export class LiveController {
   constructor(private readonly liveService: LiveService) {}
 
   // TODO: Add JWT and Auth Bear Swagger when player specific details are added (visited / ranked)
-  @ApiOperation({ summary: "Fetch live venue summary details" })
-  @ApiOkResponse({ description: "Live venue retrieved successfully" })
+  @ApiOperation({ summary: "Fetch live venues summary details" })
+  @ApiOkResponse({ description: "Live venues retrieved successfully" })
   @Get()
   async getLiveZonesAndVenues(): Promise<ZoneInterface[]> {
-    this.logger.log("Fetching live zone and venue details");
+    this.logger.log("Fetching live zones and venues details");
     return this.liveService.getLiveZonesAndVenues();
   }
 }

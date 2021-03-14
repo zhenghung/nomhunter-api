@@ -9,17 +9,17 @@ export class LiveService {
   private readonly logger = new Logger(LiveService.name);
 
   /**
-   * Fetch all active zone and venue
+   * Fetch all active zones and venues
    */
   async getLiveZonesAndVenues(): Promise<ZoneInterface[]> {
-    const queryData = await this.queryZoneAndVenues();
+    const queryData = await this.queryZonesAndVenues();
     return this.mapQueryToInterface(queryData);
   }
 
   /**
    * Maps the entity retrieved into respond interface schema
    * @param queryData {@link ZoneEntity} List of ZoneEntities retrieved from DB
-   * @return {@link ZoneInterface} List of zone with less data
+   * @return {@link ZoneInterface} List of zones with less data
    */
   private mapQueryToInterface(queryData: ZoneEntity[]): ZoneInterface[] {
     const response: ZoneInterface[] = [];
@@ -59,7 +59,7 @@ export class LiveService {
   }
 
   // TODO Add filter for current season only
-  private async queryZoneAndVenues(): Promise<ZoneEntity[]> {
+  private queryZonesAndVenues(): Promise<ZoneEntity[]> {
     return createQueryBuilder(ZoneEntity, "zone")
       .select([
         "zone.id",
@@ -74,7 +74,7 @@ export class LiveService {
         "venue.photoReference",
         "venue.description",
       ])
-      .innerJoin("zone.venue", "venues")
+      .innerJoin("zone.venues", "venue")
       .getMany();
   }
 }

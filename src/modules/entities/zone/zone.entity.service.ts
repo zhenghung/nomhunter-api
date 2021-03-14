@@ -29,7 +29,7 @@ export class ZoneEntityService {
       .findOneOrFail(id)
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Zone",
+          "ZoneEntity",
           id,
           this.logger
         )
@@ -39,12 +39,12 @@ export class ZoneEntityService {
   async getByIdJoinVenues(id: string): Promise<ZoneEntity[]> {
     return this.zoneEntityRepository
       .createQueryBuilder("zone")
-      .innerJoinAndSelect("zone.venue", "venue")
+      .innerJoinAndSelect("zone.venues", "venues")
       .where("zone.id = :id", { id: id })
       .getMany()
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "Venue",
+          "VenueEntity",
           id,
           this.logger
         )

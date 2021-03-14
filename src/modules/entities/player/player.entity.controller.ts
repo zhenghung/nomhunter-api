@@ -43,7 +43,7 @@ export class PlayerEntityController {
 
   @Get()
   findAll(): Promise<PlayerEntity[]> {
-    this.logger.log("Fetching all player");
+    this.logger.log("Fetching all player entities");
     return this.playerEntityService.findAll();
   }
 

@@ -40,12 +40,14 @@ export class BadgeEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => VenueEntity, (venueEntity) => venueEntity.badge)
-  venue: VenueEntity[];
-
+  @ApiProperty()
   @OneToMany(
     () => PlayerBadgeEntity,
     (playerBadgeEntity) => playerBadgeEntity.badge
   )
+  @JoinColumn()
   playerBadges: PlayerBadgeEntity[];
+
+  @OneToMany(() => VenueEntity, (venueEntity) => venueEntity.badge)
+  venue: VenueEntity[];
 }
