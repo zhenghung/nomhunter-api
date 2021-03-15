@@ -17,7 +17,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
-import { RequestWithUser } from "../auth/interface/request-with-user.interface";
+import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 
@@ -27,37 +27,37 @@ export class AvatarController {
   constructor(private readonly avatarService: AvatarService) {}
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Create new avatar for user" })
-  @ApiCreatedResponse({ description: "Avatar created successfully for user" })
+  @ApiOperation({ summary: "Create new avatar for player" })
+  @ApiCreatedResponse({ description: "Avatar created successfully for player" })
   @Post("create")
   @UseGuards(JwtAuthGuard)
   async createAvatar(
-    @Req() requestWithUser: RequestWithUser,
+    @Req() requestWithPlayer: RequestWithPlayer,
     @Body() createAvatar: CreateAvatarDto
   ): Promise<ProfilePicInterface> {
     return this.avatarService.createAvatar(
       createAvatar,
-      requestWithUser.user.id
+      requestWithPlayer.user.id
     );
   }
 
   @ApiImplicitQuery({
-    name: "userId",
+    name: "playerId",
     required: false,
     type: String,
   })
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Fetch image url of avatar for user" })
+  @ApiOperation({ summary: "Fetch image url of avatar for player" })
   @ApiOkResponse({ description: "Avatar Image Url retrieved successfully" })
   @Get("profile")
   @UseGuards(JwtAuthGuard)
   async getAvatar(
-    @Req() requestWithUser: RequestWithUser,
-    @Query("userId") userId?: string
+    @Req() requestWithPlayer: RequestWithPlayer,
+    @Query("playerId") playerId?: string
   ): Promise<ProfilePicInterface> {
-    if (userId) {
-      return this.avatarService.getAvatarImageUrl(userId);
+    if (playerId) {
+      return this.avatarService.getAvatarImageUrl(playerId);
     }
-    return this.avatarService.getAvatarImageUrl(requestWithUser.user.id);
+    return this.avatarService.getAvatarImageUrl(requestWithPlayer.user.id);
   }
 }

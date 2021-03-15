@@ -1,5 +1,5 @@
 export enum LeaderboardType {
-  VENUE,
-  ZONE,
-  SEASON,
+  VENUE = "venue",
+  ZONE = "zone",
+  SEASON = "season",
 }

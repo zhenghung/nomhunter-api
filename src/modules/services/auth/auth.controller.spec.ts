@@ -1,35 +1,35 @@
 import { AuthService } from "./auth.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthController } from "./auth.controller";
-import { UserEntity } from "../../entities/users/user.entity";
-import { RequestWithUser } from "./interface/request-with-user.interface";
+import { PlayerEntity } from "../../entities/player/player.entity";
+import { RequestWithPlayer } from "./interface/request-with-player.interface";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 
-const testUser1 = new UserEntity();
-testUser1.email = "newUser@nomhunter.com";
-testUser1.password = "password1";
-testUser1.firstName = "NewUser";
-testUser1.lastName = "NewLastName";
+const testPlayer1 = new PlayerEntity();
+testPlayer1.email = "newPlayer@nomhunter.com";
+testPlayer1.password = "password1";
+testPlayer1.firstName = "NewPlayer";
+testPlayer1.lastName = "NewLastName";
 
 const jwtSignedPayload = {
   bearerToken: "876432145678967634211354YU",
 };
 
 const loginDto: LoginDto = {
-  email: "newUser@nomhunter.com",
+  email: "newPlayer@nomhunter.com",
   password: "password1",
 };
 
 const registerDto: RegisterDto = {
   ...loginDto,
-  firstName: "NewUser",
+  firstName: "NewPlayer",
   lastName: "NewLastName",
 };
 
-const requestWithUser = {
-  user: testUser1,
-} as RequestWithUser;
+const requestWithPlayer = {
+  user: testPlayer1,
+} as RequestWithPlayer;
 
 describe("AuthController", () => {
   let controller: AuthController;
@@ -42,9 +42,9 @@ describe("AuthController", () => {
         {
           provide: AuthService,
           useValue: {
-            register: jest.fn().mockResolvedValue(testUser1),
+            register: jest.fn().mockResolvedValue(testPlayer1),
             login: jest.fn().mockReturnValue(jwtSignedPayload),
-            validateUser: jest.fn().mockResolvedValue(testUser1),
+            validatePlayer: jest.fn().mockResolvedValue(testPlayer1),
           },
         },
       ],
@@ -61,23 +61,23 @@ describe("AuthController", () => {
   describe("register", () => {
     it("email already exist", () => {
       return expect(controller.register(registerDto)).resolves.toStrictEqual(
-        testUser1
+        testPlayer1
       );
     });
   });
 
   describe("login", () => {
     it("email already exist", () => {
-      return expect(controller.login(requestWithUser, loginDto)).toStrictEqual(
-        jwtSignedPayload
-      );
+      return expect(
+        controller.login(requestWithPlayer, loginDto)
+      ).toStrictEqual(jwtSignedPayload);
     });
   });
 
   describe("getProfile", () => {
     it("email already exist", () => {
-      return expect(controller.getProfile(requestWithUser)).toStrictEqual(
-        testUser1
+      return expect(controller.getProfile(requestWithPlayer)).toStrictEqual(
+        testPlayer1
       );
     });
   });

@@ -15,7 +15,7 @@ import {
 } from "@nestjs/swagger";
 import { GoogleMapsService } from "./google-maps.service";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
-import { RequestWithUser } from "../auth/interface/request-with-user.interface";
+import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { DetailsResponseInterface } from "./interface/details-response.interface";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { OptionalIntPipe } from "../../common/pipes/optional-int.pipe";
@@ -37,7 +37,7 @@ export class GoogleMapsController {
   @UseGuards(JwtAuthGuard)
   async getGoogleMapPhoto(
     @Res() res,
-    @Req() requestWithUser: RequestWithUser,
+    @Req() requestWithPlayer: RequestWithPlayer,
     @Param("photo_ref") photoRef: string,
     @Query("width", OptionalIntPipe) width?: number
   ): Promise<any> {
@@ -54,7 +54,7 @@ export class GoogleMapsController {
   @Get("details/:place_id")
   @UseGuards(JwtAuthGuard)
   async getGoogleMapDetails(
-    @Req() requestWithUser: RequestWithUser,
+    @Req() requestWithPlayer: RequestWithPlayer,
     @Param("place_id") placeId: string
   ): Promise<DetailsResponseInterface> {
     return await this.googleMapsService.getGooglePlacesDetails(placeId);

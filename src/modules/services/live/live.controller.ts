@@ -10,7 +10,7 @@ export class LiveController {
 
   constructor(private readonly liveService: LiveService) {}
 
-  // TODO: Add JWT and Auth Bear Swagger when user specific details are added (visited / ranked)
+  // TODO: Add JWT and Auth Bear Swagger when player specific details are added (visited / ranked)
   @ApiOperation({ summary: "Fetch live venues summary details" })
   @ApiOkResponse({ description: "Live venues retrieved successfully" })
   @Get()

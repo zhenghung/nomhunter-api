@@ -1,25 +1,25 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { S3Service } from "../../clients/s3/s3.service";
-import { FilesService } from "../../entities/files/files.service";
-import { UsersService } from "../../entities/users/users.service";
+import { FileEntityService } from "../../entities/file/file.entity.service";
+import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { AvatarService } from "./avatar.service";
-import { UserEntity } from "../../entities/users/user.entity";
+import { PlayerEntity } from "../../entities/player/player.entity";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
-import { FileEntity, FileType } from "../../entities/files/file.entity";
+import { FileEntity, FileType } from "../../entities/file/file.entity";
 
 const testCreateAvatarDto = new CreateAvatarDto();
 testCreateAvatarDto.body = 1;
 testCreateAvatarDto.hat = 1;
 testCreateAvatarDto.prop = 1;
 
-const testUser1 = new UserEntity();
-testUser1.id = "someId";
-testUser1.email = "newUser@nomhunter.com";
-testUser1.password = "password";
-testUser1.firstName = "NewUser";
-testUser1.lastName = "NewLastName";
-testUser1.profilePic = "imageId";
+const testPlayer1 = new PlayerEntity();
+testPlayer1.id = "someId";
+testPlayer1.email = "newPlayer@nomhunter.com";
+testPlayer1.password = "password";
+testPlayer1.firstName = "NewPlayer";
+testPlayer1.lastName = "NewLastName";
+testPlayer1.profilePic = "imageId";
 
 const testFile = new FileEntity();
 testFile.id = "imageId";
@@ -42,14 +42,14 @@ describe("AvatarService", () => {
       providers: [
         AvatarService,
         {
-          provide: UsersService,
+          provide: PlayerEntityService,
           useValue: {
-            getById: jest.fn().mockResolvedValue(testUser1),
+            getById: jest.fn().mockResolvedValue(testPlayer1),
             updateProfilePic: jest.fn().mockResolvedValue(true),
           },
         },
         {
-          provide: FilesService,
+          provide: FileEntityService,
           useValue: {
             create: jest.fn().mockResolvedValue(testFile),
             getById: jest.fn().mockResolvedValue(testFile),
@@ -76,17 +76,17 @@ describe("AvatarService", () => {
   });
 
   describe("getAvatarImageUrl", () => {
-    it("should return avatar image url of the user", () => {
-      return expect(service.getAvatarImageUrl(testUser1.id)).resolves.toEqual(
+    it("should return avatar image url of the player", () => {
+      return expect(service.getAvatarImageUrl(testPlayer1.id)).resolves.toEqual(
         testProfilePic
       );
     });
   });
 
   describe("createAvatar", () => {
-    it("should return the user entity created", () => {
+    it("should return the player entity created", () => {
       return expect(
-        service.createAvatar(testCreateAvatarDto, testUser1.id)
+        service.createAvatar(testCreateAvatarDto, testPlayer1.id)
       ).resolves.toEqual(testProfilePic);
     });
   });

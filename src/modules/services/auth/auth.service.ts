@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { UsersService } from "../../entities/users/users.service";
-import { UserEntity } from "../../entities/users/user.entity";
+import { PlayerEntityService } from "../../entities/player/player.entity.service";
+import { PlayerEntity } from "../../entities/player/player.entity";
 import { RegisterDto } from "./dto/register.dto";
 import { HttpExceptions } from "../../common/constants/http.exceptions";
 import { TokenResponseInterface } from "./interface/token-response.interface";
@@ -11,25 +11,25 @@ import { QueryFailedError } from "typeorm";
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly playerEntityService: PlayerEntityService,
     private readonly jwtService: JwtService
   ) {}
 
   /**
-   * Encrypts password by adding a salt and hashing it, then creating a new User entity
+   * Encrypts password by adding a salt and hashing it, then creating a new Player entity
    * @param registrationData
    */
-  public async register(registrationData: RegisterDto): Promise<UserEntity> {
+  public async register(registrationData: RegisterDto): Promise<PlayerEntity> {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
-      return await this.usersService.create({
+      return await this.playerEntityService.create({
         ...registrationData,
         password: hashedPassword,
       });
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new HttpException(
-          "User with that email already exists",
+          "Player with that email already exists",
           HttpStatus.BAD_REQUEST
         );
       }
@@ -41,33 +41,33 @@ export class AuthService {
   }
 
   /**
-   * JWT service signs the user's email and id as bearer token
-   * @param user User entity from the database
+   * JWT service signs the player's email and id as bearer token
+   * @param player Player entity from the database
    */
-  public login(user: UserEntity): TokenResponseInterface {
-    const payload = { email: user.email, sub: user.id };
+  public login(player: PlayerEntity): TokenResponseInterface {
+    const payload = { email: player.email, sub: player.id };
     return {
       bearerToken: this.jwtService.sign(payload),
     };
   }
 
   /**
-   * For LocalStrategy Authentication, Validates User Credentials
+   * For LocalStrategy Authentication, Validates Player Credentials
    * @param email Entered Email
    * @param plainTextPassword Entered Plain-text Password
    */
-  public async validateUser(
+  public async validatePlayer(
     email: string,
     plainTextPassword: string
-  ): Promise<UserEntity> {
+  ): Promise<PlayerEntity> {
     try {
-      const user = await this.usersService.getByEmail(email);
+      const player = await this.playerEntityService.getByEmail(email);
       const correctPassword = await AuthService.verifyPassword(
         plainTextPassword,
-        user.password
+        player.password
       );
-      if (user && correctPassword) {
-        return user;
+      if (player && correctPassword) {
+        return player;
       }
     } catch (e) {
       throw HttpExceptions.INCORRECT_CREDENTIALS;

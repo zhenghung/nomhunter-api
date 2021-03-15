@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { UsersModule } from "../../entities/users/users.module";
+import { PlayerEntityModule } from "../../entities/player/player.entity.module";
 import { ProfileController } from "./profile.controller";
 import { AvatarModule } from "../avatar/avatar.module";
 
 @Module({
-  imports: [UsersModule, AvatarModule],
+  imports: [PlayerEntityModule, AvatarModule],
   providers: [],
   controllers: [ProfileController],
 })

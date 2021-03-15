@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { createQueryBuilder } from "typeorm";
-import { ZoneEntity } from "../../entities/zones/zone.entity";
+import { ZoneEntity } from "../../entities/zone/zone.entity";
 import { ZoneInterface } from "./interface/zone.interface";
 import { VenueInterface } from "./interface/venue.interface";
 
@@ -12,7 +12,7 @@ export class LiveService {
    * Fetch all active zones and venues
    */
   async getLiveZonesAndVenues(): Promise<ZoneInterface[]> {
-    const queryData = await this.queryZoneAndVenues();
+    const queryData = await this.queryZonesAndVenues();
     return this.mapQueryToInterface(queryData);
   }
 
@@ -59,22 +59,22 @@ export class LiveService {
   }
 
   // TODO Add filter for current season only
-  private async queryZoneAndVenues(): Promise<ZoneEntity[]> {
+  private queryZonesAndVenues(): Promise<ZoneEntity[]> {
     return createQueryBuilder(ZoneEntity, "zone")
       .select([
         "zone.id",
         "zone.name",
         "zone.latitude",
         "zone.longitude",
-        "venues.id",
-        "venues.name",
-        "venues.latitude",
-        "venues.longitude",
-        "venues.googlePlacesId",
-        "venues.photoReference",
-        "venues.description",
+        "venue.id",
+        "venue.name",
+        "venue.latitude",
+        "venue.longitude",
+        "venue.googlePlacesId",
+        "venue.photoReference",
+        "venue.description",
       ])
-      .innerJoin("zone.venues", "venues")
+      .innerJoin("zone.venues", "venue")
       .getMany();
   }
 }

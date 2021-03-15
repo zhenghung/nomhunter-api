@@ -18,7 +18,7 @@ export interface DetailsResultInterface {
   reviews: any[];
   types: any[];
   url: string;
-  user_ratings_total: number;
+  player_ratings_total: number;
   utc_offset: number;
   vicinity: string;
   website: string;

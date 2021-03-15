@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 import { LeaderboardService } from "./leaderboard.service";
 import { LeaderboardController } from "./leaderboard.controller";
-import { GamesModule } from "../../entities/games/games.module";
+import { GameEntityModule } from "../../entities/game/game.entity.module";
 import { RedisModule } from "../../clients/redis/redis.module";
-import { ZonesModule } from "../../entities/zones/zones.module";
-import { VenuesModule } from "../../entities/venues/venues.module";
+import { ZoneEntityModule } from "../../entities/zone/zone.entity.module";
+import { VenueEntityModule } from "../../entities/venue/venue.entity.module";
 
 @Module({
-  imports: [GamesModule, RedisModule, ZonesModule, VenuesModule],
+  imports: [GameEntityModule, RedisModule, ZoneEntityModule, VenueEntityModule],
   providers: [LeaderboardService],
   controllers: [LeaderboardController],
   exports: [LeaderboardService],
