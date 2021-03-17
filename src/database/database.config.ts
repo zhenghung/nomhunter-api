@@ -8,7 +8,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
   constructor(private readonly config: ConfigService) {}
 
   createTypeOrmOptions(): Promise<TypeOrmModuleOptions> | TypeOrmModuleOptions {
-    return {
+    let options: TypeOrmModuleOptions = {
       type: this.config.get<never>("database.type"),
       host: this.config.get("database.host"),
       port: this.config.get("database.port"),
@@ -19,5 +19,17 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
     };
+    if (this.config.get<string>("database.ssl") === "true") {
+      options = {
+        ...options,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
+      };
+    }
+    return options;
   }
 }
