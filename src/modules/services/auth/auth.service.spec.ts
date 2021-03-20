@@ -3,18 +3,18 @@ import { AuthService } from "./auth.service";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { JwtService } from "@nestjs/jwt";
 import { PlayerEntity } from "../../entities/player/player.entity";
-import { RegisterDto } from "./dto/register.dto";
+import { RegisterReq } from "./req/register.req";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
-import { LoginDto } from "./dto/login.dto";
+import { LoginReq } from "./req/login.req";
 import { HttpExceptions } from "../../common/constants/http.exceptions";
 
-const loginDto: LoginDto = {
+const loginDto: LoginReq = {
   email: "newPlayer@nomhunter.com",
   password: "password1",
 };
 
-const registerDto: RegisterDto = {
+const registerDto: RegisterReq = {
   ...loginDto,
   firstName: "NewPlayer",
   lastName: "NewLastName",

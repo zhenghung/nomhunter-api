@@ -39,4 +39,17 @@ export class JournalController {
   ): Promise<HistoryGameInterface[]> {
     return this.journalService.fetchHistory(requestWithPlayer.user.id);
   }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get Player Journal Map View" })
+  @ApiCreatedResponse({
+    description: "Player Journal Map View successfully retrieved",
+  })
+  @Get("venues")
+  @UseGuards(JwtAuthGuard)
+  async fetchVenues(
+    @Req() requestWithPlayer: RequestWithPlayer
+  ): Promise<any[]> {
+    return this.journalService.fetchVenues(requestWithPlayer.user.id);
+  }
 }
