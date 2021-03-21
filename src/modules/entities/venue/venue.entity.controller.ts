@@ -118,7 +118,7 @@ export class VenueEntityController {
   ): Promise<VenueEntity[]> {
     this.logger.log("Fetching all venue entities");
     if (showZone && showBadge) {
-      return this.venueEntityService.findJoinAll();
+      return this.venueEntityService.findJoinZoneAndBadge();
     }
     if (showZone) {
       return this.venueEntityService.findJoin("zone");

@@ -28,7 +28,7 @@ export class VenueEntityService {
     return this.queryJoin(property).getMany();
   }
 
-  async findJoinAll(): Promise<VenueEntity[]> {
+  async findJoinZoneAndBadge(): Promise<VenueEntity[]> {
     return this.queryJoin("zone")
       .innerJoinAndSelect("venue.badge", "badge")
       .getMany();
@@ -76,7 +76,7 @@ export class VenueEntityService {
     return this.getByIdJoinWith(id, "badge");
   }
 
-  async getByIdJoinWith(id: string, property: string) {
+  async getByIdJoinWith(id: string, property: string): Promise<VenueEntity> {
     return this.venueEntityRepository
       .createQueryBuilder("venue")
       .innerJoinAndSelect(`venue.${property}`, property)
@@ -91,7 +91,20 @@ export class VenueEntityService {
       );
   }
 
+  async getForPlayerBadges(playerId: string): Promise<VenueEntity[]> {
+    return this.venueEntityRepository
+      .createQueryBuilder("venue")
+      .leftJoinAndSelect("venue.badge", "badge")
+      .leftJoinAndSelect("badge.file", "file")
+      .leftJoinAndSelect("venue.zone", "zone")
+      .leftJoinAndSelect("venue.games", "game")
+      .leftJoinAndSelect("game.playerBadge", "playerBadge")
+      .leftJoinAndSelect("playerBadge.player", "player")
+      .where("player.id = :id", { id: playerId })
+      .getMany();
+  }
+
   async create(createVenueDto: CreateVenueDto): Promise<VenueEntity> {
-    return await this.venueEntityRepository.save(createVenueDto);
+    return this.venueEntityRepository.save(createVenueDto);
   }
 }

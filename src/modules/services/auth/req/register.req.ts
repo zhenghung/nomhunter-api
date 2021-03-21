@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class RegisterDto {
+export class RegisterReq {
   @ApiProperty()
   email: string;
 

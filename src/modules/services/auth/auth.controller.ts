@@ -10,11 +10,11 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { RegisterDto } from "./dto/register.dto";
+import { RegisterReq } from "./req/register.req";
 import { RequestWithPlayer } from "./interface/request-with-player.interface";
 import { LocalAuthGuard } from "./guard/local-auth.guard";
 import JwtAuthGuard from "./guard/jwt-auth.guard";
-import { LoginDto } from "./dto/login.dto";
+import { LoginReq } from "./req/login.req";
 import { PlayerEntity } from "../../entities/player/player.entity";
 import {
   ApiBadRequestResponse,
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiBadRequestResponse({ description: "Email already exists" })
   @ApiInternalServerErrorResponse({ description: "Something went wrong" })
   @Post("register")
-  async register(@Body() registrationData: RegisterDto): Promise<PlayerEntity> {
+  async register(@Body() registrationData: RegisterReq): Promise<PlayerEntity> {
     return this.authService.register(registrationData).then((player) => {
       this.logger.log(
         `Player with email: ${player.email} successfully created`
@@ -59,7 +59,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: "Incorrect credentials" })
   login(
     @Request() request: RequestWithPlayer,
-    @Body() loginData: LoginDto
+    @Body() loginData: LoginReq
   ): TokenResponseInterface {
     this.logger.log(`Player ${loginData.email} successfully logged in`);
     return this.authService.login(request.user);

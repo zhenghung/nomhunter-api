@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { PlayerEntity } from "../../entities/player/player.entity";
-import { RegisterDto } from "./dto/register.dto";
+import { RegisterReq } from "./req/register.req";
 import { HttpExceptions } from "../../common/constants/http.exceptions";
 import { TokenResponseInterface } from "./interface/token-response.interface";
 import { QueryFailedError } from "typeorm";
@@ -19,7 +19,7 @@ export class AuthService {
    * Encrypts password by adding a salt and hashing it, then creating a new Player entity
    * @param registrationData
    */
-  public async register(registrationData: RegisterDto): Promise<PlayerEntity> {
+  public async register(registrationData: RegisterReq): Promise<PlayerEntity> {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
       return await this.playerEntityService.create({

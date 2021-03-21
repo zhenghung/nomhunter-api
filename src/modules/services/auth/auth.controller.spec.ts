@@ -3,8 +3,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { AuthController } from "./auth.controller";
 import { PlayerEntity } from "../../entities/player/player.entity";
 import { RequestWithPlayer } from "./interface/request-with-player.interface";
-import { LoginDto } from "./dto/login.dto";
-import { RegisterDto } from "./dto/register.dto";
+import { LoginReq } from "./req/login.req";
+import { RegisterReq } from "./req/register.req";
 
 const testPlayer1 = new PlayerEntity();
 testPlayer1.email = "newPlayer@nomhunter.com";
@@ -16,12 +16,12 @@ const jwtSignedPayload = {
   bearerToken: "876432145678967634211354YU",
 };
 
-const loginDto: LoginDto = {
+const loginDto: LoginReq = {
   email: "newPlayer@nomhunter.com",
   password: "password1",
 };
 
-const registerDto: RegisterDto = {
+const registerDto: RegisterReq = {
   ...loginDto,
   firstName: "NewPlayer",
   lastName: "NewLastName",

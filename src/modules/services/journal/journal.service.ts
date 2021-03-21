@@ -4,12 +4,16 @@ import { BadgeEntityService } from "../../entities/badge/badge.entity.service";
 import { HistoryGameInterface } from "./interface/history-game.interface";
 import { BadgeEntity } from "../../entities/badge/badge.entity";
 import { MyBadgeInterface } from "./interface/my-badge.interface";
+import { VenueEntityService } from "../../entities/venue/venue.entity.service";
+import { VenueBadgeInterface } from "./interface/venue-badge.interface";
+import { MyBadgeGameInterface } from "./interface/my-badge-game.interface";
 
 @Injectable()
 export class JournalService {
   private logger: Logger = new Logger(JournalService.name);
 
   constructor(
+    private readonly venueEntityService: VenueEntityService,
     private readonly playerBadgeEntityService: PlayerBadgeEntityService,
     private readonly badgeEntityService: BadgeEntityService
   ) {}
@@ -83,6 +87,43 @@ export class JournalService {
         badgeDescription: playerBadge.badge.description,
       };
       return mappedResponse;
+    });
+  }
+
+  /**
+   * Fetch Player Games - Venues Map view
+   * @param playerId
+   */
+  async fetchVenues(playerId: string): Promise<VenueBadgeInterface[]> {
+    this.logger.log("Fetching PlayerBadges Venues Mapview");
+    const venues = await this.venueEntityService.getForPlayerBadges(playerId);
+    return venues.map((venueEntity) => {
+      const badgeGames: MyBadgeGameInterface[] = venueEntity.games.map(
+        (gameEntity) => {
+          return {
+            date: gameEntity.createdAt,
+            score: gameEntity.score,
+            venueName: venueEntity.name,
+            zoneName: venueEntity.zone.name,
+          };
+        }
+      );
+      return {
+        venueId: venueEntity.id,
+        venueName: venueEntity.name,
+        venueDescription: venueEntity.description,
+        venueLatitude: venueEntity.latitude,
+        venueLongitude: venueEntity.longitude,
+        venuePhotoReference: venueEntity.photoReference,
+        venueGooglePlacesId: venueEntity.googlePlacesId,
+        badgeId: venueEntity.badge.id,
+        badgeName: venueEntity.badge.name,
+        badgeDescription: venueEntity.badge.description,
+        badgeFileUrl: venueEntity.badge.file.url,
+        badgeGames: badgeGames,
+        // TODO: fix this when season leaderboards are persisted
+        ranked: true,
+      };
     });
   }
 }
