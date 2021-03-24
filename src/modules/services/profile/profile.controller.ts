@@ -39,7 +39,7 @@ export class ProfileController {
       return this.playersService.getById(playerId).then((playerEntity) => {
         return {
           playerId: playerEntity.id,
-          name: `${playerEntity.firstName} ${playerEntity.lastName}`,
+          name: `${playerEntity.nickname}`,
           avatarUrl: avatar.url,
         };
       });

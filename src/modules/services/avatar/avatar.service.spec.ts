@@ -17,8 +17,7 @@ const testPlayer1 = new PlayerEntity();
 testPlayer1.id = "someId";
 testPlayer1.email = "newPlayer@nomhunter.com";
 testPlayer1.password = "password";
-testPlayer1.firstName = "NewPlayer";
-testPlayer1.lastName = "NewLastName";
+testPlayer1.nickname = "NewPlayer";
 testPlayer1.profilePic = "imageId";
 
 const testFile = new FileEntity();

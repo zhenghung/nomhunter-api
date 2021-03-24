@@ -8,8 +8,5 @@ export class CreatePlayerDto {
   password: string;
 
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  nickname: string;
 }
