@@ -10,24 +10,21 @@ import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
 const testPlayer1 = new PlayerEntity();
 testPlayer1.email = "test1@nomhunter.com";
 testPlayer1.password = "password1";
-testPlayer1.firstName = "John";
-testPlayer1.lastName = "Doe";
+testPlayer1.nickname = "John";
 
 const testPlayer2 = new PlayerEntity();
 testPlayer2.email = "test2@nomhunter.com";
 testPlayer2.password = "password2";
-testPlayer2.firstName = "Tsz Hey";
-testPlayer2.lastName = "Lam";
+testPlayer2.nickname = "Tsz Hey";
 
 const playersArray = [testPlayer1, testPlayer2];
 
 const createTestPlayer = new CreatePlayerDto();
 createTestPlayer.email = testPlayer2.email;
 createTestPlayer.password = testPlayer2.password;
-createTestPlayer.firstName = testPlayer2.firstName;
-createTestPlayer.lastName = testPlayer2.lastName;
+createTestPlayer.nickname = testPlayer2.nickname;
 
-describe("PlayersService", () => {
+describe("PlayerEntityService", () => {
   let service: PlayerEntityService;
   let repo: Repository<PlayerEntity>;
 
@@ -81,7 +78,7 @@ describe("PlayersService", () => {
       const testPromise = service.getById("bad uuid").catch((error) => {
         expect(error).toStrictEqual(
           new HttpException(
-            "Player of id: bad uuid does not exist",
+            "PlayerEntity of id: bad uuid does not exist",
             HttpStatus.NOT_FOUND
           )
         );

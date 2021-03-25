@@ -10,8 +10,7 @@ const testPlayer1 = new PlayerEntity();
 testPlayer1.id = "1";
 testPlayer1.email = "playerOne@nomhunter.com";
 testPlayer1.password = "password1";
-testPlayer1.firstName = "PlayerOne";
-testPlayer1.lastName = "NameOne";
+testPlayer1.nickname = "PlayerOne";
 testPlayer1.profilePic = "default_profile";
 testPlayer1.createdAt = new Date();
 testPlayer1.updatedAt = new Date();
@@ -20,8 +19,7 @@ const testPlayer2 = new PlayerEntity();
 testPlayer2.id = "2";
 testPlayer2.email = "playerTwo@nomhunter.com";
 testPlayer2.password = "password2";
-testPlayer2.firstName = "PlayerTwo";
-testPlayer2.lastName = "NameTwo";
+testPlayer2.nickname = "PlayerTwo";
 testPlayer2.profilePic = "default_profile";
 testPlayer2.createdAt = new Date();
 testPlayer2.updatedAt = new Date();
@@ -29,11 +27,10 @@ testPlayer2.updatedAt = new Date();
 const newPlayerDTO: CreatePlayerDto = {
   email: "newPlayer@nomhunter.com",
   password: "password3",
-  firstName: "NewPlayer",
-  lastName: "NewLastName",
+  nickname: "NewPlayer",
 };
 
-describe("Player Controller", () => {
+describe("PlayerEntityController", () => {
   let controller: PlayerEntityController;
   let playersService: PlayerEntityService;
 

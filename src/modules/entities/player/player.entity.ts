@@ -28,11 +28,7 @@ export class PlayerEntity {
 
   @ApiProperty()
   @Column()
-  firstName: string;
-
-  @ApiProperty()
-  @Column()
-  lastName: string;
+  nickname: string;
 
   @ApiProperty()
   @Column({

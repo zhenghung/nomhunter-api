@@ -17,7 +17,7 @@ testCreateFile.name = "1-1-1";
 testCreateFile.type = FileType.PROFILE_PIC;
 testCreateFile.url = "https://somelinktourl.com/";
 
-describe("FilesService", () => {
+describe("FileEntityService", () => {
   let service: FileEntityService;
   let repo: Repository<FileEntity>;
 

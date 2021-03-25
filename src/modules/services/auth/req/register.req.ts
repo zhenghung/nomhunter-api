@@ -8,8 +8,5 @@ export class RegisterReq {
   password: string;
 
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  nickname: string;
 }

@@ -16,16 +16,14 @@ const loginDto: LoginReq = {
 
 const registerDto: RegisterReq = {
   ...loginDto,
-  firstName: "NewPlayer",
-  lastName: "NewLastName",
+  nickname: "NewPlayer",
 };
 
 const testPlayer1 = new PlayerEntity();
 testPlayer1.email = "newPlayer@nomhunter.com";
 testPlayer1.password =
   "$2b$10$R1SOiUOVNjGLu2nfuX3JX.O6sArbzmL55C90/3mGwQRgl/yqMsUo2";
-testPlayer1.firstName = "NewPlayer";
-testPlayer1.lastName = "NewLastName";
+testPlayer1.nickname = "NewPlayer";
 
 const jwtSignedPayload = {
   bearerToken: "876432145678967634211354YU",
