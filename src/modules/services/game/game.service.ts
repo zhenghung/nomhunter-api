@@ -5,6 +5,7 @@ import { VenueEntityService } from "../../entities/venue/venue.entity.service";
 import { CreateGameReq } from "./req/create-game.req";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { GameEntity } from "../../entities/game/game.entity";
+import { LeaderboardService } from "../leaderboard/leaderboard.service";
 
 @Injectable()
 export class GameService {
@@ -14,7 +15,8 @@ export class GameService {
     private readonly gameEntityService: GameEntityService,
     private readonly playerEntityService: PlayerEntityService,
     private readonly playerBadgeEntityService: PlayerBadgeEntityService,
-    private readonly venueEntityService: VenueEntityService
+    private readonly venueEntityService: VenueEntityService,
+    private readonly leaderboardService: LeaderboardService
   ) {}
 
   async create(
@@ -22,7 +24,7 @@ export class GameService {
     createGameReq: CreateGameReq
   ): Promise<GameEntity> {
     const playerEntity = await this.playerEntityService.getById(playerId);
-    const venueEntity = await this.venueEntityService.getByIdJoinBadge(
+    const venueEntity = await this.venueEntityService.getByIdJoinAll(
       createGameReq.venueId
     );
 
@@ -33,6 +35,12 @@ export class GameService {
       venue: venueEntity,
       score: createGameReq.score,
     });
+
+    // Refresh Venue, Zone and Season Leaderboard
+    await this.leaderboardService.refreshVenueLeaderboard(venueEntity.id);
+    await this.leaderboardService.refreshZoneLeaderboard(venueEntity.zone.id);
+    // TODO: season id
+    await this.leaderboardService.refreshSeasonLeaderboard("SEASON");
 
     // Award badge on condition
     if (createGameReq.score >= 40) {
