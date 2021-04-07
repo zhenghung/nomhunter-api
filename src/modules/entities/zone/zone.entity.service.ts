@@ -36,15 +36,15 @@ export class ZoneEntityService {
       );
   }
 
-  async getByIdJoinVenues(id: string): Promise<ZoneEntity[]> {
+  async getByIdJoinVenues(id: string): Promise<ZoneEntity> {
     return this.zoneEntityRepository
       .createQueryBuilder("zone")
       .innerJoinAndSelect("zone.venues", "venues")
       .where("zone.id = :id", { id: id })
-      .getMany()
+      .getOneOrFail()
       .catch(
         HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "VenueEntity",
+          "ZoneEntity",
           id,
           this.logger
         )

@@ -25,18 +25,19 @@ export class LeaderboardService {
     type: LeaderboardType,
     id: string
   ): Promise<RankInterface[]> {
-    // Refresh Leaderboard
+    // Checking if id is valid for type
+    await this.validateId(type, id);
+
+    // Fetch Leaderboard from Redis Cache if exists
     let result: string[];
-    if (type == LeaderboardType.VENUE) {
-      this.logger.log("Try fetching venue leaderboard from cache");
-      result = await this.redisService.zRevRangeWithScores(id);
-      if (result.length == 0) {
-        this.logger.log(`Rebuilding leaderboard of venue ${id}`);
-        await this.refreshVenueLeaderboard(id);
-      }
-    } else {
-      // Build Leaderboard of Zone or Season from Venue leaderboard
+    this.logger.log(`Try fetching ${type} leaderboard from cache`);
+    result = await this.redisService.zRevRangeWithScores(id);
+    if (result.length == 0) {
       switch (type) {
+        case LeaderboardType.VENUE:
+          this.logger.log(`Rebuilding leaderboard of venue ${id}`);
+          await this.refreshVenueLeaderboard(id);
+          break;
         case LeaderboardType.ZONE:
           this.logger.log(`Building leaderboard of zone ${id}`);
           await this.refreshZoneLeaderboard(id);
@@ -93,7 +94,7 @@ export class LeaderboardService {
     this.logger.log(`Refreshing leaderboard of zone ${zoneId}`);
     const venueIds: string[] = await this.zoneEntityService
       .getByIdJoinVenues(zoneId)
-      .then((zones) => zones[0].venues.map((venue) => venue.id));
+      .then((zone) => zone.venues.map((venue) => venue.id));
     // Get Accumulated Score for each player
     const mapBoard = await this.accumulateVenueScores(venueIds);
     // Add score to redis
@@ -143,5 +144,19 @@ export class LeaderboardService {
       );
     }
     return mapBoard;
+  }
+
+  private async validateId(type: LeaderboardType, id: string): Promise<void> {
+    switch (type) {
+      case LeaderboardType.VENUE:
+        await this.venueEntityService.getById(id);
+        break;
+      case LeaderboardType.ZONE:
+        await this.zoneEntityService.getById(id);
+        break;
+      default:
+        // TODO: ADD season key
+        break;
+    }
   }
 }
