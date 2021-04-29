@@ -7,6 +7,7 @@ import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { ProfileModule } from "./profile/profile.module";
 import { GameModule } from "./game/game.module";
 import { JournalModule } from "./journal/journal.module";
+import { TagModule } from "./tag/tag.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JournalModule } from "./journal/journal.module";
     ProfileModule,
     GameModule,
     JournalModule,
+    TagModule,
   ],
 })
 export class ServicesModule {}

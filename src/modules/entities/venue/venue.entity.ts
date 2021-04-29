@@ -12,6 +12,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { ZoneEntity } from "../zone/zone.entity";
 import { GameEntity } from "../game/game.entity";
 import { BadgeEntity } from "../badge/badge.entity";
+import { VenueTagEntity } from "../venueTag/venue-tag.entity";
 
 @Entity("venue")
 export class VenueEntity {
@@ -63,4 +64,8 @@ export class VenueEntity {
 
   @OneToMany(() => GameEntity, (game) => game.venue)
   games: GameEntity[];
+
+  @OneToMany(() => VenueTagEntity, (venueTagEntity) => venueTagEntity.venue)
+  @JoinColumn()
+  venueTags: VenueTagEntity[];
 }

@@ -7,6 +7,8 @@ import { GameEntityModule } from "./game/game.entity.module";
 import { SeasonEntityModule } from "./season/season.entity.module";
 import { BadgeEntityModule } from "./badge/badge.entity.module";
 import { PlayerBadgeEntityModule } from "./playerBadge/player-badge.entity.module";
+import { TagEntityModule } from "./tag/tag.entity.module";
+import { VenueTagEntityModule } from "./venueTag/venue-tag.entity.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { PlayerBadgeEntityModule } from "./playerBadge/player-badge.entity.modul
     ZoneEntityModule,
     GameEntityModule,
     SeasonEntityModule,
+    TagEntityModule,
+    VenueTagEntityModule,
   ],
 })
 export class EntitiesModule {}
