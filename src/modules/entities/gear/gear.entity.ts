@@ -2,24 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { BadgeEntity } from "../badge/badge.entity";
-import { GearEntity } from "../gear/gear.entity";
-import { FileType } from "./file.type";
+import { FileEntity } from "../file/file.entity";
 
-@Entity("file")
-export class FileEntity {
+@Entity("gear")
+export class GearEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @ApiProperty()
-  @Column("enum", { enum: FileType })
-  type: FileType;
 
   @ApiProperty()
   @Column()
@@ -27,7 +22,12 @@ export class FileEntity {
 
   @ApiProperty()
   @Column()
-  url: string;
+  description: string;
+
+  @ApiProperty({ name: "file_id" })
+  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.gear)
+  @JoinColumn({ name: "file_id" })
+  file: FileEntity;
 
   @ApiProperty()
   @CreateDateColumn()
@@ -36,10 +36,4 @@ export class FileEntity {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToOne(() => BadgeEntity, (badge) => badge.file)
-  badge: BadgeEntity;
-
-  @OneToOne(() => GearEntity, (gear) => gear.file)
-  gear: GearEntity;
 }

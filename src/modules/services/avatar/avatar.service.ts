@@ -7,7 +7,8 @@ import { S3Service } from "../../clients/s3/s3.service";
 import { FileEntityService } from "../../entities/file/file.entity.service";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { CreateFileDto } from "../../entities/file/dto/create-file.dto";
-import { FileEntity, FileType } from "../../entities/file/file.entity";
+import { FileEntity } from "../../entities/file/file.entity";
+import { FileType } from "../../entities/file/file.type";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
 
 @Injectable()

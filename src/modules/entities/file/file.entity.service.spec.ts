@@ -1,5 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { FileEntity, FileType } from "./file.entity";
+import { FileEntity } from "./file.entity";
+import { FileType } from "./file.type";
 import { DeleteResult, Repository } from "typeorm";
 import { FileEntityService } from "./file.entity.service";
 import { getRepositoryToken } from "@nestjs/typeorm";

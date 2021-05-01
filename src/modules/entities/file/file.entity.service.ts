@@ -26,8 +26,19 @@ export class FileEntityService {
       );
   }
 
+  async findAll(): Promise<FileEntity[]> {
+    return this.filesRepository.find();
+  }
+
   async create(createFileDto: CreateFileDto): Promise<FileEntity> {
-    return await this.filesRepository.save(createFileDto);
+    return this.filesRepository.save(createFileDto).catch((error) => {
+      throw HttpExceptionsUtil.createHttpException(
+        error.message,
+        HttpStatus.BAD_REQUEST,
+        this.logger,
+        error
+      );
+    });
   }
 
   async remove(id: string): Promise<boolean> {
