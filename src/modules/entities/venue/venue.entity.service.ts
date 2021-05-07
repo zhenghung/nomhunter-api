@@ -1,19 +1,23 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder } from "typeorm";
-import { CreateVenueDto } from "./dto/create-venue.dto";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { VenueEntity } from "./venue.entity";
 import { FindConditions } from "typeorm/find-options/FindConditions";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class VenueEntityService {
-  private readonly logger = new Logger(VenueEntityService.name);
-
+export class VenueEntityService extends GenericEntityService<VenueEntity> {
   constructor(
     @InjectRepository(VenueEntity)
     private readonly venueEntityRepository: Repository<VenueEntity>
-  ) {}
+  ) {
+    super(
+      venueEntityRepository,
+      new Logger(VenueEntityService.name),
+      VenueEntity.name
+    );
+  }
 
   async findAll(
     conditions?: FindConditions<VenueEntity>
@@ -38,18 +42,6 @@ export class VenueEntityService {
     return this.venueEntityRepository
       .createQueryBuilder("venue")
       .innerJoinAndSelect(`venue.${property}`, property);
-  }
-
-  async getById(id: string): Promise<VenueEntity> {
-    return await this.venueEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "VenueEntity",
-          id,
-          this.logger
-        )
-      );
   }
 
   async getByIdJoinAll(id: string): Promise<VenueEntity> {
@@ -102,9 +94,5 @@ export class VenueEntityService {
       .leftJoinAndSelect("playerBadge.player", "player")
       .where("player.id = :id", { id: playerId })
       .getMany();
-  }
-
-  async create(createVenueDto: CreateVenueDto): Promise<VenueEntity> {
-    return this.venueEntityRepository.save(createVenueDto);
   }
 }

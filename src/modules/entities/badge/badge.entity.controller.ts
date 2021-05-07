@@ -32,7 +32,6 @@ export class BadgeEntityController {
       description: createBadgeReq.description,
       file: fileEntity,
     };
-
     return this.badgeEntityService
       .create(createBadgeDto)
       .then((badgeEntity: BadgeEntity) => {

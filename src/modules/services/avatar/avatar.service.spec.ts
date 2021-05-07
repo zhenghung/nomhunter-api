@@ -6,7 +6,8 @@ import { AvatarService } from "./avatar.service";
 import { PlayerEntity } from "../../entities/player/player.entity";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
-import { FileEntity, FileType } from "../../entities/file/file.entity";
+import { FileEntity } from "../../entities/file/file.entity";
+import { FileType } from "../../entities/file/file.type";
 
 const testCreateAvatarDto = new CreateAvatarDto();
 testCreateAvatarDto.body = 1;

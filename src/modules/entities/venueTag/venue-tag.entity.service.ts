@@ -3,15 +3,22 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { VenueTagEntity } from "./venue-tag.entity";
 import { CreateManyVenueTagsDto } from "./dto/create-many-venue-tags.dto";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class VenueTagEntityService {
-  private readonly logger = new Logger(VenueTagEntityService.name);
-
+export class VenueTagEntityService extends GenericEntityService<
+  VenueTagEntity
+> {
   constructor(
     @InjectRepository(VenueTagEntity)
     private readonly venueTagEntityRepository: Repository<VenueTagEntity>
-  ) {}
+  ) {
+    super(
+      venueTagEntityRepository,
+      new Logger(VenueTagEntityService.name),
+      VenueTagEntity.name
+    );
+  }
 
   /**
    * Create venue tag entity
@@ -31,7 +38,7 @@ export class VenueTagEntityService {
     return this.venueTagEntityRepository.save(venueTags);
   }
 
-  findByVenueId(venueId: string): Promise<VenueTagEntity[]> {
+  async findByVenueId(venueId: string): Promise<VenueTagEntity[]> {
     return this.venueTagEntityRepository
       .createQueryBuilder("venueTag")
       .innerJoinAndSelect("venueTag.venue", "venue")

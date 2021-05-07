@@ -1,37 +1,25 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, UpdateResult } from "typeorm";
-import { CreatePlayerDto } from "./dto/create-player.dto";
 import { PlayerEntity } from "./player.entity";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class PlayerEntityService {
-  private readonly logger = new Logger(PlayerEntityService.name);
-
+export class PlayerEntityService extends GenericEntityService<PlayerEntity> {
   constructor(
     @InjectRepository(PlayerEntity)
-    private readonly playersRepository: Repository<PlayerEntity>
-  ) {}
-
-  async findAll(): Promise<PlayerEntity[]> {
-    return this.playersRepository.find();
-  }
-
-  async getById(id: string): Promise<PlayerEntity> {
-    return await this.playersRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "PlayerEntity",
-          id,
-          this.logger
-        )
-      );
+    private readonly playerEntityRepository: Repository<PlayerEntity>
+  ) {
+    super(
+      playerEntityRepository,
+      new Logger(PlayerEntityService.name),
+      PlayerEntity.name
+    );
   }
 
   async getByEmail(email: string): Promise<PlayerEntity> {
-    return await this.playersRepository
+    return await this.playerEntityRepository
       .findOneOrFail({ email })
       .catch((error: Error) => {
         throw HttpExceptionsUtil.createHttpException(
@@ -43,12 +31,8 @@ export class PlayerEntityService {
       });
   }
 
-  async create(createPlayerDto: CreatePlayerDto): Promise<PlayerEntity> {
-    return await this.playersRepository.save(createPlayerDto);
-  }
-
   async updateProfilePic(playerId: string, imageId: string): Promise<boolean> {
-    return await this.playersRepository
+    return await this.playerEntityRepository
       .update({ id: playerId }, { profilePic: imageId })
       .then((updateResult: UpdateResult) => {
         return updateResult.affected == 1;

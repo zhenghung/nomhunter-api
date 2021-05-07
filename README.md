@@ -68,7 +68,7 @@ $ docker volume rm nomhunter-api_postgres
     domain: admin@nomhunter.com
     password: nomnom
     ```
-4. Select `Servers` in the side bar and go to `Object > Create > Server...`
+4. Select `Servers` in the sidebar and go to `Object > Create > Server...`
 5. Fill in the details for the postgres db following the *docker-compose.yml* file.
-   * Use the IP Address obtained earlier for the host.
+    * Use the IP Address obtained earlier for the host.
 

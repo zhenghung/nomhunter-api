@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { FileEntity } from "../file/file.entity";
+import { MissionEntity } from "../mission/mission.entity";
 
 @Entity("gear")
 export class GearEntity {
@@ -36,4 +38,7 @@ export class GearEntity {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => MissionEntity, (mission) => mission.rewardGear)
+  missions: MissionEntity[];
 }

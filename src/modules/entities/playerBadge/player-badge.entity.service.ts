@@ -2,25 +2,21 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PlayerBadgeEntity } from "./player-badge.entity";
-import { CreatePlayerBadgeDto } from "./dto/create-player-badge.dto";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class PlayerBadgeEntityService {
-  private readonly logger = new Logger(PlayerBadgeEntityService.name);
-
+export class PlayerBadgeEntityService extends GenericEntityService<
+  PlayerBadgeEntity
+> {
   constructor(
     @InjectRepository(PlayerBadgeEntity)
     private readonly playerBadgeEntityRepository: Repository<PlayerBadgeEntity>
-  ) {}
-
-  /**
-   * Create player badge entity
-   * @param createPlayerBadgesDto
-   */
-  create(
-    createPlayerBadgesDto: CreatePlayerBadgeDto
-  ): Promise<PlayerBadgeEntity> {
-    return this.playerBadgeEntityRepository.save(createPlayerBadgesDto);
+  ) {
+    super(
+      playerBadgeEntityRepository,
+      new Logger(PlayerBadgeEntityService.name),
+      PlayerBadgeEntity.name
+    );
   }
 
   /**

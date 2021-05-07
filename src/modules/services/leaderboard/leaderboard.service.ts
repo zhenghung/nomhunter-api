@@ -4,7 +4,7 @@ import { RedisService } from "../../clients/redis/redis.service";
 import { GameEntity } from "../../entities/game/game.entity";
 import { ZoneEntityService } from "../../entities/zone/zone.entity.service";
 import { RankInterface } from "./interface/rank.interface";
-import { LeaderboardType } from "../../common/constants/leaderboard.type";
+import { LeaderboardType } from "./leaderboard.type";
 import { VenueEntityService } from "../../entities/venue/venue.entity.service";
 
 @Injectable()
@@ -29,9 +29,8 @@ export class LeaderboardService {
     await this.validateId(type, id);
 
     // Fetch Leaderboard from Redis Cache if exists
-    let result: string[];
     this.logger.log(`Try fetching ${type} leaderboard from cache`);
-    result = await this.redisService.zRevRangeWithScores(id);
+    let result = await this.redisService.zRevRangeWithScores(id);
     if (result.length == 0) {
       switch (type) {
         case LeaderboardType.VENUE:
@@ -47,8 +46,8 @@ export class LeaderboardService {
           await this.refreshSeasonLeaderboard(id);
           break;
       }
+      result = await this.redisService.zRevRangeWithScores(id);
     }
-    result = await this.redisService.zRevRangeWithScores(id);
     const array: RankInterface[] = [];
     for (let i = 0; i < result.length; i += 2) {
       array.push({

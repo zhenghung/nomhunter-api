@@ -5,7 +5,6 @@ import { VenueEntityModule } from "../../entities/venue/venue.entity.module";
 import { PlayerBadgeEntityModule } from "../../entities/playerBadge/player-badge.entity.module";
 import { GameService } from "./game.service";
 import { GameController } from "./game.controller";
-import { LeaderboardModule } from "../leaderboard/leaderboard.module";
 
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { LeaderboardModule } from "../leaderboard/leaderboard.module";
     VenueEntityModule,
     PlayerBadgeEntityModule,
     PlayerEntityModule,
-    LeaderboardModule,
   ],
   providers: [GameService],
   controllers: [GameController],
