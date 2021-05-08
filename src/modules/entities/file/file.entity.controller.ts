@@ -36,6 +36,12 @@ export class FileEntityController {
     return this.fileEntityService.getById(id);
   }
 
+  @Get()
+  findAll(): Promise<FileEntity[]> {
+    this.logger.log("Fetching all files");
+    return this.fileEntityService.findAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string): Promise<void> {
     this.logger.log(`Deleting file with id ${id}`);

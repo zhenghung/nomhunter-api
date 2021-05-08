@@ -1,13 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { FileType } from "../file.type";
 
-export class CreateFileDto {
+export class CreateGearReq {
   @ApiProperty()
-  type: FileType;
+  fileId: string;
 
   @ApiProperty()
   name: string;
 
   @ApiProperty()
-  url: string;
+  description: string;
 }

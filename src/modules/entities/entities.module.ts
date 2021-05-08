@@ -9,6 +9,7 @@ import { BadgeEntityModule } from "./badge/badge.entity.module";
 import { PlayerBadgeEntityModule } from "./playerBadge/player-badge.entity.module";
 import { TagEntityModule } from "./tag/tag.entity.module";
 import { VenueTagEntityModule } from "./venueTag/venue-tag.entity.module";
+import { GearEntityModule } from "./gear/gear.entity.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { VenueTagEntityModule } from "./venueTag/venue-tag.entity.module";
     SeasonEntityModule,
     TagEntityModule,
     VenueTagEntityModule,
+    GearEntityModule,
   ],
 })
 export class EntitiesModule {}
