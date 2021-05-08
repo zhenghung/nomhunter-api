@@ -1,18 +1,18 @@
 import { PlayerMissionEntityService } from "../../../entities/playerMission/player-mission.entity.service";
 import { OnEvent } from "@nestjs/event-emitter";
 import { Injectable, Logger } from "@nestjs/common";
-import { MissionProgressEvent } from "../../../common/events/mission-progress.event";
+import { MissionCompletedEvent } from "../../../common/events/mission-completed.event";
 
 @Injectable()
-export class MissionProgressListener {
-  private readonly logger = new Logger(MissionProgressListener.name);
+export class MissionCompletedListener {
+  private readonly logger = new Logger(MissionCompletedListener.name);
   constructor(
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
 
-  @OnEvent("mission.progress", { async: true })
-  async handleMissionProgressEvent(event: MissionProgressEvent) {
-    // handle and process "MissionProgressEvent" event
+  @OnEvent("mission.completed", { async: true })
+  async handleMissionCompletedEvent(event: MissionCompletedEvent) {
+    // handle and process "MissionCompletedEvent" event
     const playerMission = event.playerMission;
     const mission = event.mission;
     // Set to complete if complete

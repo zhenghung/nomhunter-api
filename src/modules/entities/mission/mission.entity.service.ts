@@ -18,7 +18,23 @@ export class MissionEntityService extends GenericEntityService<MissionEntity> {
     );
   }
 
+  async getByIdJoinAll(id: string): Promise<MissionEntity | undefined> {
+    return this.missionEntityRepository
+      .createQueryBuilder("mission")
+      .leftJoinAndSelect("mission.requiredMission", "requiredMission")
+      .leftJoinAndSelect("mission.tag", "tag")
+      .leftJoinAndSelect("mission.rewardGear", "rewardGear")
+      .where("mission.id = :id", { id: id })
+      .getOne();
+  }
+
   async findByTag(tagEntity: TagEntity): Promise<MissionEntity[]> {
-    return this.missionEntityRepository.find({ tag: tagEntity });
+    return this.missionEntityRepository
+      .createQueryBuilder("mission")
+      .leftJoinAndSelect("mission.requiredMission", "requiredMission")
+      .leftJoinAndSelect("mission.tag", "tag")
+      .leftJoinAndSelect("mission.rewardGear", "rewardGear")
+      .where("mission.tag.id = :id", { id: tagEntity.id })
+      .getMany();
   }
 }

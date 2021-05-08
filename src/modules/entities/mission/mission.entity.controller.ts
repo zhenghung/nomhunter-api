@@ -22,7 +22,6 @@ export class MissionEntityController {
   async create(
     @Body() createMissionReq: CreateMissionReq
   ): Promise<MissionEntity> {
-    // Find Gear with Id
     const rewardGearEntity = await this.gearEntityService.getByIdNullable(
       createMissionReq.rewardGearId
     );

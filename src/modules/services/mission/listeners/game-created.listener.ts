@@ -5,6 +5,7 @@ import { PlayerMissionEntityService } from "../../../entities/playerMission/play
 import { MissionEntityService } from "../../../entities/mission/mission.entity.service";
 import { MissionService } from "../mission.service";
 import { VenueTagEntityService } from "../../../entities/venueTag/venue-tag.entity.service";
+import { GameEntity } from "../../../entities/game/game.entity";
 
 @Injectable()
 export class GameCreatedListener {
@@ -19,6 +20,10 @@ export class GameCreatedListener {
   async handleGameCreatedEvent(event: GameCreatedEvent) {
     // handle and process "GameCreatedEvent" event
     const game = event.game;
+    await this.progressTagCountMissions(game);
+  }
+
+  private async progressTagCountMissions(game: GameEntity): Promise<void> {
     const venueTags = await this.venueTagsEntityService.findByVenueId(
       game.venue.id
     );
@@ -27,10 +32,16 @@ export class GameCreatedListener {
         venueTag.tag
       );
       for (const missionWithTag of missionsWithTag) {
-        await this.missionService.incrementProgress(
-          game.player.id,
-          missionWithTag.id
+        const missionDoable = await this.missionService.checkIfMissionRequirementFulfilled(
+          game.player,
+          missionWithTag
         );
+        if (missionDoable) {
+          await this.missionService.incrementProgress(
+            game.player.id,
+            missionWithTag.id
+          );
+        }
       }
     }
   }

@@ -26,8 +26,8 @@ export abstract class GenericEntityService<T> {
   }
 
   async getByIdNullable(id: string): Promise<T | undefined> {
-    if (id == null) {
-      return null;
+    if (!id) {
+      return undefined;
     }
     return this.repository.findOne(id);
   }

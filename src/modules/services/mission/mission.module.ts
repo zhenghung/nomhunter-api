@@ -9,7 +9,7 @@ import { TagEntityModule } from "../../entities/tag/tag.entity.module";
 import { VenueEntityModule } from "../../entities/venue/venue.entity.module";
 import { VenueTagEntityModule } from "../../entities/venueTag/venue-tag.entity.module";
 import { PlayerEntityModule } from "../../entities/player/player.entity.module";
-import { MissionProgressListener } from "./listeners/mission-progress.listener";
+import { MissionCompletedListener } from "./listeners/mission-completed.listener";
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { MissionProgressListener } from "./listeners/mission-progress.listener";
     VenueTagEntityModule,
     GearEntityModule,
   ],
-  providers: [MissionService, GameCreatedListener, MissionProgressListener],
+  providers: [MissionService, GameCreatedListener, MissionCompletedListener],
   controllers: [MissionController],
   exports: [],
 })

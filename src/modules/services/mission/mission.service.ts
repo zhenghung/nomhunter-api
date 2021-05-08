@@ -24,6 +24,25 @@ export class MissionService {
     return this.playerMissionEntityService.findByPlayer(player);
   }
 
+  async checkIfMissionRequirementFulfilled(
+    player: PlayerEntity,
+    mission: MissionEntity
+  ): Promise<boolean> {
+    // If mission has a requirement
+    if (mission.requiredMission) {
+      // Check if player completed requirement
+      const requiredPlayerMission = await this.playerMissionEntityService.findByPlayerAndMission(
+        player,
+        mission.requiredMission
+      );
+      // If required mission doesn't exist or if not completed, no progress
+      if (!requiredPlayerMission || !requiredPlayerMission.completed) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Increments progress of the specified mission by updating the progress field or creating a new entity if not exists
    * @param playerId
@@ -34,7 +53,7 @@ export class MissionService {
     missionId: string
   ): Promise<PlayerMissionEntity> {
     const player = await this.playerEntityService.getById(playerId);
-    const mission = await this.missionEntityService.getById(missionId);
+    const mission = await this.missionEntityService.getByIdJoinAll(missionId);
 
     const playerMission = await this.playerMissionEntityService.findByPlayerAndMission(
       player,
@@ -68,7 +87,7 @@ export class MissionService {
     const createdPlayerMission = await this.playerMissionEntityService.create(
       createPlayerMissionDto
     );
-    this.emitMissionProgressEvent(mission, createdPlayerMission);
+    this.emitMissionCompletedEventIfCompleted(mission, createdPlayerMission);
     return createdPlayerMission;
   }
 
@@ -83,17 +102,19 @@ export class MissionService {
         currentProgress: playerMission.currentProgress + 1,
       }
     );
-    this.emitMissionProgressEvent(mission, updatedPlayerMission);
+    this.emitMissionCompletedEventIfCompleted(mission, updatedPlayerMission);
     return updatedPlayerMission;
   }
 
-  private emitMissionProgressEvent(
+  private emitMissionCompletedEventIfCompleted(
     mission: MissionEntity,
     playerMission: PlayerMissionEntity
   ): void {
-    this.eventEmitter.emit("mission.progress", {
-      mission,
-      playerMission,
-    });
+    if (playerMission.currentProgress == mission.maxProgress) {
+      this.eventEmitter.emit("mission.completed", {
+        mission,
+        playerMission,
+      });
+    }
   }
 }
