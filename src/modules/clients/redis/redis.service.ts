@@ -43,7 +43,7 @@ export class RedisService {
    * @param score number
    */
   async zAdd(set: any, key: string, score: number): Promise<number> {
-    this.logger.log(`Adding element ${key}:${score} to sorted set ${set}`);
+    this.logger.debug(`Adding element ${key}:${score} to sorted set ${set}`);
     return this.zAddAsync(set, score, key);
   }
 
@@ -52,7 +52,7 @@ export class RedisService {
    * @param set name
    */
   async zRevRangeWithScores(set: string): Promise<string[]> {
-    this.logger.log(`Get all elements in sorted set ${set}`);
+    this.logger.debug(`Get all elements in sorted set ${set}`);
     return this.zRevRangeAsync(set, 0, -1, "withscores");
   }
 
@@ -62,7 +62,7 @@ export class RedisService {
    * @param key
    */
   async zScore(set: string, key: string): Promise<number> {
-    this.logger.log(`Get member ${key} score from sorted set ${set}`);
+    this.logger.debug(`Get member ${key} score from sorted set ${set}`);
     return this.zScoreAsync(set, key);
   }
 
@@ -71,7 +71,7 @@ export class RedisService {
    * @param key
    */
   async delete(key: string): Promise<number> {
-    this.logger.log(`Deleting value and key of ${key}`);
+    this.logger.debug(`Deleting value and key of ${key}`);
     return this.delAsync(key);
   }
 
@@ -80,7 +80,7 @@ export class RedisService {
    * @param key
    */
   async get(key: string): Promise<string> {
-    this.logger.log(`Get value of key ${key}`);
+    this.logger.debug(`Get value of key ${key}`);
     return this.getAsync(key);
   }
 
@@ -91,7 +91,7 @@ export class RedisService {
    * @param expire seconds to expiry, <0 for no expiry
    */
   async set(key: string, value: string, expire?: number): Promise<void> {
-    this.logger.log(
+    this.logger.debug(
       `Set key ${key} with value ${value} and expire ${expire} seconds`
     );
     await this.setAsync(key, value);

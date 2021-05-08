@@ -5,7 +5,6 @@ import { PlayerMissionEntityService } from "../../../entities/playerMission/play
 import { MissionEntityService } from "../../../entities/mission/mission.entity.service";
 import { MissionService } from "../mission.service";
 import { VenueTagEntityService } from "../../../entities/venueTag/venue-tag.entity.service";
-import { PlayerMissionEntity } from "../../../entities/playerMission/player-mission.entity";
 
 @Injectable()
 export class GameCreatedListener {
@@ -23,21 +22,16 @@ export class GameCreatedListener {
     const venueTags = await this.venueTagsEntityService.findByVenueId(
       game.venue.id
     );
-
-    const incrementAllMissions: Promise<PlayerMissionEntity>[] = [];
     for (const venueTag of venueTags) {
       const missionsWithTag = await this.missionEntityService.findByTag(
         venueTag.tag
       );
-      incrementAllMissions.concat(
-        missionsWithTag.map((missionWithTag) => {
-          return this.missionService.incrementProgress(
-            game.player.id,
-            missionWithTag.id
-          );
-        })
-      );
+      for (const missionWithTag of missionsWithTag) {
+        await this.missionService.incrementProgress(
+          game.player.id,
+          missionWithTag.id
+        );
+      }
     }
-    await Promise.all(incrementAllMissions);
   }
 }

@@ -7,11 +7,13 @@ import {
   Logger,
   Param,
   Post,
+  Query,
 } from "@nestjs/common";
 import { TagEntityService } from "./tag.entity.service";
 import { TagEntity } from "./tag.entity";
 import { CreateTagReq } from "./dto/create-tag.req";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 
 @ApiTags("TagEntity")
 @Controller("entities/tag")
@@ -33,10 +35,18 @@ export class TagEntityController {
     });
   }
 
-  @ApiOperation({ summary: "Fetch all Tags" })
-  @ApiOkResponse({ description: "Tags retrieved successfully" })
+  @ApiImplicitQuery({
+    name: "name",
+    required: false,
+    type: String,
+  })
+  @ApiOperation({ summary: "Fetch all Tags or one Tag by name" })
+  @ApiOkResponse({ description: "Tag(s) retrieved successfully" })
   @Get()
-  findAll(): Promise<TagEntity[]> {
+  findAll(@Query("name") name?: string): Promise<TagEntity | TagEntity[]> {
+    if (name) {
+      return this.tagEntityService.getByTagName(name);
+    }
     return this.tagEntityService.findAll();
   }
 

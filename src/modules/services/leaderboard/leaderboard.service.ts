@@ -29,7 +29,7 @@ export class LeaderboardService {
     await this.validateId(type, id);
 
     // Fetch Leaderboard from Redis Cache if exists
-    this.logger.log(`Try fetching ${type} leaderboard from cache`);
+    this.logger.debug(`Try fetching ${type} leaderboard from cache`);
     let result = await this.redisService.zRevRangeWithScores(id);
     if (result.length == 0) {
       switch (type) {
@@ -153,9 +153,10 @@ export class LeaderboardService {
       case LeaderboardType.ZONE:
         await this.zoneEntityService.getById(id);
         break;
-      default:
-        // TODO: ADD season key
+      case LeaderboardType.SEASON:
         break;
+      default:
+        throw new Error(`Invalid Type: ${type}`);
     }
   }
 }

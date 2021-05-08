@@ -2,8 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { PlayerMissionEntity } from "./player-mission.entity";
-import { MissionEntityService } from "../mission/mission.entity.service";
-import { PlayerEntityService } from "../player/player.entity.service";
 import { GenericEntityService } from "../generic.entity.service";
 import { PlayerEntity } from "../player/player.entity";
 import { MissionEntity } from "../mission/mission.entity";
@@ -16,9 +14,7 @@ export class PlayerMissionEntityService extends GenericEntityService<
     @InjectRepository(PlayerMissionEntity)
     private readonly playerMissionEntityRepository: Repository<
       PlayerMissionEntity
-    >,
-    private readonly playerEntityService: PlayerEntityService,
-    private readonly missionEntityService: MissionEntityService
+    >
   ) {
     super(
       playerMissionEntityRepository,
@@ -42,7 +38,7 @@ export class PlayerMissionEntityService extends GenericEntityService<
       .innerJoinAndSelect("playerMission.player", "player")
       .innerJoinAndSelect("playerMission.mission", "mission")
       .where("playerMission.player = :playerId", { playerId: player.id })
-      .where("playerMission.mission = :missionId", { missionId: mission.id })
+      .andWhere("playerMission.mission = :missionId", { missionId: mission.id })
       .getOne();
   }
 

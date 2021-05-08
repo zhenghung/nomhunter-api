@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
@@ -12,6 +13,7 @@ import { PlayerEntity } from "../player/player.entity";
 import { MissionEntity } from "../mission/mission.entity";
 
 @Entity("player_mission")
+@Unique(["player", "mission"])
 export class PlayerMissionEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
