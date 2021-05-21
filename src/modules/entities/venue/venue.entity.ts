@@ -50,7 +50,7 @@ export class VenueEntity {
   description: string;
 
   @ApiProperty({ name: "badge_id" })
-  @ManyToOne(() => BadgeEntity, (badgeEntity) => badgeEntity.venue)
+  @ManyToOne(() => BadgeEntity, (badgeEntity) => badgeEntity.venues)
   @JoinColumn({ name: "badge_id" })
   badge: BadgeEntity;
 

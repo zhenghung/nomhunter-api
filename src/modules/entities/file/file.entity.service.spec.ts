@@ -30,7 +30,7 @@ describe("FileEntityService", () => {
           provide: getRepositoryToken(FileEntity),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue(testFile),
-            save: jest.fn().mockReturnValue(testFile),
+            save: jest.fn().mockResolvedValue(testFile),
             delete: jest.fn(),
           },
         },
@@ -72,13 +72,13 @@ describe("FileEntityService", () => {
   });
 
   describe("create", () => {
-    it("should successfully create a player", () => {
+    it("should successfully create a file", () => {
       const repoSpy = jest.spyOn(repo, "save");
       const testResult = expect(
         service.create(testCreateFile)
       ).resolves.toEqual(testFile);
       expect(repoSpy).toBeCalledTimes(1);
-      expect(repoSpy).toBeCalledWith(testFile);
+      expect(repoSpy).toBeCalledWith(testCreateFile);
       return testResult;
     });
   });

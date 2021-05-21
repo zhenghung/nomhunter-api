@@ -10,6 +10,8 @@ import { PlayerBadgeEntityModule } from "./playerBadge/player-badge.entity.modul
 import { TagEntityModule } from "./tag/tag.entity.module";
 import { VenueTagEntityModule } from "./venueTag/venue-tag.entity.module";
 import { GearEntityModule } from "./gear/gear.entity.module";
+import { MissionEntityModule } from "./mission/mission.entity.module";
+import { PlayerMissionEntityModule } from "./playerMission/player-mission.entity.module";
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { GearEntityModule } from "./gear/gear.entity.module";
     TagEntityModule,
     VenueTagEntityModule,
     GearEntityModule,
+    MissionEntityModule,
+    PlayerMissionEntityModule,
   ],
 })
 export class EntitiesModule {}

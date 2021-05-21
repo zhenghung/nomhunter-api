@@ -3,35 +3,24 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, Repository } from "typeorm";
 import { FileEntity } from "./file.entity";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 import { CreateFileDto } from "./dto/create-file.dto";
 
 @Injectable()
-export class FileEntityService {
-  private readonly logger = new Logger(FileEntityService.name);
-
+export class FileEntityService extends GenericEntityService<FileEntity> {
   constructor(
     @InjectRepository(FileEntity)
-    private readonly filesRepository: Repository<FileEntity>
-  ) {}
-
-  async getById(id: string): Promise<FileEntity> {
-    return await this.filesRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "FileEntity",
-          id,
-          this.logger
-        )
-      );
-  }
-
-  async findAll(): Promise<FileEntity[]> {
-    return this.filesRepository.find();
+    private readonly fileEntityRepository: Repository<FileEntity>
+  ) {
+    super(
+      fileEntityRepository,
+      new Logger(FileEntityService.name),
+      FileEntity.name
+    );
   }
 
   async create(createFileDto: CreateFileDto): Promise<FileEntity> {
-    return this.filesRepository.save(createFileDto).catch((error) => {
+    return this.fileEntityRepository.save(createFileDto).catch((error) => {
       throw HttpExceptionsUtil.createHttpException(
         error.message,
         HttpStatus.BAD_REQUEST,
@@ -42,7 +31,7 @@ export class FileEntityService {
   }
 
   async remove(id: string): Promise<boolean> {
-    return await this.filesRepository
+    return this.fileEntityRepository
       .delete(id)
       .catch((error) => {
         throw HttpExceptionsUtil.createHttpException(

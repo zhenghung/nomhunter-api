@@ -2,39 +2,26 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { GearEntity } from "./gear.entity";
-import { CreateGearDto } from "./dto/create-gear.dto";
-import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class GearEntityService {
-  private readonly logger = new Logger(GearEntityService.name);
-
+export class GearEntityService extends GenericEntityService<GearEntity> {
   constructor(
     @InjectRepository(GearEntity)
     private readonly gearEntityRepository: Repository<GearEntity>
-  ) {}
-
-  create(createGearDto: CreateGearDto): Promise<GearEntity> {
-    return this.gearEntityRepository.save(createGearDto);
-  }
-
-  getById(id: string): Promise<GearEntity> {
-    return this.gearEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "GearEntity",
-          id,
-          this.logger
-        )
-      );
+  ) {
+    super(
+      gearEntityRepository,
+      new Logger(GearEntityService.name),
+      GearEntity.name
+    );
   }
 
   /**
    * Find all GearEntities
    * @param withFile inner join with file entity
    */
-  findAll(withFile?: boolean): Promise<GearEntity[]> {
+  async findAll(withFile?: boolean): Promise<GearEntity[]> {
     if (withFile) {
       return this.gearEntityRepository
         .createQueryBuilder("gear")

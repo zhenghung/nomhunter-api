@@ -4,16 +4,20 @@ import { Repository } from "typeorm";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { FindConditions } from "typeorm/find-options/FindConditions";
 import { ZoneEntity } from "./zone.entity";
-import { CreateZoneDto } from "./dto/create-zone.dto";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class ZoneEntityService {
-  private readonly logger = new Logger(ZoneEntityService.name);
-
+export class ZoneEntityService extends GenericEntityService<ZoneEntity> {
   constructor(
     @InjectRepository(ZoneEntity)
     private readonly zoneEntityRepository: Repository<ZoneEntity>
-  ) {}
+  ) {
+    super(
+      zoneEntityRepository,
+      new Logger(ZoneEntityService.name),
+      ZoneEntity.name
+    );
+  }
 
   async findAll(
     conditions?: FindConditions<ZoneEntity>
@@ -22,18 +26,6 @@ export class ZoneEntityService {
       return this.zoneEntityRepository.find(conditions);
     }
     return this.zoneEntityRepository.find();
-  }
-
-  async getById(id: string): Promise<ZoneEntity> {
-    return await this.zoneEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "ZoneEntity",
-          id,
-          this.logger
-        )
-      );
   }
 
   async getByIdJoinVenues(id: string): Promise<ZoneEntity> {
@@ -49,9 +41,5 @@ export class ZoneEntityService {
           this.logger
         )
       );
-  }
-
-  async create(createZoneDto: CreateZoneDto): Promise<ZoneEntity> {
-    return await this.zoneEntityRepository.save(createZoneDto);
   }
 }

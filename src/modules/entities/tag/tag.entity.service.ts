@@ -3,26 +3,19 @@ import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { TagEntity } from "./tag.entity";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class TagEntityService {
-  private readonly logger = new Logger(TagEntityService.name);
-
+export class TagEntityService extends GenericEntityService<TagEntity> {
   constructor(
     @InjectRepository(TagEntity)
     private readonly tagEntityRepository: Repository<TagEntity>
-  ) {}
-
-  getById(id: string): Promise<TagEntity> {
-    return this.tagEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "TagEntity",
-          id,
-          this.logger
-        )
-      );
+  ) {
+    super(
+      tagEntityRepository,
+      new Logger(TagEntityService.name),
+      TagEntity.name
+    );
   }
 
   async getByTagName(tagName: string): Promise<TagEntity> {
@@ -36,9 +29,5 @@ export class TagEntityService {
           error
         );
       });
-  }
-
-  findAll(): Promise<TagEntity[]> {
-    return this.tagEntityRepository.find();
   }
 }

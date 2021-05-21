@@ -5,18 +5,19 @@ import { VenueEntityService } from "../../entities/venue/venue.entity.service";
 import { CreateGameReq } from "./req/create-game.req";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
 import { GameEntity } from "../../entities/game/game.entity";
-import { LeaderboardService } from "../leaderboard/leaderboard.service";
+import { GameCreatedEvent } from "../../common/events/game-created.event";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class GameService {
   private logger: Logger = new Logger(GameService.name);
 
   constructor(
+    private readonly eventEmitter: EventEmitter2,
     private readonly gameEntityService: GameEntityService,
     private readonly playerEntityService: PlayerEntityService,
     private readonly playerBadgeEntityService: PlayerBadgeEntityService,
-    private readonly venueEntityService: VenueEntityService,
-    private readonly leaderboardService: LeaderboardService
+    private readonly venueEntityService: VenueEntityService
   ) {}
 
   async create(
@@ -36,11 +37,8 @@ export class GameService {
       score: createGameReq.score,
     });
 
-    // Refresh Venue, Zone and Season Leaderboard
-    await this.leaderboardService.refreshVenueLeaderboard(venueEntity.id);
-    await this.leaderboardService.refreshZoneLeaderboard(venueEntity.zone.id);
-    // TODO: season id
-    await this.leaderboardService.refreshSeasonLeaderboard("SEASON");
+    const gameCreatedEvent: GameCreatedEvent = { game: gameEntity };
+    this.eventEmitter.emit("game.created", gameCreatedEvent);
 
     // Award badge on condition
     if (createGameReq.score >= 40) {

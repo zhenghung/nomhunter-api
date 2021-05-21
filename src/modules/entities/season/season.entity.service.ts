@@ -4,15 +4,20 @@ import { Repository } from "typeorm";
 import { SeasonEntity } from "./season.entity";
 import { DateUtil } from "../../common/util/date.util";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class SeasonEntityService {
-  private readonly logger = new Logger(SeasonEntityService.name);
-
+export class SeasonEntityService extends GenericEntityService<SeasonEntity> {
   constructor(
     @InjectRepository(SeasonEntity)
     private readonly seasonEntityRepository: Repository<SeasonEntity>
-  ) {}
+  ) {
+    super(
+      seasonEntityRepository,
+      new Logger(SeasonEntityService.name),
+      SeasonEntity.name
+    );
+  }
 
   async createSeason(startDate?: Date): Promise<SeasonEntity> {
     this.logger.log("Creating Season Entity");

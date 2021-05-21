@@ -3,29 +3,19 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateGameDto } from "./dto/create-game.dto";
 import { GameEntity } from "./game.entity";
-import { RedisService } from "../../clients/redis/redis.service";
-import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class GameEntityService {
-  private readonly logger = new Logger(GameEntityService.name);
-
+export class GameEntityService extends GenericEntityService<GameEntity> {
   constructor(
     @InjectRepository(GameEntity)
-    private readonly gameEntityRepository: Repository<GameEntity>,
-    private readonly redisService: RedisService
-  ) {}
-
-  getById(id: string): Promise<GameEntity> {
-    return this.gameEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "GameEntity",
-          id,
-          this.logger
-        )
-      );
+    private readonly gameEntityRepository: Repository<GameEntity>
+  ) {
+    super(
+      gameEntityRepository,
+      new Logger(GameEntityService.name),
+      GameEntity.name
+    );
   }
 
   async findAll(conditions?: string): Promise<GameEntity[]> {
@@ -76,25 +66,6 @@ export class GameEntityService {
    */
   async create(createGameDto: CreateGameDto): Promise<GameEntity> {
     this.logger.log("Creating Game: " + createGameDto);
-    const game = await this.gameEntityRepository.save(createGameDto);
-    // Check and Update Leaderboard
-    await this.updateLeaderboardCache(createGameDto);
-    return game;
-  }
-
-  private async updateLeaderboardCache(
-    createGameDto: CreateGameDto
-  ): Promise<void> {
-    const currentHighScore = await this.redisService.zScore(
-      createGameDto.venue.id,
-      createGameDto.player.id
-    );
-    if (!(currentHighScore && currentHighScore >= createGameDto.score)) {
-      await this.redisService.zAdd(
-        createGameDto.venue.id,
-        createGameDto.player.id,
-        createGameDto.score
-      );
-    }
+    return await this.gameEntityRepository.save(createGameDto);
   }
 }

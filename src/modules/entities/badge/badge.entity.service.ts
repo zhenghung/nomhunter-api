@@ -2,32 +2,19 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BadgeEntity } from "./badge.entity";
-import { CreateBadgeDto } from "./dto/create-badge.dto";
-import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class BadgeEntityService {
-  private readonly logger = new Logger(BadgeEntityService.name);
-
+export class BadgeEntityService extends GenericEntityService<BadgeEntity> {
   constructor(
     @InjectRepository(BadgeEntity)
     private readonly badgeEntityRepository: Repository<BadgeEntity>
-  ) {}
-
-  create(createBadgeDto: CreateBadgeDto): Promise<BadgeEntity> {
-    return this.badgeEntityRepository.save(createBadgeDto);
-  }
-
-  getById(id: string): Promise<BadgeEntity> {
-    return this.badgeEntityRepository
-      .findOneOrFail(id)
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "BadgeEntity",
-          id,
-          this.logger
-        )
-      );
+  ) {
+    super(
+      badgeEntityRepository,
+      new Logger(BadgeEntityService.name),
+      BadgeEntity.name
+    );
   }
 
   /**

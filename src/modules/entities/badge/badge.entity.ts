@@ -49,5 +49,5 @@ export class BadgeEntity {
   playerBadges: PlayerBadgeEntity[];
 
   @OneToMany(() => VenueEntity, (venueEntity) => venueEntity.badge)
-  venue: VenueEntity[];
+  venues: VenueEntity[];
 }

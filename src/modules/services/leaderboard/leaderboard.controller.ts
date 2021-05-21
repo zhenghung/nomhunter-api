@@ -17,7 +17,7 @@ import {
 } from "@nestjs/swagger";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
-import { LeaderboardType } from "../../common/constants/leaderboard.type";
+import { LeaderboardType } from "./leaderboard.type";
 import { RankInterface } from "./interface/rank.interface";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
