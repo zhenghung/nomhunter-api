@@ -10,10 +10,12 @@ import { VenueEntityModule } from "../../entities/venue/venue.entity.module";
 import { VenueTagEntityModule } from "../../entities/venueTag/venue-tag.entity.module";
 import { PlayerEntityModule } from "../../entities/player/player.entity.module";
 import { MissionCompletedListener } from "./listeners/mission-completed.listener";
+import { MissionGroupEntityModule } from "../../entities/missionGroup/mission-group.entity.module";
 
 @Module({
   imports: [
     PlayerEntityModule,
+    MissionGroupEntityModule,
     MissionEntityModule,
     PlayerMissionEntityModule,
     VenueEntityModule,

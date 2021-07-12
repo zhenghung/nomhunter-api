@@ -42,6 +42,28 @@ export class PlayerMissionEntityService extends GenericEntityService<
       .getOne();
   }
 
+  /**
+   * Find PlayerMission of associated mission with it's mission group and level
+   * @param playerId
+   * @param missionGroupId
+   * @param level
+   */
+  async findByPlayerAndMissionGroupAndLevel(
+    playerId: string,
+    missionGroupId: string,
+    level: number
+  ): Promise<PlayerMissionEntity | undefined> {
+    return this.playerMissionEntityRepository
+      .createQueryBuilder("playerMission")
+      .innerJoinAndSelect("playerMission.mission", "mission")
+      .where("playerMission.player = :playerId", { playerId: playerId })
+      .andWhere("mission.level = :level", { level: level })
+      .andWhere("mission.missionGroup = :missionGroupId", {
+        missionGroupId: missionGroupId,
+      })
+      .getOne();
+  }
+
   async findByPlayer(player: PlayerEntity): Promise<PlayerMissionEntity[]> {
     return this.queryJoin()
       .where("playerMission.player = :playerId", { playerId: player.id })
@@ -51,7 +73,6 @@ export class PlayerMissionEntityService extends GenericEntityService<
   private queryJoin(): SelectQueryBuilder<PlayerMissionEntity> {
     return this.playerMissionEntityRepository
       .createQueryBuilder("playerMission")
-      .innerJoinAndSelect("playerMission.player", "player")
       .innerJoinAndSelect("playerMission.mission", "mission");
   }
 }

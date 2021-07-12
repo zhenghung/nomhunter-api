@@ -42,10 +42,6 @@ export class PlayerMissionEntity {
 
   @ApiProperty()
   @Column({ default: false })
-  bookmarked: boolean;
-
-  @ApiProperty()
-  @Column({ default: false })
   claimed: boolean;
 
   @ApiProperty()

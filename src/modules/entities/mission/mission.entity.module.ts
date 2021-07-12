@@ -4,13 +4,13 @@ import { MissionEntity } from "./mission.entity";
 import { MissionEntityService } from "./mission.entity.service";
 import { GearEntityModule } from "../gear/gear.entity.module";
 import { MissionEntityController } from "./mission.entity.controller";
-import { TagEntityModule } from "../tag/tag.entity.module";
+import { MissionGroupEntityModule } from "../missionGroup/mission-group.entity.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([MissionEntity]),
     GearEntityModule,
-    TagEntityModule,
+    MissionGroupEntityModule,
   ],
   providers: [MissionEntityService],
   controllers: [MissionEntityController],

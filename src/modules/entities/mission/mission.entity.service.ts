@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { MissionEntity } from "./mission.entity";
 import { GenericEntityService } from "../generic.entity.service";
 import { TagEntity } from "../tag/tag.entity";
+import { CriteriaType } from "./criteria.type";
 
 @Injectable()
 export class MissionEntityService extends GenericEntityService<MissionEntity> {
@@ -21,20 +22,31 @@ export class MissionEntityService extends GenericEntityService<MissionEntity> {
   async getByIdJoinAll(id: string): Promise<MissionEntity | undefined> {
     return this.missionEntityRepository
       .createQueryBuilder("mission")
-      .leftJoinAndSelect("mission.requiredMission", "requiredMission")
-      .leftJoinAndSelect("mission.tag", "tag")
       .leftJoinAndSelect("mission.rewardGear", "rewardGear")
       .where("mission.id = :id", { id: id })
       .getOne();
   }
 
-  async findByTag(tagEntity: TagEntity): Promise<MissionEntity[]> {
+  async findByTag(tagId: string): Promise<MissionEntity[]> {
     return this.missionEntityRepository
       .createQueryBuilder("mission")
-      .leftJoinAndSelect("mission.requiredMission", "requiredMission")
-      .leftJoinAndSelect("mission.tag", "tag")
+      .leftJoinAndSelect("mission.missionGroup", "missionGroup")
       .leftJoinAndSelect("mission.rewardGear", "rewardGear")
-      .where("mission.tag.id = :id", { id: tagEntity.id })
+      .where("mission.criteriaRefId = :id", { id: tagId })
+      .andWhere("mission.criteriaType = :criteriaType", {
+        criteriaType: CriteriaType.TAG_COUNT,
+      })
+      .getMany();
+  }
+
+  async findGameScoreMissions(): Promise<MissionEntity[]> {
+    return this.missionEntityRepository
+      .createQueryBuilder("mission")
+      .leftJoinAndSelect("mission.missionGroup", "missionGroup")
+      .leftJoinAndSelect("mission.rewardGear", "rewardGear")
+      .where("mission.criteriaType IN (:...criteriaTypes)", {
+        criteriaTypes: [CriteriaType.GAME_SCORE, CriteriaType.GAME_SCORE_VENUE],
+      })
       .getMany();
   }
 }

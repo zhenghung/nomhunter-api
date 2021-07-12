@@ -1,5 +1,5 @@
 import { HttpExceptionsUtil } from "../common/util/http-exceptions.util";
-import { DeepPartial, Repository } from "typeorm";
+import { DeepPartial, FindManyOptions, Repository } from "typeorm";
 import { Logger } from "@nestjs/common";
 
 export abstract class GenericEntityService<T> {
@@ -30,6 +30,10 @@ export abstract class GenericEntityService<T> {
       return undefined;
     }
     return this.repository.findOne(id);
+  }
+
+  async find(conditions: FindManyOptions): Promise<T[]> {
+    return this.repository.find(conditions);
   }
 
   async findAll(): Promise<T[]> {

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { MissionType } from "../mission.type";
+import { CriteriaType } from "../criteria.type";
 
 export class CreateMissionReq {
   @ApiProperty()
@@ -9,13 +9,22 @@ export class CreateMissionReq {
   description: string;
 
   @ApiProperty()
-  type: MissionType;
-
-  @ApiProperty()
-  tagId: string;
-
-  @ApiProperty()
   maxProgress: number;
+
+  @ApiProperty()
+  level: number;
+
+  @ApiProperty()
+  missionGroupId: string;
+
+  @ApiProperty()
+  criteriaType: CriteriaType;
+
+  @ApiProperty()
+  criteriaValue: string;
+
+  @ApiProperty()
+  criteriaRefId: string;
 
   @ApiProperty()
   rewardCoin: number;
@@ -25,7 +34,4 @@ export class CreateMissionReq {
 
   @ApiProperty()
   rewardGearId: string;
-
-  @ApiProperty()
-  requiredMissionId: string;
 }

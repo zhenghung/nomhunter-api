@@ -5,7 +5,7 @@ import { MissionEntity } from "./mission.entity";
 import { CreateMissionReq } from "./req/create-mission.req";
 import { CreateMissionDto } from "./dto/create-mission.dto";
 import { GearEntityService } from "../gear/gear.entity.service";
-import { TagEntityService } from "../tag/tag.entity.service";
+import { MissionGroupEntityService } from "../missionGroup/mission-group.entity.service";
 
 @ApiTags("MissionEntity")
 @Controller("entities/mission")
@@ -14,7 +14,7 @@ export class MissionEntityController {
 
   constructor(
     private readonly missionEntityService: MissionEntityService,
-    private readonly tagEntityService: TagEntityService,
+    private readonly missionGroupEntityService: MissionGroupEntityService,
     private readonly gearEntityService: GearEntityService
   ) {}
 
@@ -25,24 +25,23 @@ export class MissionEntityController {
     const rewardGearEntity = await this.gearEntityService.getByIdNullable(
       createMissionReq.rewardGearId
     );
-    const tagEntity = await this.tagEntityService.getById(
-      createMissionReq.tagId
-    );
-    const requiredMissionEntity = await this.missionEntityService.getByIdNullable(
-      createMissionReq.requiredMissionId
+    const missionGroupEntity = await this.missionGroupEntityService.getById(
+      createMissionReq.missionGroupId
     );
 
     // Construct DTO
     const createMissionDto: CreateMissionDto = {
       name: createMissionReq.name,
       description: createMissionReq.description,
-      type: createMissionReq.type,
-      tag: tagEntity,
       maxProgress: createMissionReq.maxProgress,
+      level: createMissionReq.level,
+      missionGroup: missionGroupEntity,
+      criteriaType: createMissionReq.criteriaType,
+      criteriaValue: createMissionReq.criteriaValue,
+      criteriaRefId: createMissionReq.criteriaRefId,
       rewardCoin: createMissionReq.rewardCoin,
       rewardExp: createMissionReq.rewardExp,
       rewardGear: rewardGearEntity,
-      requiredMission: requiredMissionEntity,
     };
     this.logger.log(`Creating mission with name: ${createMissionDto.name}`);
 

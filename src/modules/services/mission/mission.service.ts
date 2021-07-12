@@ -19,6 +19,29 @@ export class MissionService {
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
 
+  async claimReward(playerId: string, missionId: string): Promise<void> {
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
+      playerId
+    );
+    const missionEntity: MissionEntity = await this.missionEntityService.getByIdJoinAll(
+      missionId
+    );
+    const playerMissionEntity: PlayerMissionEntity = await this.playerMissionEntityService.findByPlayerAndMission(
+      playerEntity,
+      missionEntity
+    );
+    if (playerMissionEntity.completed && !playerMissionEntity.claimed) {
+      if (missionEntity.rewardGear) {
+        // TODO: Give player the reward
+      }
+      await this.playerMissionEntityService.updateByEntityId(
+        playerMissionEntity.id,
+        { claimed: true }
+      );
+    }
+    return;
+  }
+
   async findPlayerMission(playerId: string): Promise<PlayerMissionEntity[]> {
     const player = await this.playerEntityService.getById(playerId);
     return this.playerMissionEntityService.findByPlayer(player);
@@ -29,14 +52,15 @@ export class MissionService {
     mission: MissionEntity
   ): Promise<boolean> {
     // If mission has a requirement
-    if (mission.requiredMission) {
+    if (mission.level > 1) {
       // Check if player completed requirement
-      const requiredPlayerMission = await this.playerMissionEntityService.findByPlayerAndMission(
-        player,
-        mission.requiredMission
+      const previousLevelPlayerMission = await this.playerMissionEntityService.findByPlayerAndMissionGroupAndLevel(
+        player.id,
+        mission.missionGroup.id,
+        mission.level - 1
       );
       // If required mission doesn't exist or if not completed, no progress
-      if (!requiredPlayerMission || !requiredPlayerMission.completed) {
+      if (!previousLevelPlayerMission || !previousLevelPlayerMission.claimed) {
         return false;
       }
     }
