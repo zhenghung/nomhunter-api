@@ -9,16 +9,15 @@ import { MissionService } from "./mission.service";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { MissionGroupEntityService } from "../../entities/missionGroup/mission-group.entity.service";
-import { MissionGroupEntity } from "../../entities/missionGroup/mission-group.entity";
+import { MissionGroupsInterface } from "./interface/mission-groups.interface";
+import { MissionTransformer } from "./mission.transformer";
 
 @ApiTags("Mission")
 @Controller("mission")
 export class MissionController {
   constructor(
     private readonly eventEmitter: EventEmitter2,
-    private readonly missionService: MissionService,
-    private readonly missionGroupEntityService: MissionGroupEntityService
+    private readonly missionService: MissionService
   ) {}
 
   @ApiBearerAuth()
@@ -30,10 +29,12 @@ export class MissionController {
   @UseGuards(JwtAuthGuard)
   async fetchMissions(
     @Req() requestWithPlayer: RequestWithPlayer
-  ): Promise<MissionGroupEntity[]> {
-    return this.missionGroupEntityService.fetchAllMissionsForPlayer(
-      requestWithPlayer.user.id
-    );
+  ): Promise<MissionGroupsInterface> {
+    return this.missionService
+      .fetchAllMissionsForPlayer(requestWithPlayer.user.id)
+      .then((missionGroupEntities) =>
+        MissionTransformer.map(missionGroupEntities)
+      );
   }
 
   @ApiBearerAuth()

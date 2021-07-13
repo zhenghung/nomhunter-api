@@ -7,6 +7,8 @@ import { PlayerMissionEntity } from "../../entities/playerMission/player-mission
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { MissionEntity } from "../../entities/mission/mission.entity";
 import { PlayerEntity } from "../../entities/player/player.entity";
+import { MissionGroupEntity } from "../../entities/missionGroup/mission-group.entity";
+import { MissionGroupEntityService } from "../../entities/missionGroup/mission-group.entity.service";
 
 @Injectable()
 export class MissionService {
@@ -16,8 +18,15 @@ export class MissionService {
     private readonly eventEmitter: EventEmitter2,
     private readonly playerEntityService: PlayerEntityService,
     private readonly missionEntityService: MissionEntityService,
+    private readonly missionGroupEntityService: MissionGroupEntityService,
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
+
+  async fetchAllMissionsForPlayer(
+    playerId: string
+  ): Promise<MissionGroupEntity[]> {
+    return this.missionGroupEntityService.fetchAllMissionsForPlayer(playerId);
+  }
 
   async claimReward(playerId: string, missionId: string): Promise<void> {
     const playerEntity: PlayerEntity = await this.playerEntityService.getById(
@@ -40,11 +49,6 @@ export class MissionService {
       );
     }
     return;
-  }
-
-  async findPlayerMission(playerId: string): Promise<PlayerMissionEntity[]> {
-    const player = await this.playerEntityService.getById(playerId);
-    return this.playerMissionEntityService.findByPlayer(player);
   }
 
   async checkIfMissionRequirementFulfilled(
