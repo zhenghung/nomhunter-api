@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MissionEntityModule } from "../../entities/mission/mission.entity.module";
 import { PlayerMissionEntityModule } from "../../entities/playerMission/player-mission.entity.module";
-import { GearEntityModule } from "../../entities/gear/gear.entity.module";
 import { MissionService } from "./mission.service";
 import { MissionController } from "./mission.controller";
 import { GameCreatedListener } from "./listeners/game-created.listener";
@@ -11,17 +10,18 @@ import { VenueTagEntityModule } from "../../entities/venueTag/venue-tag.entity.m
 import { PlayerEntityModule } from "../../entities/player/player.entity.module";
 import { MissionCompletedListener } from "./listeners/mission-completed.listener";
 import { MissionGroupEntityModule } from "../../entities/missionGroup/mission-group.entity.module";
+import { MissionGroupFlagEntityModule } from "../../entities/missionGroupFlag/mission-group-flag.entity.module";
 
 @Module({
   imports: [
     PlayerEntityModule,
     MissionGroupEntityModule,
+    MissionGroupFlagEntityModule,
     MissionEntityModule,
     PlayerMissionEntityModule,
     VenueEntityModule,
     TagEntityModule,
     VenueTagEntityModule,
-    GearEntityModule,
   ],
   providers: [MissionService, GameCreatedListener, MissionCompletedListener],
   controllers: [MissionController],

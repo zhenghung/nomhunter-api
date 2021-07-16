@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -11,6 +11,8 @@ import { RequestWithPlayer } from "../auth/interface/request-with-player.interfa
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { MissionGroupsInterface } from "./interface/mission-groups.interface";
 import { MissionTransformer } from "./mission.transformer";
+import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
+import { OptionalBoolPipe } from "../../common/pipes/optional-bool.pipe";
 
 @ApiTags("Mission")
 @Controller("mission")
@@ -51,6 +53,35 @@ export class MissionController {
     return this.missionService.claimReward(
       requestWithPlayer.user.id,
       missionId
+    );
+  }
+
+  @ApiImplicitQuery({
+    name: "missionGroupId",
+    required: true,
+    type: String,
+  })
+  @ApiImplicitQuery({
+    name: "remove",
+    required: false,
+    type: Boolean,
+  })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Toggle flag status for mission group" })
+  @ApiCreatedResponse({
+    description: "Flag/Unflag mission group for player",
+  })
+  @Get("flag")
+  @UseGuards(JwtAuthGuard)
+  async flagMissionGroup(
+    @Req() requestWithPlayer: RequestWithPlayer,
+    @Query("missionGroupId") missionGroupId: string,
+    @Query("remove", OptionalBoolPipe) remove?: boolean
+  ): Promise<void> {
+    return this.missionService.setFlag(
+      requestWithPlayer.user.id,
+      missionGroupId,
+      !remove
     );
   }
 }

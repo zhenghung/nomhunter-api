@@ -1,9 +1,16 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PlayerEntity } from "../player/player.entity";
 import { MissionGroupEntity } from "../missionGroup/mission-group.entity";
 
 @Entity("mission_group_flag")
+@Unique(["player", "missionGroup"])
 export class MissionGroupFlagEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn("uuid")

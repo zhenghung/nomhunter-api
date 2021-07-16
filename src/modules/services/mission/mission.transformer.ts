@@ -52,7 +52,7 @@ export class MissionTransformer {
                   ? missionEntity.playerMissions[0].claimed
                   : false,
               level: missionEntity.level,
-              reward: rewardsMapped,
+              rewards: rewardsMapped,
             };
             return missionMapped;
           }

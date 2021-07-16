@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { MissionEntity } from "./mission.entity";
 import { GenericEntityService } from "../generic.entity.service";
-import { TagEntity } from "../tag/tag.entity";
 import { CriteriaType } from "./criteria.type";
 
 @Injectable()

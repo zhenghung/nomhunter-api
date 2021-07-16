@@ -9,6 +9,7 @@ import { MissionEntity } from "../../entities/mission/mission.entity";
 import { PlayerEntity } from "../../entities/player/player.entity";
 import { MissionGroupEntity } from "../../entities/missionGroup/mission-group.entity";
 import { MissionGroupEntityService } from "../../entities/missionGroup/mission-group.entity.service";
+import { MissionGroupFlagEntityService } from "../../entities/missionGroupFlag/mission-group-flag.entity.service";
 
 @Injectable()
 export class MissionService {
@@ -19,6 +20,7 @@ export class MissionService {
     private readonly playerEntityService: PlayerEntityService,
     private readonly missionEntityService: MissionEntityService,
     private readonly missionGroupEntityService: MissionGroupEntityService,
+    private readonly missionGroupFlagEntityService: MissionGroupFlagEntityService,
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
 
@@ -49,6 +51,32 @@ export class MissionService {
       );
     }
     return;
+  }
+
+  async setFlag(
+    playerId: string,
+    missionGroupId: string,
+    flag: boolean
+  ): Promise<void> {
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
+      playerId
+    );
+    const missionGroupEntity: MissionGroupEntity = await this.missionGroupEntityService.getById(
+      missionGroupId
+    );
+    if (flag) {
+      await this.missionGroupFlagEntityService
+        .create({
+          player: playerEntity,
+          missionGroup: missionGroupEntity,
+        })
+        .catch((reason) => this.logger.log(reason));
+    } else {
+      await this.missionGroupFlagEntityService.delete(
+        playerEntity,
+        missionGroupEntity
+      );
+    }
   }
 
   async checkIfMissionRequirementFulfilled(

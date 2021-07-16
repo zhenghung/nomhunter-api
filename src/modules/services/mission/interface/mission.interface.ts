@@ -9,5 +9,5 @@ export interface MissionInterface {
   completed: boolean;
   claimed: boolean;
   level: number;
-  reward: MissionRewardInterface[];
+  rewards: MissionRewardInterface[];
 }
