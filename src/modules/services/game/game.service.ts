@@ -10,6 +10,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class GameService {
+  public static readonly SCORE_THRESHOLD_FOR_BADGE: number = 40;
   private logger: Logger = new Logger(GameService.name);
 
   constructor(
@@ -38,10 +39,10 @@ export class GameService {
     });
 
     const gameCreatedEvent: GameCreatedEvent = { game: gameEntity };
-    this.eventEmitter.emit("game.created", gameCreatedEvent);
+    this.eventEmitter.emit(GameCreatedEvent.EVENT, gameCreatedEvent);
 
     // Award badge on condition
-    if (createGameReq.score >= 40) {
+    if (createGameReq.score >= GameService.SCORE_THRESHOLD_FOR_BADGE) {
       this.logger.log(`Creating PlayerBadge for game ${createGameReq}`);
       await this.playerBadgeEntityService.create({
         badge: venueEntity.badge,

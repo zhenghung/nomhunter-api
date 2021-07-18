@@ -11,7 +11,7 @@ export class GameCreatedListener {
     private readonly venueEntityService: VenueEntityService
   ) {}
 
-  @OnEvent("game.created", { async: true })
+  @OnEvent(GameCreatedEvent.EVENT, { async: true })
   async handleGameCreatedEvent(event: GameCreatedEvent) {
     // handle and process "GameCreatedEvent" event
     const venue = await this.venueEntityService.getByIdJoinZone(

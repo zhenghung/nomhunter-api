@@ -7,6 +7,9 @@ import { PlayerMissionEntity } from "../../entities/playerMission/player-mission
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { MissionEntity } from "../../entities/mission/mission.entity";
 import { PlayerEntity } from "../../entities/player/player.entity";
+import { MissionGroupEntity } from "../../entities/missionGroup/mission-group.entity";
+import { MissionGroupEntityService } from "../../entities/missionGroup/mission-group.entity.service";
+import { MissionGroupFlagEntityService } from "../../entities/missionGroupFlag/mission-group-flag.entity.service";
 
 @Injectable()
 export class MissionService {
@@ -16,12 +19,64 @@ export class MissionService {
     private readonly eventEmitter: EventEmitter2,
     private readonly playerEntityService: PlayerEntityService,
     private readonly missionEntityService: MissionEntityService,
+    private readonly missionGroupEntityService: MissionGroupEntityService,
+    private readonly missionGroupFlagEntityService: MissionGroupFlagEntityService,
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
 
-  async findPlayerMission(playerId: string): Promise<PlayerMissionEntity[]> {
-    const player = await this.playerEntityService.getById(playerId);
-    return this.playerMissionEntityService.findByPlayer(player);
+  async fetchAllMissionsForPlayer(
+    playerId: string
+  ): Promise<MissionGroupEntity[]> {
+    return this.missionGroupEntityService.fetchAllMissionsForPlayer(playerId);
+  }
+
+  async claimReward(playerId: string, missionId: string): Promise<void> {
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
+      playerId
+    );
+    const missionEntity: MissionEntity = await this.missionEntityService.getByIdJoinAll(
+      missionId
+    );
+    const playerMissionEntity: PlayerMissionEntity = await this.playerMissionEntityService.findByPlayerAndMission(
+      playerEntity,
+      missionEntity
+    );
+    if (playerMissionEntity.completed && !playerMissionEntity.claimed) {
+      if (missionEntity.rewardGear) {
+        // TODO: Give player the reward
+      }
+      await this.playerMissionEntityService.updateByEntityId(
+        playerMissionEntity.id,
+        { claimed: true }
+      );
+    }
+    return;
+  }
+
+  async setFlag(
+    playerId: string,
+    missionGroupId: string,
+    flag: boolean
+  ): Promise<void> {
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
+      playerId
+    );
+    const missionGroupEntity: MissionGroupEntity = await this.missionGroupEntityService.getById(
+      missionGroupId
+    );
+    if (flag) {
+      await this.missionGroupFlagEntityService
+        .create({
+          player: playerEntity,
+          missionGroup: missionGroupEntity,
+        })
+        .catch((reason) => this.logger.log(reason));
+    } else {
+      await this.missionGroupFlagEntityService.delete(
+        playerEntity,
+        missionGroupEntity
+      );
+    }
   }
 
   async checkIfMissionRequirementFulfilled(
@@ -29,14 +84,15 @@ export class MissionService {
     mission: MissionEntity
   ): Promise<boolean> {
     // If mission has a requirement
-    if (mission.requiredMission) {
+    if (mission.level > 1) {
       // Check if player completed requirement
-      const requiredPlayerMission = await this.playerMissionEntityService.findByPlayerAndMission(
-        player,
-        mission.requiredMission
+      const previousLevelPlayerMission = await this.playerMissionEntityService.findByPlayerAndMissionGroupAndLevel(
+        player.id,
+        mission.missionGroup.id,
+        mission.level - 1
       );
       // If required mission doesn't exist or if not completed, no progress
-      if (!requiredPlayerMission || !requiredPlayerMission.completed) {
+      if (!previousLevelPlayerMission || !previousLevelPlayerMission.claimed) {
         return false;
       }
     }
