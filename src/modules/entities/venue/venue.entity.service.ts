@@ -12,16 +12,10 @@ export class VenueEntityService extends GenericEntityService<VenueEntity> {
     @InjectRepository(VenueEntity)
     private readonly venueEntityRepository: Repository<VenueEntity>
   ) {
-    super(
-      venueEntityRepository,
-      new Logger(VenueEntityService.name),
-      VenueEntity.name
-    );
+    super(venueEntityRepository, new Logger(VenueEntityService.name), VenueEntity.name);
   }
 
-  async findAll(
-    conditions?: FindConditions<VenueEntity>
-  ): Promise<VenueEntity[]> {
+  async findAll(conditions?: FindConditions<VenueEntity>): Promise<VenueEntity[]> {
     if (conditions) {
       return this.venueEntityRepository.find(conditions);
     }
@@ -33,15 +27,11 @@ export class VenueEntityService extends GenericEntityService<VenueEntity> {
   }
 
   async findJoinZoneAndBadge(): Promise<VenueEntity[]> {
-    return this.queryJoin("zone")
-      .innerJoinAndSelect("venue.badge", "badge")
-      .getMany();
+    return this.queryJoin("zone").innerJoinAndSelect("venue.badge", "badge").getMany();
   }
 
   private queryJoin(property: string): SelectQueryBuilder<VenueEntity> {
-    return this.venueEntityRepository
-      .createQueryBuilder("venue")
-      .innerJoinAndSelect(`venue.${property}`, property);
+    return this.venueEntityRepository.createQueryBuilder("venue").innerJoinAndSelect(`venue.${property}`, property);
   }
 
   async getByIdJoinAll(id: string): Promise<VenueEntity> {
@@ -51,13 +41,7 @@ export class VenueEntityService extends GenericEntityService<VenueEntity> {
       .innerJoinAndSelect("venue.zone", "zone")
       .where("venue.id = :id", { id: id })
       .getOneOrFail()
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "VenueEntity",
-          id,
-          this.logger
-        )
-      );
+      .catch(HttpExceptionsUtil.genericFindByUUIDErrorHandler("VenueEntity", id, this.logger));
   }
 
   async getByIdJoinZone(id: string): Promise<VenueEntity> {
@@ -74,13 +58,7 @@ export class VenueEntityService extends GenericEntityService<VenueEntity> {
       .innerJoinAndSelect(`venue.${property}`, property)
       .where("venue.id = :id", { id: id })
       .getOneOrFail()
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "VenueEntity",
-          id,
-          this.logger
-        )
-      );
+      .catch(HttpExceptionsUtil.genericFindByUUIDErrorHandler("VenueEntity", id, this.logger));
   }
 
   async getForPlayerBadges(playerId: string): Promise<VenueEntity[]> {

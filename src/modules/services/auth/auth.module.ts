@@ -8,10 +8,12 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { JwtConfig } from "../../../config/jwt.config";
+import { AvatarModule } from "../avatar/avatar.module";
 
 @Module({
   imports: [
     PlayerEntityModule,
+    AvatarModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

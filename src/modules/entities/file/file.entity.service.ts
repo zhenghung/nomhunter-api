@@ -12,21 +12,12 @@ export class FileEntityService extends GenericEntityService<FileEntity> {
     @InjectRepository(FileEntity)
     private readonly fileEntityRepository: Repository<FileEntity>
   ) {
-    super(
-      fileEntityRepository,
-      new Logger(FileEntityService.name),
-      FileEntity.name
-    );
+    super(fileEntityRepository, new Logger(FileEntityService.name), FileEntity.name);
   }
 
   async create(createFileDto: CreateFileDto): Promise<FileEntity> {
     return this.fileEntityRepository.save(createFileDto).catch((error) => {
-      throw HttpExceptionsUtil.createHttpException(
-        error.message,
-        HttpStatus.BAD_REQUEST,
-        this.logger,
-        error
-      );
+      throw HttpExceptionsUtil.createHttpException(error.message, HttpStatus.BAD_REQUEST, this.logger, error);
     });
   }
 

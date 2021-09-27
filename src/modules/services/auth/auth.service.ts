@@ -7,11 +7,13 @@ import { RegisterReq } from "./req/register.req";
 import { HttpExceptions } from "../../common/constants/http.exceptions";
 import { TokenResponseInterface } from "./interface/token-response.interface";
 import { QueryFailedError } from "typeorm";
+import { AvatarService } from "../avatar/avatar.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly playerEntityService: PlayerEntityService,
+    private readonly avatarService: AvatarService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -21,22 +23,19 @@ export class AuthService {
    */
   public async register(registrationData: RegisterReq): Promise<PlayerEntity> {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+
     try {
-      return await this.playerEntityService.create({
+      const createdPlayer: PlayerEntity = await this.playerEntityService.create({
         ...registrationData,
         password: hashedPassword,
       });
+      await this.avatarService.createStockAvatar(createdPlayer);
+      return createdPlayer;
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        throw new HttpException(
-          "Player with that email already exists",
-          HttpStatus.BAD_REQUEST
-        );
+        throw new HttpException("Player with that email already exists", HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException(
-        "Something went wrong",
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw new HttpException("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -56,16 +55,10 @@ export class AuthService {
    * @param email Entered Email
    * @param plainTextPassword Entered Plain-text Password
    */
-  public async validatePlayer(
-    email: string,
-    plainTextPassword: string
-  ): Promise<PlayerEntity> {
+  public async validatePlayer(email: string, plainTextPassword: string): Promise<PlayerEntity> {
     try {
       const player = await this.playerEntityService.getByEmail(email);
-      const correctPassword = await AuthService.verifyPassword(
-        plainTextPassword,
-        player.password
-      );
+      const correctPassword = await AuthService.verifyPassword(plainTextPassword, player.password);
       if (player && correctPassword) {
         return player;
       }
@@ -75,10 +68,7 @@ export class AuthService {
     throw HttpExceptions.INCORRECT_CREDENTIALS;
   }
 
-  private static async verifyPassword(
-    plainTextPassword: string,
-    hashedPassword: string
-  ): Promise<boolean> {
+  private static async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(plainTextPassword, hashedPassword);
   }
 }

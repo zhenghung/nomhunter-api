@@ -12,16 +12,10 @@ export class ZoneEntityService extends GenericEntityService<ZoneEntity> {
     @InjectRepository(ZoneEntity)
     private readonly zoneEntityRepository: Repository<ZoneEntity>
   ) {
-    super(
-      zoneEntityRepository,
-      new Logger(ZoneEntityService.name),
-      ZoneEntity.name
-    );
+    super(zoneEntityRepository, new Logger(ZoneEntityService.name), ZoneEntity.name);
   }
 
-  async findAll(
-    conditions?: FindConditions<ZoneEntity>
-  ): Promise<ZoneEntity[]> {
+  async findAll(conditions?: FindConditions<ZoneEntity>): Promise<ZoneEntity[]> {
     if (conditions) {
       return this.zoneEntityRepository.find(conditions);
     }
@@ -34,12 +28,6 @@ export class ZoneEntityService extends GenericEntityService<ZoneEntity> {
       .innerJoinAndSelect("zone.venues", "venues")
       .where("zone.id = :id", { id: id })
       .getOneOrFail()
-      .catch(
-        HttpExceptionsUtil.genericFindByUUIDErrorHandler(
-          "ZoneEntity",
-          id,
-          this.logger
-        )
-      );
+      .catch(HttpExceptionsUtil.genericFindByUUIDErrorHandler("ZoneEntity", id, this.logger));
   }
 }

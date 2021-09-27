@@ -1,14 +1,5 @@
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Logger,
-  Param,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Query } from "@nestjs/common";
 import { TagEntityService } from "./tag.entity.service";
 import { TagEntity } from "./tag.entity";
 import { CreateTagReq } from "./dto/create-tag.req";
@@ -26,12 +17,7 @@ export class TagEntityController {
   create(@Body() createTagReq: CreateTagReq): Promise<TagEntity> {
     this.logger.log(`Creating tag with name: ${createTagReq.name}`);
     return this.tagEntityService.create(createTagReq).catch((error) => {
-      throw HttpExceptionsUtil.createHttpException(
-        error.message,
-        HttpStatus.CONFLICT,
-        this.logger,
-        error
-      );
+      throw HttpExceptionsUtil.createHttpException(error.message, HttpStatus.CONFLICT, this.logger, error);
     });
   }
 

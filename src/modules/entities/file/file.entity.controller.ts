@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Logger,
-  Param,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { FileEntityService } from "./file.entity.service";
 import { FileEntity } from "./file.entity";
@@ -22,12 +14,10 @@ export class FileEntityController {
   @Post()
   create(@Body() createFileDto: CreateFileDto): Promise<FileEntity> {
     this.logger.log(`Creating file with url: ${createFileDto.url}`);
-    return this.fileEntityService
-      .create(createFileDto)
-      .then((file: FileEntity) => {
-        this.logger.log(`File with id ${file.id} successfully created`);
-        return file;
-      });
+    return this.fileEntityService.create(createFileDto).then((file: FileEntity) => {
+      this.logger.log(`File with id ${file.id} successfully created`);
+      return file;
+    });
   }
 
   @Get(":id")
@@ -45,8 +35,6 @@ export class FileEntityController {
   @Delete(":id")
   remove(@Param("id") id: string): Promise<void> {
     this.logger.log(`Deleting file with id ${id}`);
-    return this.fileEntityService
-      .remove(id)
-      .then(() => this.logger.log(`File with id ${id} successfully deleted`));
+    return this.fileEntityService.remove(id).then(() => this.logger.log(`File with id ${id} successfully deleted`));
   }
 }

@@ -1,18 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { Controller, Get, Param, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GoogleMapsService } from "./google-maps.service";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
@@ -41,10 +28,7 @@ export class GoogleMapsController {
     @Param("photo_ref") photoRef: string,
     @Query("width", OptionalIntPipe) width?: number
   ): Promise<any> {
-    const b64Image = await this.googleMapsService.getGoogleMapsPhotos(
-      photoRef,
-      width ? width : 100
-    );
+    const b64Image = await this.googleMapsService.getGoogleMapsPhotos(photoRef, width ? width : 100);
     return res.end(b64Image, "base64");
   }
 

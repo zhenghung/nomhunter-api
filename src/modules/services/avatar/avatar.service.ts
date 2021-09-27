@@ -1,8 +1,6 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import Jimp from "jimp";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
-import fs from "fs";
-import { AvatarMappingDto } from "./dto/avatar-mapping.dto";
 import { S3Service } from "../../clients/s3/s3.service";
 import { FileEntityService } from "../../entities/file/file.entity.service";
 import { PlayerEntityService } from "../../entities/player/player.entity.service";
@@ -10,6 +8,18 @@ import { CreateFileDto } from "../../entities/file/dto/create-file.dto";
 import { FileEntity } from "../../entities/file/file.entity";
 import { FileType } from "../../entities/file/file.type";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
+import { Colors } from "../../common/constants/colors";
+import { AvatarPoseEntity } from "../../entities/avatarPose/avatar-pose.entity";
+import { AvatarPoseEntityService } from "../../entities/avatarPose/avatar-pose.entity.service";
+import { GearEntity } from "../../entities/gear/gear.entity";
+import { GearEntityService } from "../../entities/gear/gear.entity.service";
+import { PlayerAvatarEntityService } from "../../entities/playerAvatar/player-avatar.entity.service";
+import { GearMappingEntityService } from "../../entities/gearMapping/gear-mapping.entity.service";
+import { GearMappingEntity } from "../../entities/gearMapping/gear-mapping.entity";
+import { PlayerEntity } from "../../entities/player/player.entity";
+import { GearType } from "../../entities/gear/gear.type";
+import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { ColorInterface } from "../../common/interface/color.interface";
 
 @Injectable()
 export class AvatarService {
@@ -18,7 +28,11 @@ export class AvatarService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly fileEntityService: FileEntityService,
-    private readonly playerEntityService: PlayerEntityService
+    private readonly playerEntityService: PlayerEntityService,
+    private readonly playerAvatarEntityService: PlayerAvatarEntityService,
+    private readonly avatarPoseEntityService: AvatarPoseEntityService,
+    private readonly gearEntityService: GearEntityService,
+    private readonly gearMappingEntityService: GearMappingEntityService
   ) {}
 
   /**
@@ -26,142 +40,135 @@ export class AvatarService {
    * @param playerId
    */
   async getAvatarImageUrl(playerId: string): Promise<ProfilePicInterface> {
-    const player = await this.playerEntityService.getById(playerId);
-    const imageId = player.profilePic;
-    if (!imageId) {
-      const url = this.s3Service.getImageUrl(
-        "avatar",
-        "profile",
-        "default_profile.png"
-      );
+    return this.playerEntityService.getById(playerId).then((player) => {
+      const url = this.s3Service.getImageUrl("avatar", "profile", `${player.id}.png`);
       return {
-        name: "default",
         url: url,
-      };
-    }
-    return await this.fileEntityService.getById(imageId).then((file) => {
-      return {
-        name: file.name,
-        url: file.url,
       };
     });
   }
 
   /**
-   * Loads avatar wearables image file
+   * Loads playerAvatar wearables image file
    * Overlays and flattens them, then stores the result onto AWS S3
    * Rewrite the db of the player and file entities to point to the new url
-   * @param createAvatarDto contains the selected wearables for the avatar
+   * @param createAvatarDto contains the selected wearables for the playerAvatar
    * @param playerId
    */
-  async createAvatar(
-    createAvatarDto: CreateAvatarDto,
-    playerId: string
-  ): Promise<ProfilePicInterface> {
+  async createAvatar(createAvatarDto: CreateAvatarDto, playerId: string): Promise<ProfilePicInterface> {
+    const player: PlayerEntity = await this.playerEntityService.getById(playerId);
     this.logger.log(`Creating Avatar for player: ${playerId}`);
-    const avatarParts = this.getAvatarParts(createAvatarDto);
 
+    const faceGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.faceId, GearType.FACE);
+    const face: [GearEntity, Jimp] = [faceGear, await Jimp.read(faceGear.file.url)];
+    const hatGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.hatId, GearType.HAT);
+    const hat: [GearEntity, Jimp] = [hatGear, await Jimp.read(hatGear.file.url)];
+    const weaponGear: GearEntity = await this.gearEntityService.getByIdAndType(
+      createAvatarDto.weaponId,
+      GearType.WEAPON
+    );
+    const weapon: [GearEntity, Jimp] = [weaponGear, await Jimp.read(weaponGear.file.url)];
+
+    const pose: AvatarPoseEntity = await this.avatarPoseEntityService.getById(createAvatarDto.poseId);
     // Merge Image
-    const imageBuffer: Buffer = await Promise.all(avatarParts)
-      .then(([bodyJimp, hatJimp, propJimp]) => {
-        const mapping = AvatarService.getCustomisationMapping()[
-          `avatar_body_${createAvatarDto.body}`
-        ];
-        const mergedImage = AvatarService.mergeImages(
-          bodyJimp,
-          hatJimp,
-          propJimp,
-          mapping
-        );
-        return mergedImage.getBufferAsync(Jimp.MIME_PNG);
-      })
-      .catch((error) => {
-        this.logger.error("Something went wrong", error);
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-      });
+    const mergedImage: Jimp = await this.mergeLayers(pose, face, hat, weapon, createAvatarDto.color);
+    const imageBuffer: Buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
 
     // Upload merged Image to AWS S3
-    const url = await this.s3Service.uploadFile(
-      `avatar/profile/${createAvatarDto.body}-${createAvatarDto.hat}-${createAvatarDto.prop}.png`,
-      imageBuffer,
-      Jimp.MIME_PNG
+    const url = await this.s3Service.uploadFile(`avatar/profile/${playerId}.png`, imageBuffer, Jimp.MIME_PNG);
+    await this.playerAvatarEntityService.updateByPlayer(
+      player,
+      pose,
+      faceGear,
+      hatGear,
+      weaponGear,
+      createAvatarDto.color
     );
-
-    // Create FileEntity of Image
-    const imageName = `${createAvatarDto.body}-${createAvatarDto.hat}-${createAvatarDto.prop}`;
-    const fileCreated = await this.createImageFile(url, imageName);
-
-    // Update Player entity with new profilePic image
-    const profilePic = await this.playerEntityService
-      .getById(playerId)
-      .then((player) => player.profilePic);
-    if (profilePic) {
-      // Remove old profile pic from FileEntity Table since new one is created
-      await this.fileEntityService.remove(profilePic);
-    }
-    if (
-      await this.playerEntityService.updateProfilePic(playerId, fileCreated.id)
-    ) {
-      this.logger.log(`Avatar of player: ${playerId} created at url :${url}`);
-      return { name: imageName, url: url };
-    } else {
-      this.logger.error("Failed to update player entity with profile pic");
-      throw new HttpException(
-        "Failed to update player entity with profile pic",
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+    return { url: url };
   }
 
-  private getAvatarParts(createAvatarDto: CreateAvatarDto): Promise<Jimp>[] {
-    const avatarBody: Promise<Jimp> = Jimp.read(
-      this.s3Service.getImageUrl(
-        "avatar",
-        "body",
-        `avatar_body_${createAvatarDto.body}.png`
-      )
-    );
-    const avatarHat: Promise<Jimp> = Jimp.read(
-      this.s3Service.getImageUrl(
-        "avatar",
-        "hat",
-        `avatar_hat_${createAvatarDto.hat}.png`
-      )
-    );
-    const avatarProp: Promise<Jimp> = Jimp.read(
-      this.s3Service.getImageUrl(
-        "avatar",
-        "prop",
-        `avatar_prop_${createAvatarDto.prop}.png`
-      )
-    );
-    return [avatarBody, avatarHat, avatarProp];
+  async createStockAvatar(player: PlayerEntity): Promise<void> {
+    const faceGear: GearEntity = await this.gearEntityService.getDefaultFaceEntity();
+    const face: [GearEntity, Jimp] = [faceGear, await Jimp.read(faceGear.file.url)];
+    const pose: AvatarPoseEntity = await this.avatarPoseEntityService.getDefaultPoseEntity();
+    const mergedImage: Jimp = await this.mergeLayers(pose, face, undefined, undefined, Colors.MANGO_SORBET_200_VALUE);
+    const imageBuffer: Buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
+    const url: string = await this.s3Service.uploadFile(`avatar/profile/${player.id}.png`, imageBuffer, Jimp.MIME_PNG);
+    const fileEntity: FileEntity = await this.createImageFile(url, player.id);
+    await this.playerAvatarEntityService.createStockAvatar(player, pose, faceGear, fileEntity);
   }
 
   private createImageFile(url: string, name: string): Promise<FileEntity> {
     const createFileDto: CreateFileDto = {
-      type: FileType.PROFILE_PIC,
+      type: FileType.AVATAR,
       name: name,
       url: url,
     };
     return this.fileEntityService.create(createFileDto);
   }
 
-  private static mergeImages(body: Jimp, hat: Jimp, prop: Jimp, mapping): Jimp {
-    let mergedImage: Jimp;
-    if (mapping) {
-      mergedImage = body.composite(hat, mapping.hat.x, mapping.hat.y);
-      mergedImage = mergedImage.composite(prop, mapping.prop.x, mapping.prop.y);
-    } else {
-      mergedImage = body.composite(hat, 0, 0);
-      mergedImage = mergedImage.composite(prop, 0, 0);
+  private async mergeLayers(
+    pose: AvatarPoseEntity,
+    face: [GearEntity, Jimp],
+    hat: [GearEntity, Jimp],
+    weapon: [GearEntity, Jimp],
+    color: string
+  ): Promise<Jimp> {
+    const poseSilhouetteJimp = await Jimp.read(pose.poseSilhouette.url);
+    const poseOutlineJimp = await Jimp.read(pose.poseOutline.url);
+    const poseHandSilhouetteJimp = await Jimp.read(pose.poseHandSilhouette.url);
+    const poseHandOutlineJimp = await Jimp.read(pose.poseHandOutline.url);
+
+    const newColor = Colors.COLOR_VALUE_MAP.get(color);
+    if (!newColor) {
+      throw HttpExceptionsUtil.createHttpException("Invalid color", HttpStatus.BAD_REQUEST, this.logger);
     }
+    AvatarService.colorImage(poseSilhouetteJimp, newColor);
+    AvatarService.colorImage(poseHandSilhouetteJimp, newColor);
+
+    let mergedImage: Jimp;
+    mergedImage = poseSilhouetteJimp.composite(poseOutlineJimp, 0, 0);
+    mergedImage = await this.transformMergeImage(mergedImage, face, pose);
+    if (hat) {
+      mergedImage = await this.transformMergeImage(mergedImage, hat, pose);
+    }
+    if (weapon) {
+      mergedImage = await this.transformMergeImage(mergedImage, weapon, pose);
+    }
+    mergedImage = mergedImage.composite(poseHandSilhouetteJimp, 0, 0);
+    mergedImage = mergedImage.composite(poseHandOutlineJimp, 0, 0);
     return mergedImage;
   }
 
-  private static getCustomisationMapping(): { [k: string]: AvatarMappingDto } {
-    return JSON.parse(
-      fs.readFileSync("public/json/avatar_mapping.json", "utf-8")
-    );
+  private static colorImage(image: Jimp, color: ColorInterface): void {
+    image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+      if (image.bitmap.data[idx + 3] > 0) {
+        image.bitmap.data[idx] = color.r;
+        image.bitmap.data[idx + 1] = color.g;
+        image.bitmap.data[idx + 2] = color.b;
+        image.bitmap.data[idx + 3] = color.a;
+      }
+    });
+  }
+
+  private async transformMergeImage(
+    baseImage: Jimp,
+    gear: [GearEntity, Jimp],
+    avatarPose: AvatarPoseEntity
+  ): Promise<Jimp> {
+    const gearMapping: GearMappingEntity = await this.gearMappingEntityService
+      .findByAvatarIdAndGearId(avatarPose.id, gear[0].id)
+      .then((gearMappingOptional) => {
+        if (gearMappingOptional == undefined) {
+          const defaultMapping = new GearMappingEntity();
+          defaultMapping.transformX = 0;
+          defaultMapping.transformY = 0;
+          defaultMapping.transformRotation = 0;
+          return defaultMapping;
+        }
+        return gearMappingOptional;
+      });
+    gear[1] = gear[1].rotate(gearMapping.transformRotation);
+    return baseImage.composite(gear[1], gearMapping.transformX, gearMapping.transformY);
   }
 }

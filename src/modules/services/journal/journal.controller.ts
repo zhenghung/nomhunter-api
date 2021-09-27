@@ -1,10 +1,5 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { JournalService } from "./journal.service";
@@ -21,9 +16,7 @@ export class JournalController {
   @ApiCreatedResponse({ description: "Player badges successfully retrieved" })
   @Get("badges")
   @UseGuards(JwtAuthGuard)
-  async fetchMyBadges(
-    @Req() requestWithPlayer: RequestWithPlayer
-  ): Promise<MyBadgeInterface[]> {
+  async fetchMyBadges(@Req() requestWithPlayer: RequestWithPlayer): Promise<MyBadgeInterface[]> {
     return this.journalService.fetchMyPlayerBadges(requestWithPlayer.user.id);
   }
 
@@ -34,9 +27,7 @@ export class JournalController {
   })
   @Get("history")
   @UseGuards(JwtAuthGuard)
-  async fetchHistory(
-    @Req() requestWithPlayer: RequestWithPlayer
-  ): Promise<HistoryGameInterface[]> {
+  async fetchHistory(@Req() requestWithPlayer: RequestWithPlayer): Promise<HistoryGameInterface[]> {
     return this.journalService.fetchHistory(requestWithPlayer.user.id);
   }
 
@@ -47,9 +38,7 @@ export class JournalController {
   })
   @Get("venues")
   @UseGuards(JwtAuthGuard)
-  async fetchVenues(
-    @Req() requestWithPlayer: RequestWithPlayer
-  ): Promise<any[]> {
+  async fetchVenues(@Req() requestWithPlayer: RequestWithPlayer): Promise<any[]> {
     return this.journalService.fetchVenues(requestWithPlayer.user.id);
   }
 }

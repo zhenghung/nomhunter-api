@@ -1,10 +1,5 @@
 import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GameService } from "./game.service";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";

@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Logger,
-  Param,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Post } from "@nestjs/common";
 import { CreatePlayerDto } from "./dto/create-player.dto";
 import { PlayerEntity } from "./player.entity";
 import { PlayerEntityService } from "./player.entity.service";
@@ -27,9 +18,7 @@ export class PlayerEntityController {
     return this.playerEntityService
       .create(createPlayerDto)
       .then((player) => {
-        this.logger.log(
-          `Player with email ${player.email} successfully created`
-        );
+        this.logger.log(`Player with email ${player.email} successfully created`);
         return player;
       })
       .catch((e) => {

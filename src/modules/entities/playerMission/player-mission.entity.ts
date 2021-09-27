@@ -21,15 +21,12 @@ export class PlayerMissionEntity {
 
   @ApiProperty({ name: "player_id" })
   @ManyToOne(() => PlayerEntity, (playerEntity) => playerEntity.playerMissions)
-  @JoinColumn({ name: "player_id" })
+  @JoinColumn({ name: "player_id", referencedColumnName: "id" })
   player: PlayerEntity;
 
   @ApiProperty({ name: "mission_id" })
-  @ManyToOne(
-    () => MissionEntity,
-    (missionEntity) => missionEntity.playerMissions
-  )
-  @JoinColumn({ name: "mission_id" })
+  @ManyToOne(() => MissionEntity, (missionEntity) => missionEntity.playerMissions)
+  @JoinColumn({ name: "mission_id", referencedColumnName: "id" })
   mission: MissionEntity;
 
   @ApiProperty()

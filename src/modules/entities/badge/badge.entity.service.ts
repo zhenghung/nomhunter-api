@@ -10,11 +10,7 @@ export class BadgeEntityService extends GenericEntityService<BadgeEntity> {
     @InjectRepository(BadgeEntity)
     private readonly badgeEntityRepository: Repository<BadgeEntity>
   ) {
-    super(
-      badgeEntityRepository,
-      new Logger(BadgeEntityService.name),
-      BadgeEntity.name
-    );
+    super(badgeEntityRepository, new Logger(BadgeEntityService.name), BadgeEntity.name);
   }
 
   /**

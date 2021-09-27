@@ -91,9 +91,7 @@ export class RedisService {
    * @param expire seconds to expiry, <0 for no expiry
    */
   async set(key: string, value: string, expire?: number): Promise<void> {
-    this.logger.debug(
-      `Set key ${key} with value ${value} and expire ${expire} seconds`
-    );
+    this.logger.debug(`Set key ${key} with value ${value} and expire ${expire} seconds`);
     await this.setAsync(key, value);
     if (expire > 0) {
       this.expireAsync(key, expire);

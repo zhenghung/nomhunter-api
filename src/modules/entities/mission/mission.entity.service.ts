@@ -11,11 +11,7 @@ export class MissionEntityService extends GenericEntityService<MissionEntity> {
     @InjectRepository(MissionEntity)
     private readonly missionEntityRepository: Repository<MissionEntity>
   ) {
-    super(
-      missionEntityRepository,
-      new Logger(MissionEntityService.name),
-      MissionEntity.name
-    );
+    super(missionEntityRepository, new Logger(MissionEntityService.name), MissionEntity.name);
   }
 
   async getByIdJoinAll(id: string): Promise<MissionEntity | undefined> {

@@ -11,10 +11,7 @@ import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 export class ProfileController {
   private readonly logger = new Logger(ProfileController.name);
 
-  constructor(
-    private readonly playersService: PlayerEntityService,
-    private readonly avatarService: AvatarService
-  ) {}
+  constructor(private readonly playersService: PlayerEntityService, private readonly avatarService: AvatarService) {}
 
   @ApiImplicitQuery({
     name: "playerId",
@@ -24,15 +21,9 @@ export class ProfileController {
   @ApiOperation({ summary: "Fetch Player profile" })
   @ApiOkResponse({ description: "Player profile retrieved successfully" })
   @Get()
-  async getProfile(
-    @Query("playerId") playerId: string
-  ): Promise<ProfileResponseInterface> {
+  async getProfile(@Query("playerId") playerId: string): Promise<ProfileResponseInterface> {
     if (!playerId) {
-      throw HttpExceptionsUtil.createHttpException(
-        "PlayerId query required",
-        HttpStatus.BAD_REQUEST,
-        this.logger
-      );
+      throw HttpExceptionsUtil.createHttpException("PlayerId query required", HttpStatus.BAD_REQUEST, this.logger);
     }
     this.logger.log(`Getting profile of player: ${playerId}`);
     return this.avatarService.getAvatarImageUrl(playerId).then((avatar) => {

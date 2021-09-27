@@ -28,10 +28,7 @@ export class GoogleMapsService {
    * @param photoReference photoReference used in google google-maps api
    * @param width dimension of photo
    */
-  async getGoogleMapsPhotos(
-    photoReference: string,
-    width: number
-  ): Promise<string> {
+  async getGoogleMapsPhotos(photoReference: string, width: number): Promise<string> {
     this.logger.log(`Fetching google maps photos: ${photoReference}`);
     const photoUrl = `${this.googleMapsRootUrl}${this.googleMapsPhotoPath}?maxwidth=${width}&photoreference=${photoReference}&key=${this.googleApiKey}`;
     return this.httpService
@@ -45,9 +42,7 @@ export class GoogleMapsService {
    * Fetches place details via Google Maps API
    * @param placeId as per google maps api
    */
-  async getGooglePlacesDetails(
-    placeId: string
-  ): Promise<DetailsResponseInterface> {
+  async getGooglePlacesDetails(placeId: string): Promise<DetailsResponseInterface> {
     // Checking Cached Place Details
     const placeDetails = await this.redisService.get(placeId);
     if (placeDetails) {
@@ -56,9 +51,7 @@ export class GoogleMapsService {
     }
 
     // Calling GoogleMapsApi Webservice
-    this.logger.log(
-      `Fetching GoogleMapsApi webservice for place details: ${placeId}`
-    );
+    this.logger.log(`Fetching GoogleMapsApi webservice for place details: ${placeId}`);
     const detailsUrl = `${this.googleMapsRootUrl}${this.googleMapsDetailsPath}?place_id=${placeId}&key=${this.googleApiKey}`;
     return this.httpService
       .get(detailsUrl, {

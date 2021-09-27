@@ -22,9 +22,7 @@ export class BadgeEntityController {
     this.logger.log(`Creating badge with name: ${createBadgeReq.name}`);
 
     // Get File By Id
-    const fileEntity: FileEntity = await this.fileEntityService.getById(
-      createBadgeReq.fileId
-    );
+    const fileEntity: FileEntity = await this.fileEntityService.getById(createBadgeReq.fileId);
 
     // Construct DTO
     const createBadgeDto: CreateBadgeDto = {
@@ -32,12 +30,10 @@ export class BadgeEntityController {
       description: createBadgeReq.description,
       file: fileEntity,
     };
-    return this.badgeEntityService
-      .create(createBadgeDto)
-      .then((badgeEntity: BadgeEntity) => {
-        this.logger.log(`Badge with id ${badgeEntity.id} successfully created`);
-        return badgeEntity;
-      });
+    return this.badgeEntityService.create(createBadgeDto).then((badgeEntity: BadgeEntity) => {
+      this.logger.log(`Badge with id ${badgeEntity.id} successfully created`);
+      return badgeEntity;
+    });
   }
 
   @Get()

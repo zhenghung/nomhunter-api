@@ -1,10 +1,4 @@
-import {
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-} from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { VenueEntity } from "../venue/venue.entity";
 import { TagEntity } from "../tag/tag.entity";
@@ -18,11 +12,11 @@ export class VenueTagEntity {
 
   @ApiProperty({ name: "venue_id" })
   @ManyToOne(() => VenueEntity, (venueEntity) => venueEntity.venueTags)
-  @JoinColumn({ name: "venue_id" })
+  @JoinColumn({ name: "venue_id", referencedColumnName: "id" })
   venue: VenueEntity;
 
   @ApiProperty({ name: "tag_id" })
   @ManyToOne(() => TagEntity, (tagEntity) => tagEntity.venueTags)
-  @JoinColumn({ name: "tag_id" })
+  @JoinColumn({ name: "tag_id", referencedColumnName: "id" })
   tag: TagEntity;
 }

@@ -7,12 +7,7 @@ import { GameService } from "./game.service";
 import { GameController } from "./game.controller";
 
 @Module({
-  imports: [
-    GameEntityModule,
-    VenueEntityModule,
-    PlayerBadgeEntityModule,
-    PlayerEntityModule,
-  ],
+  imports: [GameEntityModule, VenueEntityModule, PlayerBadgeEntityModule, PlayerEntityModule],
   providers: [GameService],
   controllers: [GameController],
 })

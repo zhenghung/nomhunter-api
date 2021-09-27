@@ -2,11 +2,7 @@ import { HttpException, HttpStatus, Logger } from "@nestjs/common";
 import { EntityNotFoundError } from "typeorm/error/EntityNotFoundError";
 
 export class HttpExceptionsUtil {
-  public static genericFindByUUIDErrorHandler(
-    entity: string,
-    id: string,
-    logger: Logger
-  ) {
+  public static genericFindByUUIDErrorHandler(entity: string, id: string, logger: Logger) {
     return (error: Error) => {
       if (error instanceof EntityNotFoundError) {
         throw HttpExceptionsUtil.createHttpException(
@@ -16,12 +12,7 @@ export class HttpExceptionsUtil {
           error
         );
       } else {
-        throw HttpExceptionsUtil.createHttpException(
-          `${id} is not a UUID`,
-          HttpStatus.BAD_REQUEST,
-          logger,
-          error
-        );
+        throw HttpExceptionsUtil.createHttpException(`${id} is not a UUID`, HttpStatus.BAD_REQUEST, logger, error);
       }
     };
   }

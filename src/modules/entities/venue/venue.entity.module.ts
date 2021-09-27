@@ -8,12 +8,7 @@ import { GoogleMapsModule } from "../../services/google-maps/google-maps.module"
 import { BadgeEntityModule } from "../badge/badge.entity.module";
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([VenueEntity]),
-    ZoneEntityModule,
-    GoogleMapsModule,
-    BadgeEntityModule,
-  ],
+  imports: [TypeOrmModule.forFeature([VenueEntity]), ZoneEntityModule, GoogleMapsModule, BadgeEntityModule],
   providers: [VenueEntityService],
   controllers: [VenueEntityController],
   exports: [VenueEntityService],

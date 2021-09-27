@@ -1,7 +1,11 @@
 export enum FileType {
-  PROFILE_PIC = "profile_pic",
-  GEAR_BODY = "gear_body",
-  GEAR_HAT = "gear_hat",
-  GEAR_HAND = "gear_hand",
+  AVATAR = "avatar",
+  POSE_SILHOUETTE = "pose.silhouette",
+  POSE_OUTLINE = "pose.outline",
+  POSE_HAND_SILHOUETTE = "pose.hand.silhouette",
+  POSE_HAND_OUTLINE = "pose.hand.outline",
+  GEAR_FACE = "gear.face",
+  GEAR_HAT = "gear.hat",
+  GEAR_WEAPON = "gear.weapon",
   BADGE = "badge",
 }

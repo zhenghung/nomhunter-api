@@ -12,11 +12,7 @@ export class SeasonEntityService extends GenericEntityService<SeasonEntity> {
     @InjectRepository(SeasonEntity)
     private readonly seasonEntityRepository: Repository<SeasonEntity>
   ) {
-    super(
-      seasonEntityRepository,
-      new Logger(SeasonEntityService.name),
-      SeasonEntity.name
-    );
+    super(seasonEntityRepository, new Logger(SeasonEntityService.name), SeasonEntity.name);
   }
 
   async createSeason(startDate?: Date): Promise<SeasonEntity> {

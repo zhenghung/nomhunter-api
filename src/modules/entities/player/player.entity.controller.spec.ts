@@ -11,7 +11,6 @@ testPlayer1.id = "1";
 testPlayer1.email = "playerOne@nomhunter.com";
 testPlayer1.password = "password1";
 testPlayer1.nickname = "PlayerOne";
-testPlayer1.profilePic = "default_profile";
 testPlayer1.createdAt = new Date();
 testPlayer1.updatedAt = new Date();
 
@@ -20,7 +19,6 @@ testPlayer2.id = "2";
 testPlayer2.email = "playerTwo@nomhunter.com";
 testPlayer2.password = "password2";
 testPlayer2.nickname = "PlayerTwo";
-testPlayer2.profilePic = "default_profile";
 testPlayer2.createdAt = new Date();
 testPlayer2.updatedAt = new Date();
 
@@ -61,9 +59,7 @@ describe("PlayerEntityController", () => {
 
   describe("create", () => {
     it("should create a new player", () => {
-      return expect(controller.create(newPlayerDTO)).resolves.toEqual(
-        testPlayer1
-      );
+      return expect(controller.create(newPlayerDTO)).resolves.toEqual(testPlayer1);
     });
     it("email already exist", () => {
       jest
@@ -77,10 +73,7 @@ describe("PlayerEntityController", () => {
         );
       return controller.create(newPlayerDTO).catch((error) => {
         expect(error).toStrictEqual(
-          new HttpException(
-            `Player with email ${newPlayerDTO.email} already taken`,
-            HttpStatus.BAD_REQUEST
-          )
+          new HttpException(`Player with email ${newPlayerDTO.email} already taken`, HttpStatus.BAD_REQUEST)
         );
       });
     });
@@ -88,10 +81,7 @@ describe("PlayerEntityController", () => {
 
   describe("findAll", () => {
     it("should get an array of player", () => {
-      return expect(controller.findAll()).resolves.toEqual([
-        testPlayer1,
-        testPlayer2,
-      ]);
+      return expect(controller.findAll()).resolves.toEqual([testPlayer1, testPlayer2]);
     });
   });
 

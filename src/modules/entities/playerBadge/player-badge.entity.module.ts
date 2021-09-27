@@ -7,12 +7,7 @@ import { PlayerEntityModule } from "../player/player.entity.module";
 import { GameEntityModule } from "../game/game.entity.module";
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([PlayerBadgeEntity]),
-    BadgeEntityModule,
-    PlayerEntityModule,
-    GameEntityModule,
-  ],
+  imports: [TypeOrmModule.forFeature([PlayerBadgeEntity]), BadgeEntityModule, PlayerEntityModule, GameEntityModule],
   providers: [PlayerBadgeEntityService],
   exports: [PlayerBadgeEntityService],
 })

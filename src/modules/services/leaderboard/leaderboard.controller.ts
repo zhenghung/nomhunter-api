@@ -1,20 +1,6 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  Logger,
-  Query,
-  Req,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, HttpStatus, Logger, Query, Req, UseGuards } from "@nestjs/common";
 import { LeaderboardService } from "./leaderboard.service";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { LeaderboardType } from "./leaderboard.type";
@@ -53,10 +39,7 @@ export class LeaderboardController {
   @ApiOperation({ summary: "Fetch leaderboard" })
   @ApiOkResponse({ description: "Leaderboard retrieved successfully" })
   @Get()
-  async getLeaderboard(
-    @Query("venueId") venueId?: string,
-    @Query("zoneId") zoneId?: string
-  ): Promise<RankInterface[]> {
+  async getLeaderboard(@Query("venueId") venueId?: string, @Query("zoneId") zoneId?: string): Promise<RankInterface[]> {
     if (venueId && zoneId) {
       throw HttpExceptionsUtil.createHttpException(
         "Only one zoneId or venueId required",
@@ -66,22 +49,13 @@ export class LeaderboardController {
     }
     if (venueId) {
       this.logger.log("Fetching venue leaderboard details");
-      return await this.leaderboardService.getLeaderboard(
-        LeaderboardType.VENUE,
-        venueId
-      );
+      return await this.leaderboardService.getLeaderboard(LeaderboardType.VENUE, venueId);
     }
     if (zoneId) {
       this.logger.log("Fetching zone leaderboard details");
-      return await this.leaderboardService.getLeaderboard(
-        LeaderboardType.ZONE,
-        zoneId
-      );
+      return await this.leaderboardService.getLeaderboard(LeaderboardType.ZONE, zoneId);
     }
-    return await this.leaderboardService.getLeaderboard(
-      LeaderboardType.SEASON,
-      "SEASON"
-    );
+    return await this.leaderboardService.getLeaderboard(LeaderboardType.SEASON, "SEASON");
   }
 
   @ApiImplicitQuery({
@@ -108,11 +82,7 @@ export class LeaderboardController {
         for (const venueEntity of listOfVenues) {
           const ranks = await this.leaderboardService
             .getLeaderboard(LeaderboardType.VENUE, venueEntity.id)
-            .then((rankList) =>
-              rankList.filter(
-                (rank) => rank.playerId == requestWithPlayer.user.id
-              )
-            );
+            .then((rankList) => rankList.filter((rank) => rank.playerId == requestWithPlayer.user.id));
           const myRank = this.getScoreAndRankAfterFiltered(ranks, "venue");
           const game = await this.gamesService.findMatchingGame(
             venueEntity.id,
@@ -136,11 +106,7 @@ export class LeaderboardController {
         for (const zoneEntity of listOfZones) {
           const ranks = await this.leaderboardService
             .getLeaderboard(LeaderboardType.ZONE, zoneEntity.id)
-            .then((rankList) =>
-              rankList.filter(
-                (rank) => rank.playerId == requestWithPlayer.user.id
-              )
-            );
+            .then((rankList) => rankList.filter((rank) => rank.playerId == requestWithPlayer.user.id));
           const myRank = this.getScoreAndRankAfterFiltered(ranks, "zone");
           listOfZoneRanks.push({
             zoneId: zoneEntity.id,
@@ -155,11 +121,7 @@ export class LeaderboardController {
         const seasonId = "SEASON";
         const ranks = await this.leaderboardService
           .getLeaderboard(LeaderboardType.SEASON, seasonId)
-          .then((rankList) =>
-            rankList.filter(
-              (rank) => rank.playerId == requestWithPlayer.user.id
-            )
-          );
+          .then((rankList) => rankList.filter((rank) => rank.playerId == requestWithPlayer.user.id));
         const myRank = this.getScoreAndRankAfterFiltered(ranks, "season");
         return {
           seasonId: seasonId,

@@ -7,11 +7,7 @@ import { TagEntityModule } from "../tag/tag.entity.module";
 import { VenueTagEntityController } from "./venue-tag.entity.controller";
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([VenueTagEntity]),
-    VenueEntityModule,
-    TagEntityModule,
-  ],
+  imports: [TypeOrmModule.forFeature([VenueTagEntity]), VenueEntityModule, TagEntityModule],
   providers: [VenueTagEntityService],
   controllers: [VenueTagEntityController],
   exports: [VenueTagEntityService],
