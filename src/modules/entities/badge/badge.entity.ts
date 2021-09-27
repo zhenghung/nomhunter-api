@@ -21,7 +21,7 @@ export class BadgeEntity {
 
   @ApiProperty({ name: "file_id" })
   @OneToOne(() => FileEntity, (fileEntity) => fileEntity.badge)
-  @JoinColumn({ name: "file_id" })
+  @JoinColumn({ name: "file_id", referencedColumnName: "id" })
   file: FileEntity;
 
   @ApiProperty()
@@ -41,10 +41,7 @@ export class BadgeEntity {
   updatedAt: Date;
 
   @ApiProperty()
-  @OneToMany(
-    () => PlayerBadgeEntity,
-    (playerBadgeEntity) => playerBadgeEntity.badge
-  )
+  @OneToMany(() => PlayerBadgeEntity, (playerBadgeEntity) => playerBadgeEntity.badge)
   @JoinColumn()
   playerBadges: PlayerBadgeEntity[];
 

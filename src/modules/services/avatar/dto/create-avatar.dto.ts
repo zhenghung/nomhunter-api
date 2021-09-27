@@ -1,18 +1,18 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateAvatarDto {
-  @ApiProperty({
-    example: 1,
-  })
-  body: number;
+  @ApiProperty()
+  poseId: string;
 
-  @ApiProperty({
-    example: 1,
-  })
-  hat: number;
+  @ApiProperty()
+  faceId: string;
 
-  @ApiProperty({
-    example: 1,
-  })
-  prop: number;
+  @ApiProperty()
+  hatId: string;
+
+  @ApiProperty()
+  weaponId: string;
+
+  @ApiProperty()
+  color: string;
 }

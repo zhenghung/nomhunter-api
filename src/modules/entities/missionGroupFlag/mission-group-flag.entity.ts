@@ -1,10 +1,4 @@
-import {
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-} from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PlayerEntity } from "../player/player.entity";
 import { MissionGroupEntity } from "../missionGroup/mission-group.entity";
@@ -18,14 +12,11 @@ export class MissionGroupFlagEntity {
 
   @ApiProperty()
   @ManyToOne(() => PlayerEntity, (player) => player.missionGroupFlags)
-  @JoinColumn({ name: "player_id" })
+  @JoinColumn({ name: "player_id", referencedColumnName: "id" })
   player: PlayerEntity;
 
   @ApiProperty()
-  @ManyToOne(
-    () => MissionGroupEntity,
-    (missionGroup) => missionGroup.missionGroupFlags
-  )
-  @JoinColumn({ name: "mission_group_id" })
+  @ManyToOne(() => MissionGroupEntity, (missionGroup) => missionGroup.missionGroupFlags)
+  @JoinColumn({ name: "mission_group_id", referencedColumnName: "id" })
   missionGroup: MissionGroupEntity;
 }

@@ -25,11 +25,7 @@ export class S3Service {
    * @param buffer file data
    * @param mimeType file type
    */
-  async uploadFile(
-    key: string,
-    buffer: Buffer,
-    mimeType: string
-  ): Promise<string> {
+  async uploadFile(key: string, buffer: Buffer, mimeType: string): Promise<string> {
     const params: S3.PutObjectRequest = {
       Bucket: this.bucketName,
       Key: key,
@@ -45,9 +41,7 @@ export class S3Service {
           this.logger.error("Failed to upload image to S3", err.message);
           throw err;
         }
-        this.logger.log(
-          `Successfully uploaded image to S3 with url ${data.Location}`
-        );
+        this.logger.log(`Successfully uploaded image to S3 with url ${data.Location}`);
         return data;
       })
       .promise();
@@ -56,7 +50,7 @@ export class S3Service {
 
   /**
    * Builds image url given the following parameters
-   * @param feature highest level folder (e.g. avatar)
+   * @param feature highest level folder (e.g. playerAvatar)
    * @param type sub level folder (e.g. profile)
    * @param name filename (e.g. 1-1-1.png)
    */

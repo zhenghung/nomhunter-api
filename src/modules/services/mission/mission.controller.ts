@@ -1,10 +1,5 @@
 import { Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { MissionService } from "./mission.service";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
@@ -17,10 +12,7 @@ import { OptionalBoolPipe } from "../../common/pipes/optional-bool.pipe";
 @ApiTags("Mission")
 @Controller("mission")
 export class MissionController {
-  constructor(
-    private readonly eventEmitter: EventEmitter2,
-    private readonly missionService: MissionService
-  ) {}
+  constructor(private readonly eventEmitter: EventEmitter2, private readonly missionService: MissionService) {}
 
   @ApiBearerAuth()
   @ApiOperation({ summary: "Fetch missions for player" })
@@ -29,14 +21,10 @@ export class MissionController {
   })
   @Get()
   @UseGuards(JwtAuthGuard)
-  async fetchMissions(
-    @Req() requestWithPlayer: RequestWithPlayer
-  ): Promise<MissionGroupsInterface> {
+  async fetchMissions(@Req() requestWithPlayer: RequestWithPlayer): Promise<MissionGroupsInterface> {
     return this.missionService
       .fetchAllMissionsForPlayer(requestWithPlayer.user.id)
-      .then((missionGroupEntities) =>
-        MissionTransformer.map(missionGroupEntities)
-      );
+      .then((missionGroupEntities) => MissionTransformer.map(missionGroupEntities));
   }
 
   @ApiBearerAuth()
@@ -46,14 +34,8 @@ export class MissionController {
   })
   @Get("/:missionId/claim")
   @UseGuards(JwtAuthGuard)
-  async claimReward(
-    @Req() requestWithPlayer: RequestWithPlayer,
-    @Param("missionId") missionId: string
-  ): Promise<void> {
-    return this.missionService.claimReward(
-      requestWithPlayer.user.id,
-      missionId
-    );
+  async claimReward(@Req() requestWithPlayer: RequestWithPlayer, @Param("missionId") missionId: string): Promise<void> {
+    return this.missionService.claimReward(requestWithPlayer.user.id, missionId);
   }
 
   @ApiImplicitQuery({
@@ -78,10 +60,6 @@ export class MissionController {
     @Query("missionGroupId") missionGroupId: string,
     @Query("remove", OptionalBoolPipe) remove?: boolean
   ): Promise<void> {
-    return this.missionService.setFlag(
-      requestWithPlayer.user.id,
-      missionGroupId,
-      !remove
-    );
+    return this.missionService.setFlag(requestWithPlayer.user.id, missionGroupId, !remove);
   }
 }

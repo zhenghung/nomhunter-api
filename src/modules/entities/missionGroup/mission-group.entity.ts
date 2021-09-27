@@ -16,9 +16,6 @@ export class MissionGroupEntity {
   @OneToMany(() => MissionEntity, (missionEntity) => missionEntity.missionGroup)
   missions: MissionEntity[];
 
-  @OneToMany(
-    () => MissionGroupFlagEntity,
-    (missionGroupFlagEntity) => missionGroupFlagEntity.missionGroup
-  )
+  @OneToMany(() => MissionGroupFlagEntity, (missionGroupFlagEntity) => missionGroupFlagEntity.missionGroup)
   missionGroupFlags: MissionGroupFlagEntity[];
 }

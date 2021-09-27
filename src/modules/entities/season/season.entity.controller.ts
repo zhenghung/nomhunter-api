@@ -15,15 +15,11 @@ export class SeasonEntityController {
 
   @Post()
   create(@Body() createSeasonReq: CreateSeasonDto): Promise<SeasonEntity> {
-    this.logger.log(
-      `Creating season with startDate: ${createSeasonReq.startDate}`
-    );
-    return this.seasonEntityService
-      .createSeason(createSeasonReq.startDate)
-      .then((season: SeasonEntity) => {
-        this.logger.log(`Season with id ${season.id} successfully created`);
-        return season;
-      });
+    this.logger.log(`Creating season with startDate: ${createSeasonReq.startDate}`);
+    return this.seasonEntityService.createSeason(createSeasonReq.startDate).then((season: SeasonEntity) => {
+      this.logger.log(`Season with id ${season.id} successfully created`);
+      return season;
+    });
   }
 
   @ApiImplicitQuery({

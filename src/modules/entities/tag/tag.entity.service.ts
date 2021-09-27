@@ -11,23 +11,12 @@ export class TagEntityService extends GenericEntityService<TagEntity> {
     @InjectRepository(TagEntity)
     private readonly tagEntityRepository: Repository<TagEntity>
   ) {
-    super(
-      tagEntityRepository,
-      new Logger(TagEntityService.name),
-      TagEntity.name
-    );
+    super(tagEntityRepository, new Logger(TagEntityService.name), TagEntity.name);
   }
 
   async getByTagName(tagName: string): Promise<TagEntity> {
-    return this.tagEntityRepository
-      .findOneOrFail({ name: tagName })
-      .catch((error) => {
-        throw HttpExceptionsUtil.createHttpException(
-          "TagEntity",
-          HttpStatus.NOT_FOUND,
-          this.logger,
-          error
-        );
-      });
+    return this.tagEntityRepository.findOneOrFail({ name: tagName }).catch((error) => {
+      throw HttpExceptionsUtil.createHttpException("TagEntity", HttpStatus.NOT_FOUND, this.logger, error);
+    });
   }
 }

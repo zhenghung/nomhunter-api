@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Logger,
-  Param,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VenueEntityService } from "./venue.entity.service";
 import { VenueEntity } from "./venue.entity";
@@ -40,11 +31,7 @@ export class VenueEntityController {
       createVenueReq.googlePlacesId
     );
     if (details.status != "OK") {
-      throw HttpExceptionsUtil.createHttpException(
-        "Invalid Place Id",
-        HttpStatus.BAD_REQUEST,
-        this.logger
-      );
+      throw HttpExceptionsUtil.createHttpException("Invalid Place Id", HttpStatus.BAD_REQUEST, this.logger);
     }
     const photoReference = details.result.photos[0].photo_reference;
     const latitude = details.result.geometry.location.lat.toString();

@@ -22,23 +22,20 @@ export class GearEntityController {
     this.logger.log(`Creating gear with name: ${createGearReq.name}`);
 
     // Get File By Id
-    const fileEntity: FileEntity = await this.fileEntityService.getById(
-      createGearReq.fileId
-    );
+    const fileEntity: FileEntity = await this.fileEntityService.getById(createGearReq.fileId);
 
     // Construct DTO
     const createGearDto: CreateGearDto = {
       name: createGearReq.name,
       description: createGearReq.description,
       file: fileEntity,
+      type: createGearReq.type,
     };
 
-    return this.gearEntityService
-      .create(createGearDto)
-      .then((gearEntity: GearEntity) => {
-        this.logger.log(`Gear with id ${gearEntity.id} successfully created`);
-        return gearEntity;
-      });
+    return this.gearEntityService.create(createGearDto).then((gearEntity: GearEntity) => {
+      this.logger.log(`Gear with id ${gearEntity.id} successfully created`);
+      return gearEntity;
+    });
   }
 
   @Get()

@@ -12,16 +12,12 @@ export class TagService {
   ) {}
 
   findAllTags(): Promise<string[]> {
-    return this.tagEntityService
-      .findAll()
-      .then((tagEntities) => tagEntities.map((tagEntity) => tagEntity.name));
+    return this.tagEntityService.findAll().then((tagEntities) => tagEntities.map((tagEntity) => tagEntity.name));
   }
 
   findTagsForVenue(venueId: string): Promise<string[]> {
     return this.venueTagEntityService
       .findByVenueId(venueId)
-      .then((venueTagEntities) =>
-        venueTagEntities.map((venueTagEntity) => venueTagEntity.tag.name)
-      );
+      .then((venueTagEntities) => venueTagEntities.map((venueTagEntity) => venueTagEntity.tag.name));
   }
 }

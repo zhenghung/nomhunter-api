@@ -1,21 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { AvatarService } from "./avatar.service";
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
 import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
 import { ProfilePicInterface } from "./interface/profile-pic.interface.";
@@ -27,7 +13,7 @@ export class AvatarController {
   constructor(private readonly avatarService: AvatarService) {}
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Create new avatar for player" })
+  @ApiOperation({ summary: "Create new playerAvatar for player" })
   @ApiCreatedResponse({ description: "Avatar created successfully for player" })
   @Post("create")
   @UseGuards(JwtAuthGuard)
@@ -35,10 +21,7 @@ export class AvatarController {
     @Req() requestWithPlayer: RequestWithPlayer,
     @Body() createAvatar: CreateAvatarDto
   ): Promise<ProfilePicInterface> {
-    return this.avatarService.createAvatar(
-      createAvatar,
-      requestWithPlayer.user.id
-    );
+    return this.avatarService.createAvatar(createAvatar, requestWithPlayer.user.id);
   }
 
   @ApiImplicitQuery({
@@ -47,7 +30,7 @@ export class AvatarController {
     type: String,
   })
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Fetch image url of avatar for player" })
+  @ApiOperation({ summary: "Fetch image url of playerAvatar for player" })
   @ApiOkResponse({ description: "Avatar Image Url retrieved successfully" })
   @Get("profile")
   @UseGuards(JwtAuthGuard)

@@ -11,11 +11,7 @@ export class GameEntityService extends GenericEntityService<GameEntity> {
     @InjectRepository(GameEntity)
     private readonly gameEntityRepository: Repository<GameEntity>
   ) {
-    super(
-      gameEntityRepository,
-      new Logger(GameEntityService.name),
-      GameEntity.name
-    );
+    super(gameEntityRepository, new Logger(GameEntityService.name), GameEntity.name);
   }
 
   async findAll(conditions?: string): Promise<GameEntity[]> {
@@ -37,11 +33,7 @@ export class GameEntityService extends GenericEntityService<GameEntity> {
    * @param playerId
    * @param score
    */
-  async findMatchingGame(
-    venueId: string,
-    playerId: string,
-    score: number
-  ): Promise<GameEntity> {
+  async findMatchingGame(venueId: string, playerId: string, score: number): Promise<GameEntity> {
     this.logger.log("Finding Matching Game");
     return this.gameEntityRepository
       .findOneOrFail({

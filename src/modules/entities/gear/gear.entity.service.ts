@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { GearEntity } from "./gear.entity";
 import { GenericEntityService } from "../generic.entity.service";
+import { GearType } from "./gear.type";
 
 @Injectable()
 export class GearEntityService extends GenericEntityService<GearEntity> {
@@ -10,11 +11,7 @@ export class GearEntityService extends GenericEntityService<GearEntity> {
     @InjectRepository(GearEntity)
     private readonly gearEntityRepository: Repository<GearEntity>
   ) {
-    super(
-      gearEntityRepository,
-      new Logger(GearEntityService.name),
-      GearEntity.name
-    );
+    super(gearEntityRepository, new Logger(GearEntityService.name), GearEntity.name);
   }
 
   /**
@@ -30,5 +27,23 @@ export class GearEntityService extends GenericEntityService<GearEntity> {
         .getMany();
     }
     return this.gearEntityRepository.find();
+  }
+
+  async getByIdAndType(id: string, type: GearType): Promise<GearEntity> {
+    return this.gearEntityRepository
+      .createQueryBuilder("gear")
+      .innerJoinAndSelect("gear.file", "file")
+      .where("gear.type = :gearType", { gearType: type.toString() })
+      .andWhere("gear.id = :id", { id: id })
+      .getOneOrFail();
+  }
+
+  async getDefaultFaceEntity(): Promise<GearEntity> {
+    return this.gearEntityRepository
+      .createQueryBuilder("gear")
+      .innerJoinAndSelect("gear.file", "file")
+      .where("gear.type = :gearType", { gearType: GearType.FACE.toString() })
+      .orderBy("gear.created_at", "ASC")
+      .getOneOrFail();
   }
 }

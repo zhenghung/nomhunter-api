@@ -20,25 +20,17 @@ export class VenueTagEntityController {
   ) {}
 
   @Post()
-  async create(
-    @Body() createVenueTagReq: CreateVenueTagReq
-  ): Promise<VenueTagEntity[]> {
+  async create(@Body() createVenueTagReq: CreateVenueTagReq): Promise<VenueTagEntity[]> {
     this.logger.log(`Creating venue tags: ${createVenueTagReq}`);
-    const venue = await this.venueEntityService.getById(
-      createVenueTagReq.venueId
-    );
+    const venue = await this.venueEntityService.getById(createVenueTagReq.venueId);
     const tags = await Promise.all(
-      createVenueTagReq.tags.map((tagName) =>
-        this.tagEntityService.getByTagName(tagName)
-      )
+      createVenueTagReq.tags.map((tagName) => this.tagEntityService.getByTagName(tagName))
     );
     const dto: CreateManyVenueTagsDto = { venue, tags };
     return this.venueTagEntityService
       .createMany(dto)
       .then((venueTagEntities: VenueTagEntity[]) => {
-        this.logger.log(
-          `Venue with id ${venueTagEntities[0].venue.id} successfully created`
-        );
+        this.logger.log(`Venue with id ${venueTagEntities[0].venue.id} successfully created`);
         return venueTagEntities;
       })
       .catch((error) => {

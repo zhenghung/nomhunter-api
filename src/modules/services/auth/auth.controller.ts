@@ -43,9 +43,7 @@ export class AuthController {
   @Post("register")
   async register(@Body() registrationData: RegisterReq): Promise<PlayerEntity> {
     return this.authService.register(registrationData).then((player) => {
-      this.logger.log(
-        `Player with email: ${player.email} successfully created`
-      );
+      this.logger.log(`Player with email: ${player.email} successfully created`);
       return player;
     });
   }
@@ -57,10 +55,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: "Successfully logged in" })
   @ApiUnauthorizedResponse({ description: "Incorrect credentials" })
-  login(
-    @Request() request: RequestWithPlayer,
-    @Body() loginData: LoginReq
-  ): TokenResponseInterface {
+  login(@Request() request: RequestWithPlayer, @Body() loginData: LoginReq): TokenResponseInterface {
     this.logger.log(`Player ${loginData.email} successfully logged in`);
     return this.authService.login(request.user);
   }

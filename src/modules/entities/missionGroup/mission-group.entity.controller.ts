@@ -10,14 +10,10 @@ import { CreateMissionGroupDto } from "./dto/create-mission-group.dto";
 export class MissionGroupEntityController {
   private readonly logger = new Logger(MissionGroupEntityController.name);
 
-  constructor(
-    private readonly missionGroupEntityService: MissionGroupEntityService
-  ) {}
+  constructor(private readonly missionGroupEntityService: MissionGroupEntityService) {}
 
   @Post()
-  async create(
-    @Body() createMissionGroupReq: CreateMissionGroupReq
-  ): Promise<MissionGroupEntity> {
+  async create(@Body() createMissionGroupReq: CreateMissionGroupReq): Promise<MissionGroupEntity> {
     const dto: CreateMissionGroupDto = { name: createMissionGroupReq.name };
     return this.missionGroupEntityService.create(dto);
   }

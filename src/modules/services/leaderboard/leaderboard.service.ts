@@ -21,10 +21,7 @@ export class LeaderboardService {
   /**
    * Fetch leaderboard
    */
-  async getLeaderboard(
-    type: LeaderboardType,
-    id: string
-  ): Promise<RankInterface[]> {
+  async getLeaderboard(type: LeaderboardType, id: string): Promise<RankInterface[]> {
     // Checking if id is valid for type
     await this.validateId(type, id);
 
@@ -64,17 +61,12 @@ export class LeaderboardService {
    */
   async refreshVenueLeaderboard(venueId: string): Promise<void> {
     this.logger.log(`Refreshing leaderboard of venue ${venueId}`);
-    const games: GameEntity[] = await this.gameEntityService.findAll(
-      `venue.id = '${venueId}'`
-    );
+    const games: GameEntity[] = await this.gameEntityService.findAll(`venue.id = '${venueId}'`);
     // Get Highest Score for each player
     const mapBoard = new Map<string, number>();
     for (const game of games) {
       if (mapBoard.has(game.player.id)) {
-        mapBoard.set(
-          game.player.id,
-          Math.max(mapBoard.get(game.player.id), game.score)
-        );
+        mapBoard.set(game.player.id, Math.max(mapBoard.get(game.player.id), game.score));
       } else {
         mapBoard.set(game.player.id, game.score);
       }
@@ -122,25 +114,18 @@ export class LeaderboardService {
     }
   }
 
-  private async accumulateVenueScores(
-    venueIds: string[]
-  ): Promise<Map<string, number>> {
+  private async accumulateVenueScores(venueIds: string[]): Promise<Map<string, number>> {
     const mapBoard = new Map<string, number>();
     for (const venueId of venueIds) {
-      await this.getLeaderboard(LeaderboardType.VENUE, venueId).then(
-        (ranks) => {
-          for (const rank of ranks) {
-            if (mapBoard.has(rank.playerId)) {
-              mapBoard.set(
-                rank.playerId,
-                mapBoard.get(rank.playerId) + rank.score
-              );
-            } else {
-              mapBoard.set(rank.playerId, rank.score);
-            }
+      await this.getLeaderboard(LeaderboardType.VENUE, venueId).then((ranks) => {
+        for (const rank of ranks) {
+          if (mapBoard.has(rank.playerId)) {
+            mapBoard.set(rank.playerId, mapBoard.get(rank.playerId) + rank.score);
+          } else {
+            mapBoard.set(rank.playerId, rank.score);
           }
         }
-      );
+      });
     }
     return mapBoard;
   }

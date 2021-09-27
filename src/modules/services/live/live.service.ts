@@ -40,8 +40,7 @@ export class LiveService {
           topPlayer: {
             id: "00309",
             name: "Pineapple Guy",
-            avatarUrl:
-              "https://nomhunter-dev.s3.eu-west-2.amazonaws.com/avatar/profile/1-2-2.png",
+            avatarUrl: "https://nomhunter-dev.s3.eu-west-2.amazonaws.com/avatar/profile/1-2-2.png",
           },
         };
         venues.push(venue);

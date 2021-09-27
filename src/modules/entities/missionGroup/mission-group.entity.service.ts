@@ -5,25 +5,15 @@ import { Repository } from "typeorm";
 import { MissionGroupEntity } from "./mission-group.entity";
 
 @Injectable()
-export class MissionGroupEntityService extends GenericEntityService<
-  MissionGroupEntity
-> {
+export class MissionGroupEntityService extends GenericEntityService<MissionGroupEntity> {
   constructor(
     @InjectRepository(MissionGroupEntity)
-    private readonly missionGroupEntityRepository: Repository<
-      MissionGroupEntity
-    >
+    private readonly missionGroupEntityRepository: Repository<MissionGroupEntity>
   ) {
-    super(
-      missionGroupEntityRepository,
-      new Logger(MissionGroupEntityService.name),
-      MissionGroupEntity.name
-    );
+    super(missionGroupEntityRepository, new Logger(MissionGroupEntityService.name), MissionGroupEntity.name);
   }
 
-  async fetchAllMissionsForPlayer(
-    playerId: string
-  ): Promise<MissionGroupEntity[]> {
+  async fetchAllMissionsForPlayer(playerId: string): Promise<MissionGroupEntity[]> {
     return this.missionGroupEntityRepository
       .createQueryBuilder("missionGroup")
       .leftJoinAndSelect(
@@ -33,12 +23,9 @@ export class MissionGroupEntityService extends GenericEntityService<
         { playerId: playerId }
       )
       .leftJoinAndSelect("missionGroup.missions", "missions")
-      .leftJoinAndSelect(
-        "missions.playerMissions",
-        "playerMissions",
-        "playerMissions.player = :playerId",
-        { playerId: playerId }
-      )
+      .leftJoinAndSelect("missions.playerMissions", "playerMissions", "playerMissions.player = :playerId", {
+        playerId: playerId,
+      })
       .orderBy("missions.level", "ASC")
       .getMany();
   }

@@ -21,14 +21,9 @@ export class GameService {
     private readonly venueEntityService: VenueEntityService
   ) {}
 
-  async create(
-    playerId: string,
-    createGameReq: CreateGameReq
-  ): Promise<GameEntity> {
+  async create(playerId: string, createGameReq: CreateGameReq): Promise<GameEntity> {
     const playerEntity = await this.playerEntityService.getById(playerId);
-    const venueEntity = await this.venueEntityService.getByIdJoinAll(
-      createGameReq.venueId
-    );
+    const venueEntity = await this.venueEntityService.getByIdJoinAll(createGameReq.venueId);
 
     // Create Game Entity
     this.logger.log(`Creating Game with req ${createGameReq}`);

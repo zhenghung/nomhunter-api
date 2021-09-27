@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -12,6 +13,7 @@ import { GameEntity } from "../game/game.entity";
 import { PlayerBadgeEntity } from "../playerBadge/player-badge.entity";
 import { PlayerMissionEntity } from "../playerMission/player-mission.entity";
 import { MissionGroupFlagEntity } from "../missionGroupFlag/mission-group-flag.entity";
+import { PlayerAvatarEntity } from "../playerAvatar/player-avatar.entity";
 
 @Entity("player")
 export class PlayerEntity {
@@ -33,12 +35,6 @@ export class PlayerEntity {
   nickname: string;
 
   @ApiProperty()
-  @Column({
-    nullable: true,
-  })
-  profilePic: string;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
@@ -55,9 +51,9 @@ export class PlayerEntity {
   @OneToMany(() => PlayerMissionEntity, (playerMission) => playerMission.player)
   playerMissions: PlayerMissionEntity[];
 
-  @OneToMany(
-    () => MissionGroupFlagEntity,
-    (missionGroupFlagEntity) => missionGroupFlagEntity.player
-  )
+  @OneToMany(() => MissionGroupFlagEntity, (missionGroupFlagEntity) => missionGroupFlagEntity.player)
   missionGroupFlags: MissionGroupFlagEntity[];
+
+  @OneToOne(() => PlayerAvatarEntity, (playerAvatar) => playerAvatar.player)
+  avatar: PlayerAvatarEntity;
 }

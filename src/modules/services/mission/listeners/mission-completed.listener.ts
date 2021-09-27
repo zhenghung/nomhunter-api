@@ -6,9 +6,7 @@ import { MissionCompletedEvent } from "../../../common/events/mission-completed.
 @Injectable()
 export class MissionCompletedListener {
   private readonly logger = new Logger(MissionCompletedListener.name);
-  constructor(
-    private readonly playerMissionEntityService: PlayerMissionEntityService
-  ) {}
+  constructor(private readonly playerMissionEntityService: PlayerMissionEntityService) {}
 
   @OnEvent("mission.completed", { async: true })
   async handleMissionCompletedEvent(event: MissionCompletedEvent) {
@@ -17,15 +15,10 @@ export class MissionCompletedListener {
     const mission = event.mission;
     // Set to complete if complete
     if (playerMission.currentProgress == mission.maxProgress) {
-      this.logger.log(
-        `Player: ${playerMission.player.id} completed mission: ${mission.id}`
-      );
-      return this.playerMissionEntityService.updateByEntityId(
-        playerMission.id,
-        {
-          completed: true,
-        }
-      );
+      this.logger.log(`Player: ${playerMission.player.id} completed mission: ${mission.id}`);
+      return this.playerMissionEntityService.updateByEntityId(playerMission.id, {
+        completed: true,
+      });
     }
   }
 }

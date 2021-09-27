@@ -5,18 +5,12 @@ import { PlayerBadgeEntity } from "./player-badge.entity";
 import { GenericEntityService } from "../generic.entity.service";
 
 @Injectable()
-export class PlayerBadgeEntityService extends GenericEntityService<
-  PlayerBadgeEntity
-> {
+export class PlayerBadgeEntityService extends GenericEntityService<PlayerBadgeEntity> {
   constructor(
     @InjectRepository(PlayerBadgeEntity)
     private readonly playerBadgeEntityRepository: Repository<PlayerBadgeEntity>
   ) {
-    super(
-      playerBadgeEntityRepository,
-      new Logger(PlayerBadgeEntityService.name),
-      PlayerBadgeEntity.name
-    );
+    super(playerBadgeEntityRepository, new Logger(PlayerBadgeEntityService.name), PlayerBadgeEntity.name);
   }
 
   /**

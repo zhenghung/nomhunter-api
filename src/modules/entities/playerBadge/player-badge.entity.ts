@@ -20,17 +20,17 @@ export class PlayerBadgeEntity {
 
   @ApiProperty({ name: "player_id" })
   @ManyToOne(() => PlayerEntity, (playerEntity) => playerEntity.playerBadges)
-  @JoinColumn({ name: "player_id" })
+  @JoinColumn({ name: "player_id", referencedColumnName: "id" })
   player: PlayerEntity;
 
   @ApiProperty({ name: "badge_id" })
   @ManyToOne(() => BadgeEntity, (badgeEntity) => badgeEntity.playerBadges)
-  @JoinColumn({ name: "badge_id" })
+  @JoinColumn({ name: "badge_id", referencedColumnName: "id" })
   badge: BadgeEntity;
 
   @ApiProperty({ name: "game_id" })
   @OneToOne(() => GameEntity, (gameEntity) => gameEntity.playerBadge)
-  @JoinColumn({ name: "game_id" })
+  @JoinColumn({ name: "game_id", referencedColumnName: "id" })
   game: GameEntity;
 
   @ApiProperty()

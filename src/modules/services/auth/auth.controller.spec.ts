@@ -58,25 +58,19 @@ describe("AuthController", () => {
 
   describe("register", () => {
     it("email already exist", () => {
-      return expect(controller.register(registerDto)).resolves.toStrictEqual(
-        testPlayer1
-      );
+      return expect(controller.register(registerDto)).resolves.toStrictEqual(testPlayer1);
     });
   });
 
   describe("login", () => {
     it("email already exist", () => {
-      return expect(
-        controller.login(requestWithPlayer, loginDto)
-      ).toStrictEqual(jwtSignedPayload);
+      return expect(controller.login(requestWithPlayer, loginDto)).toStrictEqual(jwtSignedPayload);
     });
   });
 
   describe("getProfile", () => {
     it("email already exist", () => {
-      return expect(controller.getProfile(requestWithPlayer)).toStrictEqual(
-        testPlayer1
-      );
+      return expect(controller.getProfile(requestWithPlayer)).toStrictEqual(testPlayer1);
     });
   });
 });

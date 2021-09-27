@@ -26,9 +26,7 @@ export class JournalService {
     this.logger.log("Fetching all badges...");
     const allBadges = await this.badgeEntityService.findAll(true);
     this.logger.log("Fetching player badges...");
-    const myBadges = await this.badgeEntityService.findByJoinPlayerBadges(
-      playerId
-    );
+    const myBadges = await this.badgeEntityService.findByJoinPlayerBadges(playerId);
     // Convert myBadges to a Map with key badgeId
     const myBadgesMap = new Map<string, BadgeEntity>();
     myBadges.forEach((badge) => {
@@ -40,9 +38,7 @@ export class JournalService {
       .map((badge: BadgeEntity) => {
         return {
           ...badge,
-          playerBadges: myBadgesMap.has(badge.id)
-            ? myBadgesMap.get(badge.id).playerBadges
-            : [],
+          playerBadges: myBadgesMap.has(badge.id) ? myBadgesMap.get(badge.id).playerBadges : [],
         };
       })
       .map((badge: BadgeEntity) => {
@@ -71,9 +67,7 @@ export class JournalService {
    */
   async fetchHistory(playerId: string): Promise<HistoryGameInterface[]> {
     this.logger.log("Fetching PlayerBadges History");
-    const playerBadges = await this.playerBadgeEntityService.findByPlayerId(
-      playerId
-    );
+    const playerBadges = await this.playerBadgeEntityService.findByPlayerId(playerId);
     // Map playerBadges to response
     return playerBadges.map((playerBadge) => {
       const mappedResponse: HistoryGameInterface = {
@@ -98,16 +92,14 @@ export class JournalService {
     this.logger.log("Fetching PlayerBadges Venues Mapview");
     const venues = await this.venueEntityService.getForPlayerBadges(playerId);
     return venues.map((venueEntity) => {
-      const badgeGames: MyBadgeGameInterface[] = venueEntity.games.map(
-        (gameEntity) => {
-          return {
-            date: gameEntity.createdAt,
-            score: gameEntity.score,
-            venueName: venueEntity.name,
-            zoneName: venueEntity.zone.name,
-          };
-        }
-      );
+      const badgeGames: MyBadgeGameInterface[] = venueEntity.games.map((gameEntity) => {
+        return {
+          date: gameEntity.createdAt,
+          score: gameEntity.score,
+          venueName: venueEntity.name,
+          zoneName: venueEntity.zone.name,
+        };
+      });
       return {
         venueId: venueEntity.id,
         venueName: venueEntity.name,

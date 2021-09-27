@@ -7,14 +7,10 @@ import { PlayerEntity } from "../player/player.entity";
 import { MissionGroupEntity } from "../missionGroup/mission-group.entity";
 
 @Injectable()
-export class MissionGroupFlagEntityService extends GenericEntityService<
-  MissionGroupFlagEntity
-> {
+export class MissionGroupFlagEntityService extends GenericEntityService<MissionGroupFlagEntity> {
   constructor(
     @InjectRepository(MissionGroupFlagEntity)
-    private readonly missionGroupFlagEntityRepository: Repository<
-      MissionGroupFlagEntity
-    >
+    private readonly missionGroupFlagEntityRepository: Repository<MissionGroupFlagEntity>
   ) {
     super(
       missionGroupFlagEntityRepository,
@@ -23,10 +19,7 @@ export class MissionGroupFlagEntityService extends GenericEntityService<
     );
   }
 
-  async delete(
-    playerEntity: PlayerEntity,
-    missionGroupEntity: MissionGroupEntity
-  ): Promise<void> {
+  async delete(playerEntity: PlayerEntity, missionGroupEntity: MissionGroupEntity): Promise<void> {
     await this.missionGroupFlagEntityRepository.delete({
       player: playerEntity,
       missionGroup: missionGroupEntity,

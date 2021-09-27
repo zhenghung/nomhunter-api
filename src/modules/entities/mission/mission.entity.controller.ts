@@ -19,15 +19,9 @@ export class MissionEntityController {
   ) {}
 
   @Post()
-  async create(
-    @Body() createMissionReq: CreateMissionReq
-  ): Promise<MissionEntity> {
-    const rewardGearEntity = await this.gearEntityService.getByIdNullable(
-      createMissionReq.rewardGearId
-    );
-    const missionGroupEntity = await this.missionGroupEntityService.getById(
-      createMissionReq.missionGroupId
-    );
+  async create(@Body() createMissionReq: CreateMissionReq): Promise<MissionEntity> {
+    const rewardGearEntity = await this.gearEntityService.getByIdNullable(createMissionReq.rewardGearId);
+    const missionGroupEntity = await this.missionGroupEntityService.getById(createMissionReq.missionGroupId);
 
     // Construct DTO
     const createMissionDto: CreateMissionDto = {
@@ -45,14 +39,10 @@ export class MissionEntityController {
     };
     this.logger.log(`Creating mission with name: ${createMissionDto.name}`);
 
-    return this.missionEntityService
-      .create(createMissionDto)
-      .then((missionEntity: MissionEntity) => {
-        this.logger.log(
-          `Mission with id ${missionEntity.id} successfully created`
-        );
-        return missionEntity;
-      });
+    return this.missionEntityService.create(createMissionDto).then((missionEntity: MissionEntity) => {
+      this.logger.log(`Mission with id ${missionEntity.id} successfully created`);
+      return missionEntity;
+    });
   }
 
   @Get()

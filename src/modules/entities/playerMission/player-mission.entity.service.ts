@@ -7,20 +7,12 @@ import { PlayerEntity } from "../player/player.entity";
 import { MissionEntity } from "../mission/mission.entity";
 
 @Injectable()
-export class PlayerMissionEntityService extends GenericEntityService<
-  PlayerMissionEntity
-> {
+export class PlayerMissionEntityService extends GenericEntityService<PlayerMissionEntity> {
   constructor(
     @InjectRepository(PlayerMissionEntity)
-    private readonly playerMissionEntityRepository: Repository<
-      PlayerMissionEntity
-    >
+    private readonly playerMissionEntityRepository: Repository<PlayerMissionEntity>
   ) {
-    super(
-      playerMissionEntityRepository,
-      new Logger(PlayerMissionEntityService.name),
-      PlayerMissionEntity.name
-    );
+    super(playerMissionEntityRepository, new Logger(PlayerMissionEntityService.name), PlayerMissionEntity.name);
   }
 
   /**
@@ -29,10 +21,7 @@ export class PlayerMissionEntityService extends GenericEntityService<
    * @param player
    * @param mission
    */
-  async findByPlayerAndMission(
-    player: PlayerEntity,
-    mission: MissionEntity
-  ): Promise<PlayerMissionEntity | undefined> {
+  async findByPlayerAndMission(player: PlayerEntity, mission: MissionEntity): Promise<PlayerMissionEntity | undefined> {
     return this.playerMissionEntityRepository
       .createQueryBuilder("playerMission")
       .innerJoinAndSelect("playerMission.player", "player")
@@ -65,9 +54,7 @@ export class PlayerMissionEntityService extends GenericEntityService<
   }
 
   async findByPlayer(player: PlayerEntity): Promise<PlayerMissionEntity[]> {
-    return this.queryJoin()
-      .where("playerMission.player = :playerId", { playerId: player.id })
-      .getMany();
+    return this.queryJoin().where("playerMission.player = :playerId", { playerId: player.id }).getMany();
   }
 
   private queryJoin(): SelectQueryBuilder<PlayerMissionEntity> {

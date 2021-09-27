@@ -1,12 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { PlayerMissionEntity } from "../playerMission/player-mission.entity";
 import { GearEntity } from "../gear/gear.entity";
@@ -37,11 +29,8 @@ export class MissionEntity {
   level: number;
 
   @ApiProperty()
-  @ManyToOne(
-    () => MissionGroupEntity,
-    (missionGroupEntity) => missionGroupEntity.missions
-  )
-  @JoinColumn({ name: "mission_group_id" })
+  @ManyToOne(() => MissionGroupEntity, (missionGroupEntity) => missionGroupEntity.missions)
+  @JoinColumn({ name: "mission_group_id", referencedColumnName: "id" })
   missionGroup: MissionGroupEntity;
 
   @ApiProperty()
@@ -68,12 +57,9 @@ export class MissionEntity {
   @ManyToOne(() => GearEntity, (gearEntity) => gearEntity.missions, {
     nullable: true,
   })
-  @JoinColumn({ name: "reward_gear_id" })
+  @JoinColumn({ name: "reward_gear_id", referencedColumnName: "id" })
   rewardGear: GearEntity;
 
-  @OneToMany(
-    () => PlayerMissionEntity,
-    (playerMission) => playerMission.mission
-  )
+  @OneToMany(() => PlayerMissionEntity, (playerMission) => playerMission.mission)
   playerMissions: PlayerMissionEntity[];
 }

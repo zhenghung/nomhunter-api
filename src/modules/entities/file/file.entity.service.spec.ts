@@ -10,12 +10,12 @@ import { CreateFileDto } from "./dto/create-file.dto";
 
 const testFile = new FileEntity();
 testFile.name = "1-1-1";
-testFile.type = FileType.PROFILE_PIC;
+testFile.type = FileType.AVATAR;
 testFile.url = "https://somelinktourl.com/";
 
 const testCreateFile = new CreateFileDto();
 testCreateFile.name = "1-1-1";
-testCreateFile.type = FileType.PROFILE_PIC;
+testCreateFile.type = FileType.AVATAR;
 testCreateFile.url = "https://somelinktourl.com/";
 
 describe("FileEntityService", () => {
@@ -48,9 +48,7 @@ describe("FileEntityService", () => {
   describe("getById", () => {
     it("should get a single file", () => {
       const repoSpy = jest.spyOn(repo, "findOneOrFail");
-      const testResult = expect(service.getById("a uuid")).resolves.toEqual(
-        testFile
-      );
+      const testResult = expect(service.getById("a uuid")).resolves.toEqual(testFile);
       expect(repoSpy).toBeCalledWith("a uuid");
       return testResult;
     });
@@ -60,10 +58,7 @@ describe("FileEntityService", () => {
         .mockRejectedValue(new EntityNotFoundError("FileEntity", "bad uuid"));
       const testPromise = service.getById("bad uuid").catch((error) => {
         expect(error).toStrictEqual(
-          new HttpException(
-            "FileEntity of id: bad uuid does not exist",
-            HttpStatus.NOT_FOUND
-          )
+          new HttpException("FileEntity of id: bad uuid does not exist", HttpStatus.NOT_FOUND)
         );
       });
       expect(repoSpy).toBeCalledWith("bad uuid");
@@ -74,9 +69,7 @@ describe("FileEntityService", () => {
   describe("create", () => {
     it("should successfully create a file", () => {
       const repoSpy = jest.spyOn(repo, "save");
-      const testResult = expect(
-        service.create(testCreateFile)
-      ).resolves.toEqual(testFile);
+      const testResult = expect(service.create(testCreateFile)).resolves.toEqual(testFile);
       expect(repoSpy).toBeCalledTimes(1);
       expect(repoSpy).toBeCalledWith(testCreateFile);
       return testResult;
@@ -88,12 +81,8 @@ describe("FileEntityService", () => {
       const successDeleteResult = new DeleteResult();
       successDeleteResult.raw = [];
       successDeleteResult.affected = 1;
-      const repoSpy = jest
-        .spyOn(repo, "delete")
-        .mockResolvedValue(successDeleteResult);
-      const testResult = expect(service.remove("a uuid")).resolves.toEqual(
-        true
-      );
+      const repoSpy = jest.spyOn(repo, "delete").mockResolvedValue(successDeleteResult);
+      const testResult = expect(service.remove("a uuid")).resolves.toEqual(true);
       expect(repoSpy).toBeCalledWith("a uuid");
       expect(repoSpy).toBeCalledTimes(1);
       return testResult;
@@ -102,16 +91,9 @@ describe("FileEntityService", () => {
       const failedDeleteResult = new DeleteResult();
       failedDeleteResult.raw = [];
       failedDeleteResult.affected = 0;
-      const repoSpy = jest
-        .spyOn(repo, "delete")
-        .mockResolvedValue(failedDeleteResult);
-      const testResult = expect(
-        service.remove("a bad uuid")
-      ).rejects.toThrowError(
-        new HttpException(
-          "FileEntity of id: a bad uuid does not exist",
-          HttpStatus.NOT_FOUND
-        )
+      const repoSpy = jest.spyOn(repo, "delete").mockResolvedValue(failedDeleteResult);
+      const testResult = expect(service.remove("a bad uuid")).rejects.toThrowError(
+        new HttpException("FileEntity of id: a bad uuid does not exist", HttpStatus.NOT_FOUND)
       );
       expect(repoSpy).toBeCalledWith("a bad uuid");
       expect(repoSpy).toBeCalledTimes(1);
@@ -119,13 +101,8 @@ describe("FileEntityService", () => {
     });
     it("Error deleting File entity", () => {
       const repoSpy = jest.spyOn(repo, "delete").mockRejectedValue(new Error());
-      const testResult = expect(
-        service.remove("a bad uuid")
-      ).rejects.toThrowError(
-        new HttpException(
-          "Something went wrong",
-          HttpStatus.INTERNAL_SERVER_ERROR
-        )
+      const testResult = expect(service.remove("a bad uuid")).rejects.toThrowError(
+        new HttpException("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
       );
       expect(repoSpy).toBeCalledWith("a bad uuid");
       expect(repoSpy).toBeCalledTimes(1);

@@ -24,19 +24,13 @@ export class MissionService {
     private readonly playerMissionEntityService: PlayerMissionEntityService
   ) {}
 
-  async fetchAllMissionsForPlayer(
-    playerId: string
-  ): Promise<MissionGroupEntity[]> {
+  async fetchAllMissionsForPlayer(playerId: string): Promise<MissionGroupEntity[]> {
     return this.missionGroupEntityService.fetchAllMissionsForPlayer(playerId);
   }
 
   async claimReward(playerId: string, missionId: string): Promise<void> {
-    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
-      playerId
-    );
-    const missionEntity: MissionEntity = await this.missionEntityService.getByIdJoinAll(
-      missionId
-    );
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(playerId);
+    const missionEntity: MissionEntity = await this.missionEntityService.getByIdJoinAll(missionId);
     const playerMissionEntity: PlayerMissionEntity = await this.playerMissionEntityService.findByPlayerAndMission(
       playerEntity,
       missionEntity
@@ -45,25 +39,14 @@ export class MissionService {
       if (missionEntity.rewardGear) {
         // TODO: Give player the reward
       }
-      await this.playerMissionEntityService.updateByEntityId(
-        playerMissionEntity.id,
-        { claimed: true }
-      );
+      await this.playerMissionEntityService.updateByEntityId(playerMissionEntity.id, { claimed: true });
     }
     return;
   }
 
-  async setFlag(
-    playerId: string,
-    missionGroupId: string,
-    flag: boolean
-  ): Promise<void> {
-    const playerEntity: PlayerEntity = await this.playerEntityService.getById(
-      playerId
-    );
-    const missionGroupEntity: MissionGroupEntity = await this.missionGroupEntityService.getById(
-      missionGroupId
-    );
+  async setFlag(playerId: string, missionGroupId: string, flag: boolean): Promise<void> {
+    const playerEntity: PlayerEntity = await this.playerEntityService.getById(playerId);
+    const missionGroupEntity: MissionGroupEntity = await this.missionGroupEntityService.getById(missionGroupId);
     if (flag) {
       await this.missionGroupFlagEntityService
         .create({
@@ -72,17 +55,11 @@ export class MissionService {
         })
         .catch((reason) => this.logger.log(reason));
     } else {
-      await this.missionGroupFlagEntityService.delete(
-        playerEntity,
-        missionGroupEntity
-      );
+      await this.missionGroupFlagEntityService.delete(playerEntity, missionGroupEntity);
     }
   }
 
-  async checkIfMissionRequirementFulfilled(
-    player: PlayerEntity,
-    mission: MissionEntity
-  ): Promise<boolean> {
+  async checkIfMissionRequirementFulfilled(player: PlayerEntity, mission: MissionEntity): Promise<boolean> {
     // If mission has a requirement
     if (mission.level > 1) {
       // Check if player completed requirement
@@ -104,17 +81,11 @@ export class MissionService {
    * @param playerId
    * @param missionId
    */
-  async incrementProgress(
-    playerId: string,
-    missionId: string
-  ): Promise<PlayerMissionEntity> {
+  async incrementProgress(playerId: string, missionId: string): Promise<PlayerMissionEntity> {
     const player = await this.playerEntityService.getById(playerId);
     const mission = await this.missionEntityService.getByIdJoinAll(missionId);
 
-    const playerMission = await this.playerMissionEntityService.findByPlayerAndMission(
-      player,
-      mission
-    );
+    const playerMission = await this.playerMissionEntityService.findByPlayerAndMission(player, mission);
 
     // If player hasn't started mission
     if (!playerMission) {
@@ -129,20 +100,13 @@ export class MissionService {
     return;
   }
 
-  private async createPlayerMission(
-    player: PlayerEntity,
-    mission: MissionEntity
-  ): Promise<PlayerMissionEntity> {
-    this.logger.log(
-      `Player: ${player.id} starting mission: ${mission.id}, new PlayerMissionEntity being created`
-    );
+  private async createPlayerMission(player: PlayerEntity, mission: MissionEntity): Promise<PlayerMissionEntity> {
+    this.logger.log(`Player: ${player.id} starting mission: ${mission.id}, new PlayerMissionEntity being created`);
     const createPlayerMissionDto: CreatePlayerMissionDto = {
       mission,
       player,
     };
-    const createdPlayerMission = await this.playerMissionEntityService.create(
-      createPlayerMissionDto
-    );
+    const createdPlayerMission = await this.playerMissionEntityService.create(createPlayerMissionDto);
     this.emitMissionCompletedEventIfCompleted(mission, createdPlayerMission);
     return createdPlayerMission;
   }
@@ -151,21 +115,15 @@ export class MissionService {
     playerMission: PlayerMissionEntity,
     mission: MissionEntity
   ): Promise<PlayerMissionEntity> {
-    const updatedPlayerMission = await this.playerMissionEntityService.updateByEntityId(
-      playerMission.id,
-      {
-        ...playerMission,
-        currentProgress: playerMission.currentProgress + 1,
-      }
-    );
+    const updatedPlayerMission = await this.playerMissionEntityService.updateByEntityId(playerMission.id, {
+      ...playerMission,
+      currentProgress: playerMission.currentProgress + 1,
+    });
     this.emitMissionCompletedEventIfCompleted(mission, updatedPlayerMission);
     return updatedPlayerMission;
   }
 
-  private emitMissionCompletedEventIfCompleted(
-    mission: MissionEntity,
-    playerMission: PlayerMissionEntity
-  ): void {
+  private emitMissionCompletedEventIfCompleted(mission: MissionEntity, playerMission: PlayerMissionEntity): void {
     if (playerMission.currentProgress == mission.maxProgress) {
       this.eventEmitter.emit("mission.completed", {
         mission,

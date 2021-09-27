@@ -36,10 +36,7 @@ export class GameCreatedListener {
           }
           break;
         case CriteriaType.GAME_SCORE_VENUE:
-          if (
-            gameScoreMission.criteriaRefId == game.venue.id &&
-            game.score >= +gameScoreMission.criteriaValue
-          ) {
+          if (gameScoreMission.criteriaRefId == game.venue.id && game.score >= +gameScoreMission.criteriaValue) {
             await this.progressMissionIfDoable(game, gameScoreMission);
           }
           break;
@@ -48,27 +45,17 @@ export class GameCreatedListener {
   }
 
   private async progressTagCountMissions(game: GameEntity): Promise<void> {
-    const venueTags = await this.venueTagsEntityService.findByVenueId(
-      game.venue.id
-    );
+    const venueTags = await this.venueTagsEntityService.findByVenueId(game.venue.id);
     for (const venueTag of venueTags) {
-      const missionsWithTag = await this.missionEntityService.findByTag(
-        venueTag.tag.id
-      );
+      const missionsWithTag = await this.missionEntityService.findByTag(venueTag.tag.id);
       for (const missionWithTag of missionsWithTag) {
         await this.progressMissionIfDoable(game, missionWithTag);
       }
     }
   }
 
-  private async progressMissionIfDoable(
-    game: GameEntity,
-    mission: MissionEntity
-  ): Promise<void> {
-    const missionDoable = await this.missionService.checkIfMissionRequirementFulfilled(
-      game.player,
-      mission
-    );
+  private async progressMissionIfDoable(game: GameEntity, mission: MissionEntity): Promise<void> {
+    const missionDoable = await this.missionService.checkIfMissionRequirementFulfilled(game.player, mission);
     if (missionDoable) {
       await this.missionService.incrementProgress(game.player.id, mission.id);
     }

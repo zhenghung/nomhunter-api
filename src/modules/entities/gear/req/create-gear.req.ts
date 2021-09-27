@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { GearType } from "../gear.type";
 
 export class CreateGearReq {
   @ApiProperty()
@@ -9,4 +10,7 @@ export class CreateGearReq {
 
   @ApiProperty()
   description: string;
+
+  @ApiProperty()
+  type: GearType;
 }

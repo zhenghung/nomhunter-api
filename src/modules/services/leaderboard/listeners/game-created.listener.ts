@@ -14,9 +14,7 @@ export class GameCreatedListener {
   @OnEvent(GameCreatedEvent.EVENT, { async: true })
   async handleGameCreatedEvent(event: GameCreatedEvent) {
     // handle and process "GameCreatedEvent" event
-    const venue = await this.venueEntityService.getByIdJoinZone(
-      event.game.venue.id
-    );
+    const venue = await this.venueEntityService.getByIdJoinZone(event.game.venue.id);
     // Refresh Venue, Zone and Season Leaderboard
     await this.leaderboardService.refreshVenueLeaderboard(venue.id);
     await this.leaderboardService.refreshZoneLeaderboard(venue.zone.id);
