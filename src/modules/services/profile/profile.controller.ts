@@ -26,12 +26,12 @@ export class ProfileController {
       throw HttpExceptionsUtil.createHttpException("PlayerId query required", HttpStatus.BAD_REQUEST, this.logger);
     }
     this.logger.log(`Getting profile of player: ${playerId}`);
-    return this.avatarService.getAvatarImageUrl(playerId).then((avatar) => {
+    return this.avatarService.getPlayerAvatar(playerId).then((avatar) => {
       return this.playersService.getById(playerId).then((playerEntity) => {
         return {
           playerId: playerEntity.id,
           name: `${playerEntity.nickname}`,
-          avatarUrl: avatar.url,
+          avatarUrl: avatar.imageUrl,
         };
       });
     });

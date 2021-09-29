@@ -7,7 +7,7 @@ import { PlayerEntityService } from "../../entities/player/player.entity.service
 import { CreateFileDto } from "../../entities/file/dto/create-file.dto";
 import { FileEntity } from "../../entities/file/file.entity";
 import { FileType } from "../../entities/file/file.type";
-import { ProfilePicInterface } from "./interface/profile-pic.interface.";
+import { PlayerAvatarInterface } from "./interface/player-avatar.interface";
 import { Colors } from "../../common/constants/colors";
 import { AvatarPoseEntity } from "../../entities/avatarPose/avatar-pose.entity";
 import { AvatarPoseEntityService } from "../../entities/avatarPose/avatar-pose.entity.service";
@@ -20,6 +20,7 @@ import { PlayerEntity } from "../../entities/player/player.entity";
 import { GearType } from "../../entities/gear/gear.type";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { ColorInterface } from "../../common/interface/color.interface";
+import { createQueryBuilder } from "typeorm";
 
 @Injectable()
 export class AvatarService {
@@ -39,13 +40,24 @@ export class AvatarService {
    * Fetches the url of the profile pic image of the provided player id
    * @param playerId
    */
-  async getAvatarImageUrl(playerId: string): Promise<ProfilePicInterface> {
-    return this.playerEntityService.getById(playerId).then((player) => {
-      const url = this.s3Service.getImageUrl("avatar", "profile", `${player.id}.png`);
-      return {
-        url: url,
-      };
-    });
+  async getPlayerAvatar(playerId: string): Promise<PlayerAvatarInterface> {
+    const playerAvatar = await this.playerAvatarEntityService.getByPlayerId(playerId);
+    return {
+      poseId: playerAvatar.pose.id,
+      faceId: playerAvatar.face.id,
+      hatId: playerAvatar.hat == null ? null : playerAvatar.hat.id,
+      weaponId: playerAvatar.weapon == null ? null : playerAvatar.weapon.id,
+      color: playerAvatar.color,
+      imageUrl: this.s3Service.getImageUrl("avatar", "profile", `${playerId}.png`),
+    };
+  }
+
+  async getProfileGears(playerId: string): Promise<GearEntity[]> {
+    return createQueryBuilder(GearEntity, "gear").select().innerJoinAndSelect("gear.file", "file").getMany();
+  }
+
+  async getProfilePoses(playerId: string): Promise<AvatarPoseEntity[]> {
+    return createQueryBuilder(AvatarPoseEntity, "avatarPose").select().getMany();
   }
 
   /**
@@ -55,7 +67,7 @@ export class AvatarService {
    * @param createAvatarDto contains the selected wearables for the playerAvatar
    * @param playerId
    */
-  async createAvatar(createAvatarDto: CreateAvatarDto, playerId: string): Promise<ProfilePicInterface> {
+  async createAvatar(createAvatarDto: CreateAvatarDto, playerId: string): Promise<PlayerAvatarInterface> {
     const player: PlayerEntity = await this.playerEntityService.getById(playerId);
     this.logger.log(`Creating Avatar for player: ${playerId}`);
 
@@ -84,7 +96,14 @@ export class AvatarService {
       weaponGear,
       createAvatarDto.color
     );
-    return { url: url };
+    return {
+      poseId: pose.id,
+      faceId: faceGear.id,
+      hatId: hatGear.id,
+      weaponId: weaponGear.id,
+      color: createAvatarDto.color,
+      imageUrl: url,
+    };
   }
 
   async createStockAvatar(player: PlayerEntity): Promise<void> {

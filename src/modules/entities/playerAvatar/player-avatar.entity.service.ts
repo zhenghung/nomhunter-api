@@ -21,6 +21,11 @@ export class PlayerAvatarEntityService extends GenericEntityService<PlayerAvatar
   async getByPlayerId(playerId: string): Promise<PlayerAvatarEntity> {
     return this.playerAvatarEntityRepository
       .createQueryBuilder("playerAvatar")
+      .leftJoinAndSelect("playerAvatar.player", "player")
+      .leftJoinAndSelect("playerAvatar.pose", "pose")
+      .leftJoinAndSelect("playerAvatar.hat", "hat")
+      .leftJoinAndSelect("playerAvatar.weapon", "weapon")
+      .leftJoinAndSelect("playerAvatar.face", "face")
       .where("playerAvatar.player.id = :id", { id: playerId })
       .getOne();
   }

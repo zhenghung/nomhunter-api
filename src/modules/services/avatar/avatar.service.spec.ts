@@ -5,7 +5,7 @@ import { PlayerEntityService } from "../../entities/player/player.entity.service
 import { AvatarService } from "./avatar.service";
 import { PlayerEntity } from "../../entities/player/player.entity";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
-import { ProfilePicInterface } from "./interface/profile-pic.interface.";
+import { PlayerAvatarInterface } from "./interface/player-avatar.interface";
 import { FileEntity } from "../../entities/file/file.entity";
 import { FileType } from "../../entities/file/file.type";
 import { Colors } from "../../common/constants/colors";
@@ -49,8 +49,13 @@ testGear.file = testFile;
 
 const testGearMapping = new GearMappingEntity();
 
-const testProfilePic: ProfilePicInterface = {
-  url: testUrl,
+const testProfilePic: PlayerAvatarInterface = {
+  poseId: "string",
+  faceId: "string",
+  hatId: "string",
+  weaponId: "string",
+  color: Colors.MANGO_SORBET_200_VALUE,
+  imageUrl: testUrl,
 };
 
 describe("AvatarService", () => {
@@ -121,7 +126,7 @@ describe("AvatarService", () => {
 
   describe("getAvatarImageUrl", () => {
     it("should return playerAvatar image url of the player", () => {
-      return expect(service.getAvatarImageUrl(testPlayer1.id)).resolves.toEqual(testProfilePic);
+      return expect(service.getPlayerAvatar(testPlayer1.id)).resolves.toEqual(testProfilePic);
     });
   });
 

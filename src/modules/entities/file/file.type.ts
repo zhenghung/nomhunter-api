@@ -1,5 +1,6 @@
 export enum FileType {
   AVATAR = "avatar",
+  POSE = "pose",
   POSE_SILHOUETTE = "pose.silhouette",
   POSE_OUTLINE = "pose.outline",
   POSE_HAND_SILHOUETTE = "pose.hand.silhouette",
