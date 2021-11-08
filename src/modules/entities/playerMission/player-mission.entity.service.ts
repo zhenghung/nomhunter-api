@@ -53,8 +53,8 @@ export class PlayerMissionEntityService extends GenericEntityService<PlayerMissi
       .getOne();
   }
 
-  async findByPlayer(player: PlayerEntity): Promise<PlayerMissionEntity[]> {
-    return this.queryJoin().where("playerMission.player = :playerId", { playerId: player.id }).getMany();
+  async findByPlayer(playerId: string): Promise<PlayerMissionEntity[]> {
+    return this.queryJoin().where("playerMission.player = :playerId", { playerId: playerId }).getMany();
   }
 
   private queryJoin(): SelectQueryBuilder<PlayerMissionEntity> {

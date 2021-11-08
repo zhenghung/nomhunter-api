@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "The API to power NomHunter",
   "author": "",
+  "engines": {
+    "node": "12.14.x"
+  },
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

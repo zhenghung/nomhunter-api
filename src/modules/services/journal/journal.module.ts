@@ -9,5 +9,6 @@ import { VenueEntityModule } from "../../entities/venue/venue.entity.module";
   imports: [PlayerBadgeEntityModule, BadgeEntityModule, VenueEntityModule],
   providers: [JournalService],
   controllers: [JournalController],
+  exports: [JournalService],
 })
 export class JournalModule {}

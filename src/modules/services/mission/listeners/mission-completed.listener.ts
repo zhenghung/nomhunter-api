@@ -6,6 +6,7 @@ import { MissionCompletedEvent } from "../../../common/events/mission-completed.
 @Injectable()
 export class MissionCompletedListener {
   private readonly logger = new Logger(MissionCompletedListener.name);
+
   constructor(private readonly playerMissionEntityService: PlayerMissionEntityService) {}
 
   @OnEvent("mission.completed", { async: true })

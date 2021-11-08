@@ -1,39 +1,33 @@
-import { Controller, Get, HttpStatus, Logger, Query } from "@nestjs/common";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
+import { Controller, Get, Query, Req, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ProfileResponseInterface } from "./interface/profile-response.interface";
-import { PlayerEntityService } from "../../entities/player/player.entity.service";
-import { AvatarService } from "../avatar/avatar.service";
-import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
+import { ProfileService } from "./profile.service";
+import JwtAuthGuard from "../auth/guard/jwt-auth.guard";
+import { RequestWithPlayer } from "../auth/interface/request-with-player.interface";
+import { ApiImplicitQuery } from "@nestjs/swagger/dist/decorators/api-implicit-query.decorator";
 
 @ApiTags("Profile")
 @Controller("profile")
 export class ProfileController {
-  private readonly logger = new Logger(ProfileController.name);
-
-  constructor(private readonly playersService: PlayerEntityService, private readonly avatarService: AvatarService) {}
+  constructor(private readonly profileService: ProfileService) {}
 
   @ApiImplicitQuery({
     name: "playerId",
-    required: true,
+    required: false,
     type: String,
   })
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Fetch Player profile" })
   @ApiOkResponse({ description: "Player profile retrieved successfully" })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getProfile(@Query("playerId") playerId: string): Promise<ProfileResponseInterface> {
-    if (!playerId) {
-      throw HttpExceptionsUtil.createHttpException("PlayerId query required", HttpStatus.BAD_REQUEST, this.logger);
+  async getProfile(
+    @Req() requestWithPlayer: RequestWithPlayer,
+    @Query("playerId") playerId?: string
+  ): Promise<ProfileResponseInterface> {
+    if (playerId) {
+      return this.profileService.getProfile(playerId, true);
     }
-    this.logger.log(`Getting profile of player: ${playerId}`);
-    return this.avatarService.getPlayerAvatar(playerId).then((avatar) => {
-      return this.playersService.getById(playerId).then((playerEntity) => {
-        return {
-          playerId: playerEntity.id,
-          name: `${playerEntity.nickname}`,
-          avatarUrl: avatar.imageUrl,
-        };
-      });
-    });
+    return this.profileService.getProfile(requestWithPlayer.user.id, false);
   }
 }
