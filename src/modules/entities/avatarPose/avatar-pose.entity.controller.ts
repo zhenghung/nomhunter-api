@@ -23,6 +23,7 @@ export class AvatarPoseEntityController {
       poseOutline: await this.fileEntityService.getById(createAvatarPoseReq.poseOutlineFileId),
       poseHandSilhouette: await this.fileEntityService.getById(createAvatarPoseReq.poseHandSilhouetteFileId),
       poseHandOutline: await this.fileEntityService.getById(createAvatarPoseReq.poseHandOutlineFileId),
+      file: await this.fileEntityService.getById(createAvatarPoseReq.fileId),
     };
     return this.avatarPoseEntityService.create(dto);
   }

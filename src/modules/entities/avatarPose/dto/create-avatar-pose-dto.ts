@@ -5,4 +5,5 @@ export class CreateAvatarPoseDto {
   poseOutline: FileEntity;
   poseHandSilhouette: FileEntity;
   poseHandOutline: FileEntity;
+  file: FileEntity;
 }

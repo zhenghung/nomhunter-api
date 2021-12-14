@@ -57,7 +57,7 @@ export class AvatarService {
   }
 
   async getProfilePoses(playerId: string): Promise<AvatarPoseEntity[]> {
-    return createQueryBuilder(AvatarPoseEntity, "avatarPose").select().getMany();
+    return createQueryBuilder(AvatarPoseEntity, "avatarPose").innerJoinAndSelect("avatarPose.file", "file").getMany();
   }
 
   /**

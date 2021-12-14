@@ -52,4 +52,7 @@ export class FileEntity {
 
   @OneToOne(() => AvatarPoseEntity, (avatarPose) => avatarPose.poseHandOutline)
   poseHandOutline: AvatarPoseEntity;
+
+  @OneToOne(() => AvatarPoseEntity, (avatarPose) => avatarPose.file)
+  avatarPose: AvatarPoseEntity;
 }

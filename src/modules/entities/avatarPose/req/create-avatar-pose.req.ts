@@ -9,4 +9,6 @@ export class CreateAvatarPoseReq {
   poseHandOutlineFileId: string;
   @ApiProperty()
   poseHandSilhouetteFileId: string;
+  @ApiProperty()
+  fileId: string;
 }

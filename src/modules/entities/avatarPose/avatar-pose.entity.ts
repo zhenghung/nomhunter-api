@@ -30,6 +30,11 @@ export class AvatarPoseEntity {
   @JoinColumn({ name: "pose_hand_outline_id", referencedColumnName: "id" })
   poseHandOutline: FileEntity;
 
+  @ApiProperty({ name: "file_id" })
+  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
+  @JoinColumn({ name: "file_id", referencedColumnName: "id" })
+  file: FileEntity;
+
   @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
