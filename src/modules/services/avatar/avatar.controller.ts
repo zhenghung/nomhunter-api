@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Response, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Response as Res } from "express";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { AvatarService } from "./avatar.service";
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
@@ -16,6 +17,18 @@ import { AvatarPoseEntity } from "../../entities/avatarPose/avatar-pose.entity";
 @Controller("avatar")
 export class AvatarController {
   constructor(private readonly avatarService: AvatarService) {}
+
+  @ApiOperation({ summary: "Create temporary preview of playerAvatar" })
+  @ApiCreatedResponse({ description: "Temporary preview of avatar generated" })
+  @Post("preview")
+  async previewAvatarNoAws(@Response() res: Res, @Body() createAvatar: CreateAvatarDto) {
+    const buffer = await this.avatarService.generatePreviewBuffer(createAvatar);
+    res.writeHead(200, {
+      "Content-Type": "image/png",
+      "Content-Length": buffer.length,
+    });
+    res.end(buffer);
+  }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create new playerAvatar for player" })

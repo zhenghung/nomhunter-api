@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import Jimp from "jimp";
+import { v4 as uuidv4 } from "uuid";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { S3Service } from "../../clients/s3/s3.service";
 import { FileEntityService } from "../../entities/file/file.entity.service";
@@ -73,13 +74,18 @@ export class AvatarService {
 
     const faceGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.faceId, GearType.FACE);
     const face: [GearEntity, Jimp] = [faceGear, await Jimp.read(faceGear.file.url)];
-    const hatGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.hatId, GearType.HAT);
-    const hat: [GearEntity, Jimp] = [hatGear, await Jimp.read(hatGear.file.url)];
-    const weaponGear: GearEntity = await this.gearEntityService.getByIdAndType(
-      createAvatarDto.weaponId,
-      GearType.WEAPON
-    );
-    const weapon: [GearEntity, Jimp] = [weaponGear, await Jimp.read(weaponGear.file.url)];
+    let hatGear: GearEntity = undefined;
+    let hat: [GearEntity, Jimp] = undefined;
+    let weaponGear: GearEntity = undefined;
+    let weapon: [GearEntity, Jimp] = undefined;
+    if (createAvatarDto.hatId != null) {
+      hatGear = await this.gearEntityService.getByIdAndType(createAvatarDto.hatId, GearType.HAT);
+      hat = [hatGear, await Jimp.read(hatGear.file.url)];
+    }
+    if (createAvatarDto.weaponId != null) {
+      weaponGear = await this.gearEntityService.getByIdAndType(createAvatarDto.weaponId, GearType.WEAPON);
+      weapon = [weaponGear, await Jimp.read(weaponGear.file.url)];
+    }
 
     const pose: AvatarPoseEntity = await this.avatarPoseEntityService.getById(createAvatarDto.poseId);
     // Merge Image
@@ -99,11 +105,33 @@ export class AvatarService {
     return {
       poseId: pose.id,
       faceId: faceGear.id,
-      hatId: hatGear.id,
-      weaponId: weaponGear.id,
+      hatId: hatGear ? hatGear.id : null,
+      weaponId: weaponGear ? weaponGear.id : null,
       color: createAvatarDto.color,
       imageUrl: url,
     };
+  }
+
+  async generatePreviewBuffer(createAvatarDto: CreateAvatarDto): Promise<Buffer> {
+    const faceGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.faceId, GearType.FACE);
+    const face: [GearEntity, Jimp] = [faceGear, await Jimp.read(faceGear.file.url)];
+    let hat: [GearEntity, Jimp] = undefined;
+    let weapon: [GearEntity, Jimp] = undefined;
+    if (createAvatarDto.hatId != null) {
+      const hatGear: GearEntity = await this.gearEntityService.getByIdAndType(createAvatarDto.hatId, GearType.HAT);
+      hat = [hatGear, await Jimp.read(hatGear.file.url)];
+    }
+    if (createAvatarDto.weaponId != null) {
+      const weaponGear: GearEntity = await this.gearEntityService.getByIdAndType(
+        createAvatarDto.weaponId,
+        GearType.WEAPON
+      );
+      weapon = [weaponGear, await Jimp.read(weaponGear.file.url)];
+    }
+    const pose: AvatarPoseEntity = await this.avatarPoseEntityService.getById(createAvatarDto.poseId);
+    // Merge Image
+    const mergedImage: Jimp = await this.mergeLayers(pose, face, hat, weapon, createAvatarDto.color);
+    return mergedImage.getBufferAsync(Jimp.MIME_PNG);
   }
 
   async createStockAvatar(player: PlayerEntity): Promise<void> {
