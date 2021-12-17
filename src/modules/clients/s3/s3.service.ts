@@ -34,7 +34,7 @@ export class S3Service {
       ACL: "public-read",
     };
 
-    this.logger.log(`Uploading to profiles folder in bucket ${params.Bucket}`);
+    this.logger.log(`Uploading to ${key} in bucket ${params.Bucket}`);
     const uploadResult = await this.s3
       .upload(params, (err, data) => {
         if (err) {
