@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { FileEntity } from "../file/file.entity";
 import { PlayerAvatarEntity } from "../playerAvatar/player-avatar.entity";
@@ -11,27 +11,27 @@ export class AvatarPoseEntity {
   id: string;
 
   @ApiProperty({ name: "pose_silhouette_id" })
-  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.poseSilhouette)
+  @ManyToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
   @JoinColumn({ name: "pose_silhouette_id", referencedColumnName: "id" })
   poseSilhouette: FileEntity;
 
   @ApiProperty({ name: "pose_outline_id" })
-  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.poseOutline)
+  @ManyToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
   @JoinColumn({ name: "pose_outline_id", referencedColumnName: "id" })
   poseOutline: FileEntity;
 
   @ApiProperty({ name: "pose_hand_silhouette_id" })
-  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.poseHandSilhouette)
+  @ManyToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
   @JoinColumn({ name: "pose_hand_silhouette_id", referencedColumnName: "id" })
   poseHandSilhouette: FileEntity;
 
   @ApiProperty({ name: "pose_hand_outline_id" })
-  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.poseHandOutline)
+  @ManyToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
   @JoinColumn({ name: "pose_hand_outline_id", referencedColumnName: "id" })
   poseHandOutline: FileEntity;
 
   @ApiProperty({ name: "file_id" })
-  @OneToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
+  @ManyToOne(() => FileEntity, (fileEntity) => fileEntity.avatarPose)
   @JoinColumn({ name: "file_id", referencedColumnName: "id" })
   file: FileEntity;
 

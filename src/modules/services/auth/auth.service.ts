@@ -8,12 +8,14 @@ import { HttpExceptions } from "../../common/constants/http.exceptions";
 import { TokenResponseInterface } from "./interface/token-response.interface";
 import { QueryFailedError } from "typeorm";
 import { AvatarService } from "../avatar/avatar.service";
+import { PlayerWalletEntityService } from "../../entities/playerWallet/player-wallet.entity.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly playerEntityService: PlayerEntityService,
     private readonly avatarService: AvatarService,
+    private readonly playerWalletEntityService: PlayerWalletEntityService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -30,6 +32,7 @@ export class AuthService {
         password: hashedPassword,
       });
       await this.avatarService.createStockAvatar(createdPlayer);
+      await this.playerWalletEntityService.createNewPlayerWallet(createdPlayer);
       return createdPlayer;
     } catch (error) {
       if (error instanceof QueryFailedError) {

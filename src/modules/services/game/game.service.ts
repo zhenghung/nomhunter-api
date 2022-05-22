@@ -7,6 +7,7 @@ import { PlayerEntityService } from "../../entities/player/player.entity.service
 import { GameEntity } from "../../entities/game/game.entity";
 import { GameCreatedEvent } from "../../common/events/game-created.event";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { PlayerWalletEntityService } from "../../entities/playerWallet/player-wallet.entity.service";
 
 @Injectable()
 export class GameService {
@@ -18,6 +19,7 @@ export class GameService {
     private readonly gameEntityService: GameEntityService,
     private readonly playerEntityService: PlayerEntityService,
     private readonly playerBadgeEntityService: PlayerBadgeEntityService,
+    private readonly playerWalletEntityService: PlayerWalletEntityService,
     private readonly venueEntityService: VenueEntityService
   ) {}
 
@@ -44,6 +46,7 @@ export class GameService {
         game: gameEntity,
         player: playerEntity,
       });
+      await this.playerWalletEntityService.addCoin(playerId, createGameReq.score * 30);
     }
     return gameEntity;
   }

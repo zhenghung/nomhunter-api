@@ -17,6 +17,9 @@ import { MissionGroupFlagEntityModule } from "./missionGroupFlag/mission-group-f
 import { AvatarPoseEntityModule } from "./avatarPose/avatar-pose.entity.module";
 import { PlayerAvatarEntityModule } from "./playerAvatar/player-avatar.entity.module";
 import { GearMappingEntityModule } from "./gearMapping/gear-mapping.entity.module";
+import { PlayerWalletEntityModule } from "./playerWallet/player-wallet.entity.module";
+import { ShopItemEntityModule } from "./shopItem/shop-item.entity.module";
+import { TransactionEntityModule } from "./transaction/transaction.entity.module";
 
 @Module({
   imports: [
@@ -38,6 +41,9 @@ import { GearMappingEntityModule } from "./gearMapping/gear-mapping.entity.modul
     AvatarPoseEntityModule,
     PlayerAvatarEntityModule,
     GearMappingEntityModule,
+    PlayerWalletEntityModule,
+    ShopItemEntityModule,
+    TransactionEntityModule,
   ],
 })
 export class EntitiesModule {}

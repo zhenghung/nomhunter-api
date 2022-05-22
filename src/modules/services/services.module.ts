@@ -9,6 +9,7 @@ import { GameModule } from "./game/game.module";
 import { JournalModule } from "./journal/journal.module";
 import { TagModule } from "./tag/tag.module";
 import { MissionModule } from "./mission/mission.module";
+import { ShopModule } from "./shop/shop.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MissionModule } from "./mission/mission.module";
     JournalModule,
     TagModule,
     MissionModule,
+    ShopModule,
   ],
 })
 export class ServicesModule {}
