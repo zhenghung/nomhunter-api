@@ -15,13 +15,21 @@ export class TransactionEntity {
   @Column({ default: "NOM" })
   currency: string;
 
-  @ApiProperty({ name: "shop_item_reserved_name" })
+  @ApiProperty()
   @Column()
-  shopItemReservedName: string;
+  sourceType: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  sourceId: string;
 
   @ApiProperty()
   @Column()
-  sourceId: string;
+  targetType: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  targetId: string;
 
   @ApiProperty()
   @CreateDateColumn()

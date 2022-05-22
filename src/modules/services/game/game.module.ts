@@ -6,9 +6,17 @@ import { PlayerBadgeEntityModule } from "../../entities/playerBadge/player-badge
 import { GameService } from "./game.service";
 import { GameController } from "./game.controller";
 import { PlayerWalletEntityModule } from "../../entities/playerWallet/player-wallet.entity.module";
+import { TransactionEntityModule } from "../../entities/transaction/transaction.entity.module";
 
 @Module({
-  imports: [GameEntityModule, VenueEntityModule, PlayerBadgeEntityModule, PlayerWalletEntityModule, PlayerEntityModule],
+  imports: [
+    GameEntityModule,
+    VenueEntityModule,
+    PlayerBadgeEntityModule,
+    PlayerWalletEntityModule,
+    PlayerEntityModule,
+    TransactionEntityModule,
+  ],
   providers: [GameService],
   controllers: [GameController],
 })

@@ -8,6 +8,8 @@ import { GameEntity } from "../../entities/game/game.entity";
 import { GameCreatedEvent } from "../../common/events/game-created.event";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { PlayerWalletEntityService } from "../../entities/playerWallet/player-wallet.entity.service";
+import { TransactionEntityService } from "../../entities/transaction/transaction.entity.service";
+import { TransactionDomainType } from "../../entities/transaction/transaction-domain-type";
 
 @Injectable()
 export class GameService {
@@ -19,6 +21,7 @@ export class GameService {
     private readonly gameEntityService: GameEntityService,
     private readonly playerEntityService: PlayerEntityService,
     private readonly playerBadgeEntityService: PlayerBadgeEntityService,
+    private readonly transactionEntityService: TransactionEntityService,
     private readonly playerWalletEntityService: PlayerWalletEntityService,
     private readonly venueEntityService: VenueEntityService
   ) {}
@@ -47,6 +50,14 @@ export class GameService {
         player: playerEntity,
       });
       await this.playerWalletEntityService.addCoin(playerId, createGameReq.score * 30);
+      await this.transactionEntityService.create({
+        amount: createGameReq.score * 30,
+        currency: "NOM",
+        sourceId: gameEntity.id,
+        sourceType: TransactionDomainType.GAME,
+        targetId: (await this.playerWalletEntityService.findByPlayerId(playerId)).id,
+        targetType: TransactionDomainType.PLAYER_WALLET,
+      });
     }
     return gameEntity;
   }

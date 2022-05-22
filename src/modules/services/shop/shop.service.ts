@@ -5,9 +5,9 @@ import { PlayerWalletEntityService } from "../../entities/playerWallet/player-wa
 import { PlayerWalletEntity } from "../../entities/playerWallet/player-wallet.entity";
 import { HttpExceptionsUtil } from "../../common/util/http-exceptions.util";
 import { PlayerEntity } from "../../entities/player/player.entity";
-import { TransactionEntity } from "../../entities/transaction/transaction.entity";
 import { ShopItemObject } from "../../entities/shopItem/shop-item.object";
 import { ShopItemsResponse } from "./res/shop-items.response";
+import { TransactionDomainType } from "../../entities/transaction/transaction-domain-type";
 
 @Injectable()
 export class ShopService {
@@ -36,12 +36,14 @@ export class ShopService {
 
     this.checkIfPlayerCanAffordItem(playerWalletEntity, shopItemEntity);
 
-    const transactionEntity: TransactionEntity = new TransactionEntity();
-    transactionEntity.shopItemReservedName = shopItemEntity.reservedName;
-    transactionEntity.sourceId = playerWalletEntity.id;
-    transactionEntity.amount = shopItemEntity.price.amount;
-    transactionEntity.currency = shopItemEntity.price.currency;
-    await this.transactionEntityService.create(transactionEntity);
+    await this.transactionEntityService.create({
+      amount: shopItemEntity.price.amount,
+      currency: shopItemEntity.price.currency,
+      sourceId: playerWalletEntity.id,
+      sourceType: TransactionDomainType.PLAYER_WALLET,
+      targetId: reservedName,
+      targetType: TransactionDomainType.SHOP_ITEM,
+    });
 
     const newBalance: number = playerWalletEntity.amount - shopItemEntity.price.amount;
 
