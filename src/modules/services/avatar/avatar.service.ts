@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import Jimp from "jimp";
-import { v4 as uuidv4 } from "uuid";
 import { CreateAvatarDto } from "./dto/create-avatar.dto";
 import { S3Service } from "../../clients/s3/s3.service";
 import { FileEntityService } from "../../entities/file/file.entity.service";

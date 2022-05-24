@@ -14,6 +14,7 @@ import { PlayerBadgeEntity } from "../playerBadge/player-badge.entity";
 import { PlayerMissionEntity } from "../playerMission/player-mission.entity";
 import { MissionGroupFlagEntity } from "../missionGroupFlag/mission-group-flag.entity";
 import { PlayerAvatarEntity } from "../playerAvatar/player-avatar.entity";
+import { PlayerWalletEntity } from "../playerWallet/player-wallet.entity";
 
 @Entity("player")
 export class PlayerEntity {
@@ -56,4 +57,7 @@ export class PlayerEntity {
 
   @OneToOne(() => PlayerAvatarEntity, (playerAvatar) => playerAvatar.player)
   avatar: PlayerAvatarEntity;
+
+  @OneToOne(() => PlayerWalletEntity, (playerWallet) => playerWallet.player)
+  wallet: PlayerWalletEntity;
 }
