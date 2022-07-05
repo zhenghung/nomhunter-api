@@ -8,6 +8,7 @@ import { JournalModule } from "../journal/journal.module";
 import { LeaderboardModule } from "../leaderboard/leaderboard.module";
 import { ZoneEntityModule } from "../../entities/zone/zone.entity.module";
 import { PlayerMissionEntityModule } from "../../entities/playerMission/player-mission.entity.module";
+import { PlayerWalletEntityModule } from "../../entities/playerWallet/player-wallet.entity.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PlayerMissionEntityModule } from "../../entities/playerMission/player-m
     LeaderboardModule,
     ZoneEntityModule,
     PlayerMissionEntityModule,
+    PlayerWalletEntityModule,
   ],
   providers: [ProfileService],
   controllers: [ProfileController],

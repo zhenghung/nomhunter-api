@@ -12,6 +12,7 @@ import { RankInterface } from "../leaderboard/interface/rank.interface";
 import { PlayerMissionEntityService } from "../../entities/playerMission/player-mission.entity.service";
 import { ProfileRankInterface } from "./interface/profile-rank.interface";
 import { MyBadgeInterface } from "../journal/interface/my-badge.interface";
+import { PlayerWalletEntityService } from "../../entities/playerWallet/player-wallet.entity.service";
 
 @Injectable()
 export class ProfileService {
@@ -23,13 +24,14 @@ export class ProfileService {
     private readonly journalService: JournalService,
     private readonly leaderboardService: LeaderboardService,
     private readonly zoneEntityService: ZoneEntityService,
-    private readonly playerMissionEntityService: PlayerMissionEntityService
+    private readonly playerMissionEntityService: PlayerMissionEntityService,
+    private readonly playerWalletEntityService: PlayerWalletEntityService
   ) {}
 
   /**
    * Fetch profile
    */
-  async getProfile(playerId: string, user: boolean): Promise<ProfileResponseInterface> {
+  async getProfile(playerId: string, isOtherPlayer: boolean): Promise<ProfileResponseInterface> {
     this.logger.log(`Getting profile of player: ${playerId}`);
 
     const nickname = await this.playersService.getById(playerId).then((playerEntity) => playerEntity.nickname);
@@ -53,9 +55,11 @@ export class ProfileService {
       pointsEarned: pointsEarned,
       badgesEarned: badgesEarned,
       completedMissions: completedMissionsCount,
-      nomCoins: null,
+      nomCoins: isOtherPlayer
+        ? null
+        : await this.playerWalletEntityService.findByPlayerId(playerId).then((wallet) => wallet.amount),
       rankings: await this.getRanks(playerId),
-      badges: user ? ProfileService.getTopBadges(badges) : null,
+      badges: isOtherPlayer ? ProfileService.getTopBadges(badges) : null,
     };
   }
 
